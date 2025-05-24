@@ -318,7 +318,7 @@ function App() {
           </div>
           <div className="flex items-center gap-3">
             {/* Undo/Redo */}
-            <div className="flex gap-1">
+            <div className="flex gap-1 tour-undo-redo">
               <Button
                 variant="outline"
                 size="default"
@@ -358,7 +358,7 @@ function App() {
               size="default"
               onClick={handleShare}
               disabled={cards.length === 0}
-              className="gap-2"
+              className="gap-2 tour-share"
             >
               <Share size={16} />
               Share
@@ -380,7 +380,7 @@ function App() {
               mode="browse"
               onCardEdit={handleCardEdit}
               trigger={
-                <Button variant="outline" size="default" className="gap-2">
+                <Button variant="outline" size="default" className="gap-2 tour-my-cards">
                   <BookOpen size={16} />
                   My Cards
                 </Button>
@@ -388,13 +388,13 @@ function App() {
             />
 
             {/* Export group */}
-            <div className="flex gap-2 export-actions">
+            <div className="flex gap-2 export-actions tour-export-actions">
               <Button
                 variant="outline"
                 size="default"
                 onClick={handleExportSummary}
                 disabled={cards.length === 0}
-                className="gap-2"
+                className="gap-2 tour-export-summary"
               >
                 <FileText size={16} />
                 Summary
@@ -405,7 +405,7 @@ function App() {
                 disabled={cards.length === 0}
                 isLoading={isCompiling}
                 loadingText="Compiling..."
-                className="bg-primary text-primary-foreground hover:bg-primary/90 disabled:bg-muted disabled:text-muted-foreground whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none h-10 px-4 py-2 gap-2"
+                className="bg-primary text-primary-foreground hover:bg-primary/90 disabled:bg-muted disabled:text-muted-foreground whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none h-10 px-4 py-2 gap-2 tour-export-ini"
               >
                 <Download size={16} />
                 Export INI
@@ -419,7 +419,7 @@ function App() {
         {/* Full-width grid layout with proper constraints - accounting for footer */}
         <div className="grid grid-cols-1 lg:grid-cols-[300px_minmax(0,1fr)_320px] lg:grid-rows-[auto_1fr] gap-6 h-auto lg:h-[calc(100vh-320px)] w-full max-w-full">
           {/* Top-left: Project Management */}
-          <section className="bg-card rounded-xl border p-6 shadow-sm flex flex-col">
+          <section className="bg-card rounded-xl border p-6 shadow-sm flex flex-col tour-project-management">
             <h2 className="text-lg font-semibold mb-4 flex-shrink-0">Project Management</h2>
             <div className="overflow-y-auto max-h-[calc(100vh-500px)] min-h-0 flex-1">
               <ProjectManager
@@ -507,7 +507,7 @@ function App() {
           </section>
 
           {/* Top-right: Profile Summary */}
-          <section className="bg-card rounded-xl border p-6 shadow-sm lg:row-span-2 flex flex-col">
+          <section className="bg-card rounded-xl border p-6 shadow-sm lg:row-span-2 flex flex-col tour-profile-summary">
             <h3 className="text-lg font-semibold mb-4 flex-shrink-0">Profile Summary</h3>
             <div className="overflow-y-auto max-h-[calc(100vh-500px)] min-h-0 flex-1">
               <ProfileSummary

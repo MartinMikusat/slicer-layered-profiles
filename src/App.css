@@ -300,7 +300,9 @@
 }
 
 .tour-tooltip {
-  @apply absolute bg-white rounded-lg shadow-lg p-4 max-w-sm;
+  @apply absolute bg-white rounded-lg shadow-lg p-4;
+  max-width: 400px; /* Increased from default to accommodate more dots */
+  min-width: 320px; /* Ensure minimum width for readability */
   z-index: 1002; /* Above the highlight element */
   transition: all 0.2s ease-out;
   opacity: 1;
@@ -443,6 +445,7 @@
   }
   
   .tour-tooltip {
-    @apply max-w-xs;
+    max-width: 350px; /* Increased from max-w-xs (320px) for mobile */
+    min-width: 280px;
   }
 }

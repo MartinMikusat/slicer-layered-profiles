@@ -306,7 +306,7 @@ export const CardBuilder: React.FC<CardBuilderProps> = ({
     }, []);
 
     const defaultTrigger = (
-        <Button className="flex items-center gap-2">
+        <Button className="flex items-center gap-2 tour-create-card">
             <Plus size={16} />
             Create Custom Card
         </Button>

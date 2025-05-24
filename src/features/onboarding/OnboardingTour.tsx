@@ -24,10 +24,38 @@ const tourSteps: TourStep[] = [
         position: 'right'
     },
     {
+        id: 'project-management',
+        title: 'Project Management',
+        content: 'Save your work! You can save projects to your browser storage, load previous projects, and even export/import them as JSON files to share with others.',
+        target: '.tour-project-management',
+        position: 'right'
+    },
+    {
+        id: 'undo-redo',
+        title: 'Undo & Redo',
+        content: 'Made a mistake? Use Undo and Redo buttons to step back and forward through your changes. Keyboard shortcuts work too: Ctrl+Z and Ctrl+Y.',
+        target: '.tour-undo-redo',
+        position: 'bottom'
+    },
+    {
         id: 'demo-cards',
         title: 'Load Demo Cards',
         content: 'Click this button to load some example cards that demonstrate common modifications like temperature adjustments, speed settings, and quality tweaks.',
         target: '.demo-btn',
+        position: 'bottom'
+    },
+    {
+        id: 'card-library',
+        title: 'My Cards Library',
+        content: 'Access your saved custom cards! Browse, search, edit, and manage all your custom cards in one place. You can also add cards directly to your workspace from here.',
+        target: '.tour-my-cards',
+        position: 'bottom'
+    },
+    {
+        id: 'custom-card-creation',
+        title: 'Create Custom Cards',
+        content: 'Build your own setting modifications! Click "Create Custom Card" in the workspace to modify any profile setting like temperatures, speeds, or quality parameters.',
+        target: '.tour-create-card',
         position: 'bottom'
     },
     {
@@ -38,10 +66,31 @@ const tourSteps: TourStep[] = [
         position: 'top'
     },
     {
+        id: 'profile-summary',
+        title: 'Profile Summary',
+        content: 'See exactly what changes your cards make! This panel shows your base profile settings and highlights all modifications in real-time.',
+        target: '.tour-profile-summary',
+        position: 'left'
+    },
+    {
+        id: 'share',
+        title: 'Share Your Project',
+        content: 'Share your project configuration with others! Click Share to generate a URL that contains your entire project setup - cards, profile, and all settings.',
+        target: '.tour-share',
+        position: 'bottom'
+    },
+    {
+        id: 'export-summary',
+        title: 'Export Summary',
+        content: 'Get a detailed report of all your changes! The Summary button generates a comprehensive list of every setting modification for easy review.',
+        target: '.tour-export-summary',
+        position: 'bottom'
+    },
+    {
         id: 'export',
         title: 'Export Your Profile',
-        content: 'When you\'re happy with your configuration, click Export INI to download a PrusaSlicer-compatible profile file.',
-        target: '.export-actions',
+        content: 'When you\'re happy with your configuration, click Export INI to download a PrusaSlicer-compatible profile file that you can import directly into PrusaSlicer.',
+        target: '.tour-export-ini',
         position: 'bottom'
     }
 ]
@@ -73,37 +122,56 @@ export function OnboardingTour({ isVisible, onComplete, onSkip }: OnboardingTour
         const elementWidth = rect.width
         const elementHeight = rect.height
 
-        const isLargeElement = (elementWidth / viewportWidth > 0.5) || (elementHeight / viewportHeight > 0.5)
+        // Calculate tooltip dimensions (approximate)
+        const tooltipWidth = 400 // matches CSS max-width
+        const tooltipHeight = 200 // approximate height
 
-        // If it's a large element, center the dialog within the highlighted area
-        if (isLargeElement) {
+        // Center only if element takes up significant space in BOTH dimensions
+        // This ensures wide panels (like card workspace) and tall panels (like profile summary) 
+        // only get centered if they're truly large in both width and height
+        const shouldCenter = (elementWidth / viewportWidth > 0.6) && (elementHeight / viewportHeight > 0.6)
+
+        // If it should be centered, center the dialog within the highlighted area
+        if (shouldCenter) {
             style.left = rect.left + rect.width / 2
             style.top = rect.top + rect.height / 2
             style.transform = 'translate(-50%, -50%)'
             return style
         }
 
-        // Otherwise, use the original positioning logic
+        // Otherwise, use the original positioning logic with boundary checking
         switch (position) {
             case 'top':
                 style.bottom = window.innerHeight - rect.top + 16
-                style.left = rect.left + rect.width / 2
-                style.transform = 'translateX(-50%)'
+                style.left = Math.max(16, Math.min(rect.left + rect.width / 2 - tooltipWidth / 2, viewportWidth - tooltipWidth - 16))
+                style.transform = 'none'
                 break
             case 'bottom':
                 style.top = rect.bottom + 16
-                style.left = rect.left + rect.width / 2
-                style.transform = 'translateX(-50%)'
+                style.left = Math.max(16, Math.min(rect.left + rect.width / 2 - tooltipWidth / 2, viewportWidth - tooltipWidth - 16))
+                style.transform = 'none'
                 break
             case 'left':
                 style.right = window.innerWidth - rect.left + 16
-                style.top = rect.top + rect.height / 2
-                style.transform = 'translateY(-50%)'
+                style.top = Math.max(16, Math.min(rect.top + rect.height / 2 - tooltipHeight / 2, viewportHeight - tooltipHeight - 16))
+                style.transform = 'none'
+                // Ensure tooltip doesn't go off the left edge
+                if (rect.left - tooltipWidth - 16 < 0) {
+                    // Switch to right positioning if there's no room on the left
+                    style.right = 'auto'
+                    style.left = rect.right + 16
+                }
                 break
             case 'right':
                 style.left = rect.right + 16
-                style.top = rect.top + rect.height / 2
-                style.transform = 'translateY(-50%)'
+                style.top = Math.max(16, Math.min(rect.top + rect.height / 2 - tooltipHeight / 2, viewportHeight - tooltipHeight - 16))
+                style.transform = 'none'
+                // Ensure tooltip doesn't go off the right edge
+                if (rect.right + tooltipWidth + 16 > viewportWidth) {
+                    // Switch to left positioning if there's no room on the right
+                    style.left = 'auto'
+                    style.right = window.innerWidth - rect.left + 16
+                }
                 break
         }
 
@@ -123,7 +191,10 @@ export function OnboardingTour({ isVisible, onComplete, onSkip }: OnboardingTour
         const elementWidth = rect.width
         const elementHeight = rect.height
 
-        return (elementWidth / viewportWidth > 0.5) || (elementHeight / viewportHeight > 0.5)
+        // Center only if element takes up significant space in BOTH dimensions
+        // This ensures wide panels (like card workspace) and tall panels (like profile summary) 
+        // only get centered if they're truly large in both width and height
+        return (elementWidth / viewportWidth > 0.6) && (elementHeight / viewportHeight > 0.6)
     }, [])
 
     // Memoize expensive calculations
