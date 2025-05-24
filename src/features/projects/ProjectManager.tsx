@@ -4,6 +4,7 @@ import { Button } from '../ui/components/button';
 import { Input } from '../ui/components/input';
 import { Textarea } from '../ui/components/textarea';
 import { Label } from '../ui/components/label';
+import type { ProjectData } from '../../types';
 
 interface ProjectManagerProps {
     projectName: string;
@@ -16,11 +17,11 @@ interface ProjectManagerProps {
     onProjectNameChange: (name: string) => void;
     onProjectDescriptionChange: (description: string) => void;
     onSave: () => void;
-    onLoad: () => Promise<{ success: boolean; projectData?: any; error?: string }>;
+    onLoad: () => Promise<{ success: boolean; projectData?: ProjectData; error?: string }>;
     onExport: (filename?: string) => void;
-    onImport: (jsonString: string) => Promise<{ success: boolean; projectData?: any; error?: string }>;
+    onImport: (jsonString: string) => Promise<{ success: boolean; projectData?: ProjectData; error?: string }>;
     onClearError: () => void;
-    onProjectLoaded?: (projectData: any) => void;
+    onProjectLoaded?: (projectData: ProjectData) => void;
     onResetAll?: () => void;
 }
 

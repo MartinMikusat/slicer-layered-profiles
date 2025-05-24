@@ -15,14 +15,14 @@ import xl2t from './generated/xl-2t-04-nozzle-0.4.json';
  * These are loaded as static JSON imports, browser-compatible
  */
 export const realProfiles: BaseProfile[] = [
-    mk3s04 as BaseProfile,
-    mk3s06 as BaseProfile,
-    mk3s025 as BaseProfile,
-    mini04 as BaseProfile,
-    miniIS as BaseProfile,
-    mini06 as BaseProfile,
-    xl04 as BaseProfile,
-    xl2t as BaseProfile
+    mk3s04 as unknown as BaseProfile,
+    mk3s06 as unknown as BaseProfile,
+    mk3s025 as unknown as BaseProfile,
+    mini04 as unknown as BaseProfile,
+    miniIS as unknown as BaseProfile,
+    mini06 as unknown as BaseProfile,
+    xl04 as unknown as BaseProfile,
+    xl2t as unknown as BaseProfile
 ];
 
 console.log(`Loaded ${realProfiles.length} real PrusaSlicer profiles`); 

@@ -2,6 +2,7 @@ import { readFileSync, writeFileSync } from 'fs';
 import { join, dirname } from 'path';
 import { convertINIToBaseProfiles } from './profileConverter';
 import { fileURLToPath } from 'url';
+import type { BaseProfile } from '../../../types';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -46,7 +47,7 @@ export function buildRealProfiles(): void {
         }
 
         // Write individual profile files
-        profiles.forEach((profile: any) => {
+        profiles.forEach((profile: BaseProfile) => {
             const filename = `${profile.id}.json`;
             const filepath = join(outputPath, filename);
             writeFileSync(filepath, JSON.stringify(profile, null, 2));
@@ -55,7 +56,7 @@ export function buildRealProfiles(): void {
 
         // Write profiles index
         const indexData = {
-            profiles: profiles.map((p: any) => ({
+            profiles: profiles.map((p: BaseProfile) => ({
                 id: p.id,
                 name: p.name,
                 description: p.description,

@@ -4,7 +4,9 @@ import type {
     BaseProfile,
     CompiledProfile,
     ConflictMap,
-    SettingChange
+    SettingChange,
+    INIData,
+    INIValue
 } from '../../types';
 
 /**
@@ -126,17 +128,17 @@ export function updateCardPreviews(
  */
 export function generateSettingPreview(
     card: Card,
-    baseData: Record<string, any>
+    baseData: INIData
 ): SettingChange[] {
     const changes: SettingChange[] = [];
 
     card.patch.forEach(operation => {
         if (operation.op === 'replace' || operation.op === 'add') {
             const path = operation.path;
-            const newValue = operation.value;
+            const newValue = operation.value as INIValue;
 
             // Get the old value from the base data
-            const oldValue = getValueAtPath(baseData, path);
+            const oldValue = getValueAtPath(baseData, path) as INIValue | undefined;
 
             // Convert path to human-readable info
             const settingInfo = parseSettingPath(path);
@@ -158,7 +160,7 @@ export function generateSettingPreview(
 /**
  * Gets a value from an object using a JSON pointer path
  */
-function getValueAtPath(obj: any, path: string): any {
+function getValueAtPath(obj: unknown, path: string): unknown {
     if (!path.startsWith('/')) return undefined;
 
     const parts = path.slice(1).split('/');
@@ -168,7 +170,7 @@ function getValueAtPath(obj: any, path: string): any {
         if (current == null || typeof current !== 'object') {
             return undefined;
         }
-        current = current[part];
+        current = (current as Record<string, unknown>)[part];
     }
 
     return current;
@@ -217,7 +219,7 @@ function parseSettingPath(path: string): {
 /**
  * Validates that a patch can be applied to a profile
  */
-export function validateCard(card: Card, baseData: Record<string, any>): {
+export function validateCard(card: Card, baseData: INIData): {
     valid: boolean;
     errors: string[];
     warnings: string[];

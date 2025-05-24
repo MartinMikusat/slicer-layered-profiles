@@ -132,19 +132,25 @@ export function downloadProjectFile(projectData: ProjectData, filename?: string)
 /**
  * Validate project data structure
  */
-function validateProjectData(data: any): data is ProjectData {
+function validateProjectData(data: unknown): data is ProjectData {
+    if (!data || typeof data !== 'object') {
+        return false;
+    }
+
+    const obj = data as Record<string, unknown>;
+
     return (
-        data &&
-        typeof data === 'object' &&
-        typeof data.version === 'string' &&
-        typeof data.name === 'string' &&
-        typeof data.baseProfile === 'string' &&
-        Array.isArray(data.cards) &&
-        Array.isArray(data.cardOrder) &&
-        data.exportSettings &&
-        data.metadata &&
-        typeof data.metadata.created === 'string' &&
-        typeof data.metadata.modified === 'string'
+        typeof obj.version === 'string' &&
+        typeof obj.name === 'string' &&
+        typeof obj.baseProfile === 'string' &&
+        Array.isArray(obj.cards) &&
+        Array.isArray(obj.cardOrder) &&
+        !!obj.exportSettings &&
+        typeof obj.exportSettings === 'object' &&
+        !!obj.metadata &&
+        typeof obj.metadata === 'object' &&
+        typeof (obj.metadata as Record<string, unknown>).created === 'string' &&
+        typeof (obj.metadata as Record<string, unknown>).modified === 'string'
     );
 }
 

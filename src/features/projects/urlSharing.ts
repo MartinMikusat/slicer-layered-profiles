@@ -1,8 +1,8 @@
-import type { ProjectData } from '../../types'
+import type { ProjectData, Card } from '../../types'
 
 interface ShareableData {
     baseProfile: string
-    cards: any[]
+    cards: Card[]
     cardOrder: string[]
     name?: string
     description?: string
@@ -14,7 +14,7 @@ export function encodeProjectToURL(projectData: ProjectData): string {
             baseProfile: projectData.baseProfile,
             cards: projectData.cards,
             cardOrder: projectData.cardOrder,
-            name: (projectData as any).name,
+            name: projectData.name,
             description: projectData.metadata?.description
         }
 
@@ -26,8 +26,8 @@ export function encodeProjectToURL(projectData: ProjectData): string {
         currentURL.searchParams.set('project', base64)
 
         return currentURL.toString()
-    } catch (error) {
-        console.error('Failed to encode project to URL:', error)
+    } catch {
+        console.error('Failed to encode project to URL')
         throw new Error('Failed to create shareable URL')
     }
 }
@@ -65,8 +65,8 @@ export function decodeProjectFromURL(): ProjectData | null {
         }
 
         return projectData
-    } catch (error) {
-        console.error('Failed to decode project from URL:', error)
+    } catch {
+        console.error('Failed to decode project from URL')
         return null
     }
 }

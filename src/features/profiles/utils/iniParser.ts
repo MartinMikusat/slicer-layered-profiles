@@ -11,7 +11,7 @@
 export interface INISection {
     name: string;
     type: 'vendor' | 'printer_model' | 'printer' | 'print' | 'filament';
-    data: Record<string, any>;
+    data: Record<string, unknown>;
     inherits?: string;
 }
 
@@ -60,7 +60,7 @@ export function parseINI(content: string): ParsedINI {
             }
 
             // Start new section
-            const sectionType = sectionMatch[1] as any;
+            const sectionType = sectionMatch[1] as 'vendor' | 'printer_model' | 'printer' | 'print' | 'filament';
             const sectionName = sectionMatch[2] || sectionMatch[1];
 
             currentSection = {
@@ -145,7 +145,7 @@ function isMultiLineValue(key: string, value: string): boolean {
 /**
  * Parse individual values to appropriate types
  */
-function parseValue(key: string, value: string): any {
+function parseValue(key: string, value: string): unknown {
     const trimmed = value.trim();
 
     // Handle empty values
@@ -194,7 +194,7 @@ function parseValue(key: string, value: string): any {
 function addSectionToResult(result: ParsedINI, section: INISection): void {
     // Handle inherits property
     if (section.data.inherits) {
-        section.inherits = section.data.inherits;
+        section.inherits = section.data.inherits as string;
         delete section.data.inherits;
     }
 
@@ -221,7 +221,7 @@ function addSectionToResult(result: ParsedINI, section: INISection): void {
  * Resolve inheritance in INI sections
  * This applies inherited properties from parent sections
  */
-export function resolveInheritance<T extends { name: string; inherits?: string; data: Record<string, any> }>(
+export function resolveInheritance<T extends { name: string; inherits?: string; data: Record<string, unknown> }>(
     sections: T[]
 ): T[] {
     const sectionMap = new Map<string, T>();

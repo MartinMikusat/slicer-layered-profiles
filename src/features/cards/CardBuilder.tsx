@@ -8,6 +8,7 @@ import { Label } from '../ui/components/label';
 import { SettingPicker } from './SettingPicker';
 import type { Card, BaseProfile, SettingChange } from '../../types';
 import type { Operation } from 'fast-json-patch';
+import type { INIValue } from '../../types';
 
 interface CardBuilderProps {
     selectedProfile: BaseProfile;
@@ -27,7 +28,7 @@ interface CardFormData {
     modifications: Array<{
         path: string;
         key: string;
-        currentValue: string | number | boolean;
+        currentValue: INIValue;
         newValue: string;
         unit?: string;
         section?: string;
@@ -37,7 +38,7 @@ interface CardFormData {
 interface SettingInfo {
     path: string;
     key: string;
-    currentValue: string | number | boolean;
+    currentValue: INIValue;
     section: string;
     unit?: string;
     description?: string;
@@ -105,7 +106,7 @@ export const CardBuilder: React.FC<CardBuilderProps> = ({
             const modifications = editingCard.preview?.map(change => ({
                 path: change.path,
                 key: change.key,
-                currentValue: change.oldValue,
+                currentValue: change.oldValue ?? '',
                 newValue: String(change.newValue),
                 unit: change.unit,
                 section: change.section,
@@ -173,7 +174,7 @@ export const CardBuilder: React.FC<CardBuilderProps> = ({
         }));
     }, [formData.modifications]);
 
-    const parseValue = (value: string, targetType: string): string | number | boolean => {
+    const parseValue = (value: string, targetType: string): INIValue => {
         if (targetType === 'number') {
             const parsed = parseFloat(value);
             return isNaN(parsed) ? 0 : parsed;
@@ -181,6 +182,7 @@ export const CardBuilder: React.FC<CardBuilderProps> = ({
         if (targetType === 'boolean') {
             return value.toLowerCase() === 'true' || value === '1';
         }
+        // For arrays and other complex types, just return the string value
         return value;
     };
 

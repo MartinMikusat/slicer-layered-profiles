@@ -1,8 +1,9 @@
 import { useState, useCallback, useRef } from 'react'
+import type { BaseProfile, Card } from '../../../types'
 
 interface HistoryState {
-    selectedProfile: any
-    cards: any[]
+    selectedProfile: BaseProfile | null
+    cards: Card[]
     cardOrder: string[]
 }
 

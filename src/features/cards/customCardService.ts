@@ -197,7 +197,7 @@ export function getStorageInfo(): { used: number; available: number; percentage:
         const percentage = (used / available) * 100;
 
         return { used, available, percentage };
-    } catch (error) {
+    } catch {
         return { used: 0, available: 0, percentage: 0 };
     }
 } 

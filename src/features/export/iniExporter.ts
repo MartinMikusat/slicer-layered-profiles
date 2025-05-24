@@ -45,13 +45,13 @@ export function exportProfileAsINI(
 
     sections.forEach(sectionName => {
         const sectionData = compiledProfile.finalData[sectionName];
-        if (sectionData && typeof sectionData === 'object') {
+        if (sectionData && typeof sectionData === 'object' && !Array.isArray(sectionData)) {
             lines.push(`[${sectionName}]`);
 
             // Sort keys for consistent output
             const sortedKeys = Object.keys(sectionData).sort();
             sortedKeys.forEach(key => {
-                const value = sectionData[key];
+                const value = (sectionData as Record<string, unknown>)[key];
                 lines.push(`${key} = ${formatINIValue(value)}`);
             });
 
@@ -81,7 +81,7 @@ export function exportProfileAsINI(
 /**
  * Formats a value for INI file output
  */
-function formatINIValue(value: any): string {
+function formatINIValue(value: unknown): string {
     if (value === null || value === undefined) {
         return '';
     }

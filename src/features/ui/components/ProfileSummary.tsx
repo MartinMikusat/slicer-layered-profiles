@@ -1,5 +1,5 @@
 import React from 'react';
-import type { CompiledProfile, BaseProfile, SettingChange } from '../../../types';
+import type { CompiledProfile, BaseProfile, SettingChange, INIValue } from '../../../types';
 import { Badge } from './badge';
 import {
     AlertTriangle,
@@ -35,7 +35,7 @@ const ProfileSummary: React.FC<ProfileSummaryProps> = ({
     };
 
     // Format value for display
-    const formatValue = (value: any, unit?: string) => {
+    const formatValue = (value: INIValue | null | undefined, unit?: string) => {
         if (value === null || value === undefined) return 'unset';
         const formattedValue = typeof value === 'number' ? value.toString() : String(value);
         return unit ? `${formattedValue}${unit}` : formattedValue;
@@ -44,25 +44,35 @@ const ProfileSummary: React.FC<ProfileSummaryProps> = ({
     // Get key settings overview
     const getKeySettings = () => {
         const data = compiledProfile?.finalData || selectedProfile.data;
+
+        // Helper function to safely get nested value
+        const getNestedValue = (section: string, key: string): INIValue | undefined => {
+            const sectionData = data[section];
+            if (sectionData && typeof sectionData === 'object' && !Array.isArray(sectionData)) {
+                return (sectionData as Record<string, INIValue>)[key];
+            }
+            return undefined;
+        };
+
         return [
             {
                 label: 'Layer Height',
-                value: formatValue(data.print_settings?.layer_height, 'mm'),
+                value: formatValue(getNestedValue('print_settings', 'layer_height'), 'mm'),
                 path: '/print_settings/layer_height'
             },
             {
                 label: 'Temperature',
-                value: formatValue(data.filament_settings?.temperature, '°C'),
+                value: formatValue(getNestedValue('filament_settings', 'temperature'), '°C'),
                 path: '/filament_settings/temperature'
             },
             {
                 label: 'Speed',
-                value: formatValue(data.print_settings?.perimeter_speed, 'mm/s'),
+                value: formatValue(getNestedValue('print_settings', 'perimeter_speed'), 'mm/s'),
                 path: '/print_settings/perimeter_speed'
             },
             {
                 label: 'Infill',
-                value: formatValue(data.print_settings?.fill_density, '%'),
+                value: formatValue(getNestedValue('print_settings', 'fill_density'), '%'),
                 path: '/print_settings/fill_density'
             }
         ];

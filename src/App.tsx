@@ -124,7 +124,7 @@ function App() {
   // Handle undo/redo
   const handleUndo = useCallback(() => {
     const prevState = undo()
-    if (prevState) {
+    if (prevState && prevState.selectedProfile) {
       setSelectedProfile(prevState.selectedProfile)
       setCards(prevState.cards)
       setCardOrder(prevState.cardOrder)
@@ -133,7 +133,7 @@ function App() {
 
   const handleRedo = useCallback(() => {
     const nextState = redo()
-    if (nextState) {
+    if (nextState && nextState.selectedProfile) {
       setSelectedProfile(nextState.selectedProfile)
       setCards(nextState.cards)
       setCardOrder(nextState.cardOrder)

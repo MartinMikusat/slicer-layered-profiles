@@ -38,7 +38,7 @@ export function useProfileCompiler(
         if (!compiledProfile) return undefined;
 
         const parts = path.startsWith('/') ? path.slice(1).split('/') : path.split('/');
-        let current = compiledProfile.finalData;
+        let current: any = compiledProfile.finalData;
 
         for (const part of parts) {
             if (current == null || typeof current !== 'object') {
