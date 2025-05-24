@@ -5,7 +5,7 @@ import { baseProfiles, useProfileCompiler } from './features/profiles'
 import { demoCards, SortableCardList } from './features/layers'
 import { CardBuilder, CardLibrary, loadCustomCards, addCustomCard, removeCustomCard, updateCustomCard, isCustomCard } from './features/cards'
 import { useProjectPersistence, ProjectManager } from './features/projects'
-import { exportProfileAsINI, downloadINIFile, exportChangeSummaryAsFile } from './features/export'
+import { exportProfileAsINI, downloadINIFile } from './features/export'
 import { encodeProjectToURL, decodeProjectFromURL, clearProjectFromURL, copyToClipboard } from './features/projects'
 import { OnboardingTour } from './features/onboarding'
 import {
@@ -269,18 +269,6 @@ function App() {
     localStorage.setItem('hasSeenTour', 'true')
   }
 
-  // Change summary handler
-  const handleExportSummary = () => {
-    if (!compiledProfile) return
-
-    exportChangeSummaryAsFile(
-      selectedProfile,
-      compiledProfile.appliedCards,
-      compiledProfile.conflicts,
-      { format: 'markdown', includeMetadata: true }
-    )
-  }
-
   const handleProjectLoaded = (projectData: ProjectData) => {
     // Find the base profile
     const baseProfile = baseProfiles.find(p => p.id === projectData.baseProfile) || baseProfiles[0]
@@ -389,17 +377,6 @@ function App() {
 
             {/* Export group */}
             <div className="flex gap-2 export-actions tour-export-actions">
-              <Button
-                variant="outline"
-                size="default"
-                onClick={handleExportSummary}
-                disabled={cards.length === 0}
-                className="gap-2 tour-export-summary"
-              >
-                <FileText size={16} />
-                Summary
-              </Button>
-
               <LoadingButton
                 onClick={handleExport}
                 disabled={cards.length === 0}

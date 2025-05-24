@@ -80,13 +80,6 @@ const tourSteps: TourStep[] = [
         position: 'bottom'
     },
     {
-        id: 'export-summary',
-        title: 'Export Summary',
-        content: 'Get a detailed report of all your changes! The Summary button generates a comprehensive list of every setting modification for easy review.',
-        target: '.tour-export-summary',
-        position: 'bottom'
-    },
-    {
         id: 'export',
         title: 'Export Your Profile',
         content: 'When you\'re happy with your configuration, click Export INI to download a PrusaSlicer-compatible profile file that you can import directly into PrusaSlicer.',
