@@ -3,7 +3,7 @@ description:
 globs: 
 alwaysApply: true
 ---
-# Cursor Rules for Slicer Layer Composer
+# Cursor Rules for Layered Profile Builder
 
 ## Project Context
 Building a browser-based tool for composing PrusaSlicer profiles from layers/cards.
@@ -159,16 +159,24 @@ interface AppState {
 
 ### Progress Summary Format
 - **Filename**: `YYYY-MM-DD-HHMMSS-brief-description.md`
-- **Content**: Include milestone achieved, commit hash, files changed, key features implemented, what users can now do, and next steps
+- **Content**: Include milestone achieved, files changed, key features implemented, what users can now do, and next steps
 - **Structure**: Use markdown with sections for changes summary, new files, modified files, key features, user capabilities, and next steps
 - **Implementation plan progress**: Reference current phase completion status
 - **IMPORTANT**: Always use `date +"%Y-%m-%d %H:%M:%S"` terminal command to get accurate timestamps - do not rely on training data which may be outdated
+- **NO COMMIT HASHES**: Do not include commit hashes in progress files
 
 ### When to Create Progress Summaries
 - Before completing git commits for major phases or milestones
 - When user requests git commit of significant work (create summary first, then commit together)
 - At natural breaking points in development
 - When major functionality becomes available to users
+
+### Post-Commit State Management
+**CRITICAL**: After any git commit:
+- **NO file modifications** - maintain completely clean state
+- **NO adding commit hashes** to progress files or any other files
+- **NO follow-up edits** - the working directory must remain clean
+- User should see no modified files after `git status`
 
 This documentation helps track project evolution and maintain development momentum.
 
