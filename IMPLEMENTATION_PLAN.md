@@ -58,7 +58,7 @@ Build a browser-based tool for composing PrusaSlicer profiles from simple "layer
 - [x] Add tooltips explaining conflicts
 - [x] Highlight overridden settings
 
-## Phase 4: Core Functionality (2-3 hours)
+## Phase 4: Core Functionality ✅ (2-3 hours)
 
 ### ✅ 4.1 INI Export System
 - [x] Convert final JSON profile to INI format
@@ -66,17 +66,17 @@ Build a browser-based tool for composing PrusaSlicer profiles from simple "layer
 - [x] Implement file download
 - [x] Add export metadata/comments
 
-### 🔲 4.2 Project Persistence
-- [ ] Save/load project state to localStorage
-- [ ] Export project as JSON file
-- [ ] Import project from JSON file
-- [ ] Handle migration/versioning
+### ✅ 4.2 Project Persistence
+- [x] Save/load project state to localStorage
+- [x] Export project as JSON file
+- [x] Import project from JSON file
+- [x] Handle migration/versioning
 
 ### ✅ 4.3 Demo & Sample Data
 - [x] Create 3-5 demo cards (temperature, speed, quality)
 - [x] Add "Load Demo" button
 - [x] Pre-populate with working example
-- [ ] Add tooltips explaining each demo card
+- [x] Add tooltips explaining each demo card
 
 ## Phase 5: Polish & Testing (2-3 hours)
 

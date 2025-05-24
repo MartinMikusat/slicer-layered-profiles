@@ -9,10 +9,9 @@ import {
 } from '@dnd-kit/core'
 import type { DragEndEvent } from '@dnd-kit/core'
 import {
-    arrayMove,
     SortableContext,
     sortableKeyboardCoordinates,
-    verticalListSortingStrategy,
+    horizontalListSortingStrategy,
 } from '@dnd-kit/sortable'
 import { Card } from './Card'
 import type { Card as CardType, SettingChange } from '../types'
@@ -28,7 +27,6 @@ interface SortableCardListProps {
 }
 
 export const SortableCardList: React.FC<SortableCardListProps> = ({
-    cards,
     cardOrder,
     cardsWithPreviews,
     onReorder,
@@ -72,7 +70,7 @@ export const SortableCardList: React.FC<SortableCardListProps> = ({
             collisionDetection={closestCenter}
             onDragEnd={handleDragEnd}
         >
-            <SortableContext items={cardOrder} strategy={verticalListSortingStrategy}>
+            <SortableContext items={cardOrder} strategy={horizontalListSortingStrategy}>
                 <div className="card-list">
                     {orderedCards.map((card, index) => {
                         const cardHasConflicts = card.preview?.some(change => hasConflict(change.path)) || false

@@ -1,13 +1,15 @@
 import { useState } from 'react'
-import { Download, FileText, Settings, Plus, AlertTriangle } from 'lucide-react'
+import { Download, FileText, Settings, Plus } from 'lucide-react'
 import { arrayMove } from '@dnd-kit/sortable'
 import { baseProfiles } from './data/baseProfiles'
 import { demoCards } from './data/demoCards'
 import { useProfileCompiler } from './hooks/useProfileCompiler'
+import { useProjectPersistence } from './hooks/useProjectPersistence'
 import { exportProfileAsINI, downloadINIFile } from './utils/iniExporter'
 import { DEFAULT_EXPORT_SETTINGS } from './constants'
 import { SortableCardList } from './components/SortableCardList'
-import type { BaseProfile, Card } from './types'
+import { ProjectManager } from './components/ProjectManager'
+import type { BaseProfile, Card, ProjectData } from './types'
 import './App.css'
 
 function App() {
@@ -23,6 +25,24 @@ function App() {
     isCompiling,
     hasConflict
   } = useProfileCompiler(selectedProfile, cards, cardOrder)
+
+  // Use the project persistence hook
+  const {
+    projectName,
+    projectDescription,
+    hasUnsavedChanges,
+    lastSaved,
+    isLoading: isSaving,
+    error,
+    hasStoredProject,
+    setProjectName,
+    setProjectDescription,
+    saveProject,
+    loadProject,
+    exportProject,
+    importProject,
+    clearError,
+  } = useProjectPersistence(selectedProfile, cards, cardOrder, DEFAULT_EXPORT_SETTINGS)
 
   const loadDemo = () => {
     const demoCardsWithIds: Card[] = demoCards.map((demoCard, index) => ({
@@ -70,6 +90,19 @@ function App() {
     setCardOrder(cardOrder.filter(id => id !== cardId))
   }
 
+  const handleProjectLoaded = (projectData: ProjectData) => {
+    // Find the base profile
+    const baseProfile = baseProfiles.find(p => p.id === projectData.baseProfile) || baseProfiles[0]
+    setSelectedProfile(baseProfile)
+
+    // Set cards and order
+    setCards(projectData.cards)
+    setCardOrder(projectData.cardOrder)
+
+    // Clear demo state if loading a project
+    setShowDemo(false)
+  }
+
   return (
     <div className="app">
       <header className="app-header">
@@ -97,115 +130,135 @@ function App() {
       </header>
 
       <main className="app-main">
-        <aside className="sidebar">
-          <section className="profile-section">
-            <h2>Base Profile</h2>
-            <div className="profile-selector">
-              {baseProfiles.map((profile) => (
-                <label key={profile.id} className="profile-option">
-                  <input
-                    type="radio"
-                    name="baseProfile"
-                    value={profile.id}
-                    checked={selectedProfile.id === profile.id}
-                    onChange={() => setSelectedProfile(profile)}
-                  />
-                  <div className="profile-card">
-                    <h3>{profile.name}</h3>
-                    <p>{profile.description}</p>
-                    <div className="profile-meta">
-                      {profile.metadata.printer} • {profile.metadata.quality}
-                    </div>
-                  </div>
-                </label>
-              ))}
-            </div>
-          </section>
+        <ProjectManager
+          projectName={projectName}
+          projectDescription={projectDescription}
+          hasUnsavedChanges={hasUnsavedChanges}
+          lastSaved={lastSaved}
+          isLoading={isSaving}
+          error={error}
+          hasStoredProject={hasStoredProject}
+          onProjectNameChange={setProjectName}
+          onProjectDescriptionChange={setProjectDescription}
+          onSave={saveProject}
+          onLoad={async () => loadProject()}
+          onExport={exportProject}
+          onImport={async (jsonString) => importProject(jsonString)}
+          onClearError={clearError}
+          onProjectLoaded={handleProjectLoaded}
+        />
 
-          <section className="info-section">
-            <h3>Profile Summary</h3>
-            <div className="profile-info">
-              <div className="info-item">
-                <span>Layer Height:</span>
-                <span>
-                  {compiledProfile ?
-                    `${compiledProfile.finalData.print_settings?.layer_height || selectedProfile.data.print_settings.layer_height}mm` :
-                    `${selectedProfile.data.print_settings.layer_height}mm`
-                  }
-                </span>
-              </div>
-              <div className="info-item">
-                <span>Temperature:</span>
-                <span>
-                  {compiledProfile ?
-                    `${compiledProfile.finalData.filament_settings?.temperature || selectedProfile.data.filament_settings.temperature}°C` :
-                    `${selectedProfile.data.filament_settings.temperature}°C`
-                  }
-                </span>
-              </div>
-              <div className="info-item">
-                <span>Speed:</span>
-                <span>
-                  {compiledProfile ?
-                    `${compiledProfile.finalData.print_settings?.perimeter_speed || selectedProfile.data.print_settings.perimeter_speed}mm/s` :
-                    `${selectedProfile.data.print_settings.perimeter_speed}mm/s`
-                  }
-                </span>
-              </div>
-              <div className="info-item">
-                <span>Infill:</span>
-                <span>
-                  {compiledProfile ?
-                    `${compiledProfile.finalData.print_settings?.fill_density || selectedProfile.data.print_settings.fill_density}%` :
-                    `${selectedProfile.data.print_settings.fill_density}%`
-                  }
-                </span>
-              </div>
-              {compiledProfile && compiledProfile.appliedCards.length > 0 && (
-                <div className="compilation-status">
-                  <div className="info-item">
-                    <span>Applied Cards:</span>
-                    <span>{compiledProfile.appliedCards.length}</span>
-                  </div>
-                  {Object.keys(compiledProfile.conflicts).length > 0 && (
-                    <div className="info-item">
-                      <span>Conflicts:</span>
-                      <span className="conflict-count">{Object.keys(compiledProfile.conflicts).length}</span>
+        <div className="main-content">
+          <aside className="sidebar">
+            <section className="profile-section">
+              <h2>Base Profile</h2>
+              <div className="profile-selector">
+                {baseProfiles.map((profile) => (
+                  <label key={profile.id} className="profile-option">
+                    <input
+                      type="radio"
+                      name="baseProfile"
+                      value={profile.id}
+                      checked={selectedProfile.id === profile.id}
+                      onChange={() => setSelectedProfile(profile)}
+                    />
+                    <div className="profile-card">
+                      <h3>{profile.name}</h3>
+                      <p>{profile.description}</p>
+                      <div className="profile-meta">
+                        {profile.metadata.printer} • {profile.metadata.quality}
+                      </div>
                     </div>
-                  )}
+                  </label>
+                ))}
+              </div>
+            </section>
+
+            <section className="info-section">
+              <h3>Profile Summary</h3>
+              <div className="profile-info">
+                <div className="info-item">
+                  <span>Layer Height:</span>
+                  <span>
+                    {compiledProfile ?
+                      `${compiledProfile.finalData.print_settings?.layer_height || selectedProfile.data.print_settings.layer_height}mm` :
+                      `${selectedProfile.data.print_settings.layer_height}mm`
+                    }
+                  </span>
                 </div>
-              )}
+                <div className="info-item">
+                  <span>Temperature:</span>
+                  <span>
+                    {compiledProfile ?
+                      `${compiledProfile.finalData.filament_settings?.temperature || selectedProfile.data.filament_settings.temperature}°C` :
+                      `${selectedProfile.data.filament_settings.temperature}°C`
+                    }
+                  </span>
+                </div>
+                <div className="info-item">
+                  <span>Speed:</span>
+                  <span>
+                    {compiledProfile ?
+                      `${compiledProfile.finalData.print_settings?.perimeter_speed || selectedProfile.data.print_settings.perimeter_speed}mm/s` :
+                      `${selectedProfile.data.print_settings.perimeter_speed}mm/s`
+                    }
+                  </span>
+                </div>
+                <div className="info-item">
+                  <span>Infill:</span>
+                  <span>
+                    {compiledProfile ?
+                      `${compiledProfile.finalData.print_settings?.fill_density || selectedProfile.data.print_settings.fill_density}%` :
+                      `${selectedProfile.data.print_settings.fill_density}%`
+                    }
+                  </span>
+                </div>
+                {compiledProfile && compiledProfile.appliedCards.length > 0 && (
+                  <div className="compilation-status">
+                    <div className="info-item">
+                      <span>Applied Cards:</span>
+                      <span>{compiledProfile.appliedCards.length}</span>
+                    </div>
+                    {Object.keys(compiledProfile.conflicts).length > 0 && (
+                      <div className="info-item">
+                        <span>Conflicts:</span>
+                        <span className="conflict-count">{Object.keys(compiledProfile.conflicts).length}</span>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            </section>
+          </aside>
+
+          <section className="card-workspace">
+            <div className="workspace-header">
+              <h2>Layer Cards</h2>
+              <p>Drag cards to reorder horizontally • Cards to the right override those to the left</p>
             </div>
+
+            {cards.length === 0 ? (
+              <div className="empty-state">
+                <FileText size={48} />
+                <h3>No cards yet</h3>
+                <p>Load the demo or create your first card to get started</p>
+                <button onClick={loadDemo} className="primary-btn">
+                  Load Demo Cards
+                </button>
+              </div>
+            ) : (
+              <SortableCardList
+                cards={cards}
+                cardOrder={cardOrder}
+                cardsWithPreviews={cardsWithPreviews}
+                onReorder={handleCardReorder}
+                onToggle={handleCardToggle}
+                onRemove={handleCardRemove}
+                hasConflict={hasConflict}
+              />
+            )}
           </section>
-        </aside>
-
-        <section className="card-workspace">
-          <div className="workspace-header">
-            <h2>Layer Cards</h2>
-            <p>Drag cards to reorder • Later cards override earlier ones</p>
-          </div>
-
-          {cards.length === 0 ? (
-            <div className="empty-state">
-              <FileText size={48} />
-              <h3>No cards yet</h3>
-              <p>Load the demo or create your first card to get started</p>
-              <button onClick={loadDemo} className="primary-btn">
-                Load Demo Cards
-              </button>
-            </div>
-          ) : (
-            <SortableCardList
-              cards={cards}
-              cardOrder={cardOrder}
-              cardsWithPreviews={cardsWithPreviews}
-              onReorder={handleCardReorder}
-              onToggle={handleCardToggle}
-              onRemove={handleCardRemove}
-              hasConflict={hasConflict}
-            />
-          )}
-        </section>
+        </div>
       </main>
 
       <footer className="app-footer">

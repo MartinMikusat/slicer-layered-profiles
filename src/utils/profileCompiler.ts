@@ -4,7 +4,6 @@ import type {
     BaseProfile,
     CompiledProfile,
     ConflictMap,
-    Conflict,
     SettingChange
 } from '../types';
 
