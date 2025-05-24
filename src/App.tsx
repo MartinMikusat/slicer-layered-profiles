@@ -3,7 +3,7 @@ import { Download, FileText, Settings, Plus, Undo, Redo, Share, BookOpen } from 
 import { arrayMove } from '@dnd-kit/sortable'
 import { baseProfiles, useProfileCompiler } from './features/profiles'
 import { demoCards, SortableCardList } from './features/layers'
-import { CardBuilder, CardLibrary, loadCustomCards, addCustomCard, removeCustomCard, updateCustomCard, isCustomCard } from './features/cards'
+import { CardBuilder, CardLibrary, addCustomCard, removeCustomCard, updateCustomCard, isCustomCard } from './features/cards'
 import { useProjectPersistence, ProjectManager } from './features/projects'
 import { exportProfileAsINI, downloadINIFile } from './features/export'
 import { encodeProjectToURL, decodeProjectFromURL, clearProjectFromURL, copyToClipboard } from './features/projects'
@@ -77,6 +77,34 @@ function App() {
     cardOrder
   })
 
+  // Clear all state and start fresh
+  const clearAllState = useCallback(() => {
+    setCards([])
+    setCardOrder([])
+    setShowDemo(false)
+    setSelectedProfile(baseProfiles[0])
+    setProjectName('Untitled Project')
+    setProjectDescription('')
+
+    // Clear localStorage
+    localStorage.removeItem('layered-profile-builder-project')
+    localStorage.removeItem('layered-profile-builder-custom-cards')
+    localStorage.removeItem('hasSeenTour')
+  }, [setProjectName, setProjectDescription])
+
+  const handleProjectLoaded = useCallback((projectData: ProjectData) => {
+    // Find the base profile
+    const baseProfile = baseProfiles.find(p => p.id === projectData.baseProfile) || baseProfiles[0]
+    setSelectedProfile(baseProfile)
+
+    // Set cards and order
+    setCards(projectData.cards)
+    setCardOrder(projectData.cardOrder)
+
+    // Clear demo state if loading a project
+    setShowDemo(false)
+  }, [])
+
   // Check for shared project on load
   useEffect(() => {
     const sharedProject = decodeProjectFromURL()
@@ -91,7 +119,7 @@ function App() {
         setShowTour(true)
       }
     }
-  }, [])
+  }, [handleProjectLoaded])
 
   // Handle undo/redo
   const handleUndo = useCallback(() => {
@@ -140,21 +168,6 @@ function App() {
     setShowDemo(false)
   }
 
-  // Clear all state and start fresh
-  const clearAllState = () => {
-    setCards([])
-    setCardOrder([])
-    setShowDemo(false)
-    setSelectedProfile(baseProfiles[0])
-    setProjectName('Untitled Project')
-    setProjectDescription('')
-
-    // Clear localStorage
-    localStorage.removeItem('layered-profile-builder-project')
-    localStorage.removeItem('layered-profile-builder-custom-cards')
-    localStorage.removeItem('hasSeenTour')
-  }
-
   // Handle reset all with confirmation
   const handleResetAll = () => {
     if (confirm('Are you sure you want to reset all app state? This will clear all cards, projects, and settings. This action cannot be undone.')) {
@@ -167,8 +180,8 @@ function App() {
   // Debug function for development - expose to window for console access
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      (window as any).clearAllAppState = clearAllState;
-      (window as any).debugAppState = () => {
+      (window as unknown as any).clearAllAppState = clearAllState;
+      (window as unknown as any).debugAppState = () => {
         console.log('Current App State:', {
           selectedProfile: selectedProfile.name,
           cards: cards.map(c => ({ id: c.id, name: c.name, enabled: c.enabled })),
@@ -182,12 +195,12 @@ function App() {
         });
       };
     }
-  }, [selectedProfile, cards, cardOrder, showDemo, projectName, projectDescription]);
+  }, [selectedProfile, cards, cardOrder, showDemo, projectName, projectDescription, clearAllState]);
 
   // Push state for undo/redo when changes happen
   useEffect(() => {
     pushState({ selectedProfile, cards, cardOrder })
-  }, [selectedProfile, cards, cardOrder]) // Remove pushState from dependencies to prevent infinite loop
+  }, [selectedProfile, cards, cardOrder, pushState])
 
   // Set up keyboard shortcuts  
   const { getShortcutText } = useKeyboardShortcuts({
@@ -280,7 +293,7 @@ function App() {
       const url = encodeProjectToURL(currentProject)
       setShareUrl(url)
       setShowShareModal(true)
-    } catch (error) {
+    } catch (_error) {
       setShareError('Failed to create shareable URL')
     }
   }
@@ -289,7 +302,7 @@ function App() {
     try {
       await copyToClipboard(shareUrl)
       setShowShareModal(false)
-    } catch (error) {
+    } catch (_error) {
       setShareError('Failed to copy URL to clipboard')
     }
   }
@@ -303,19 +316,6 @@ function App() {
   const handleTourSkip = () => {
     setShowTour(false)
     localStorage.setItem('hasSeenTour', 'true')
-  }
-
-  const handleProjectLoaded = (projectData: ProjectData) => {
-    // Find the base profile
-    const baseProfile = baseProfiles.find(p => p.id === projectData.baseProfile) || baseProfiles[0]
-    setSelectedProfile(baseProfile)
-
-    // Set cards and order
-    setCards(projectData.cards)
-    setCardOrder(projectData.cardOrder)
-
-    // Clear demo state if loading a project
-    setShowDemo(false)
   }
 
   // Add handler for selecting cards from library

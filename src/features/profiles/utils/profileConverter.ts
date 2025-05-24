@@ -1,5 +1,5 @@
 import type { BaseProfile } from '../../../types';
-import { parseINI, extractPrinterProfile, type ParsedINI, type INISection } from './iniParser';
+import { parseINI, extractPrinterProfile, type INISection } from './iniParser';
 
 /**
  * Convert a PrusaSlicer INI file to our BaseProfile format
@@ -9,27 +9,27 @@ export function convertINIToBaseProfile(
     printerName: string
 ): BaseProfile | null {
     try {
-        const parsedINI = parseINI(iniContent);
-        const printerProfile = extractPrinterProfile(parsedINI, printerName);
+        const parsed = parseINI(iniContent);
+        const printerData = extractPrinterProfile(parsed, printerName);
 
-        if (!printerProfile) {
+        if (!printerData) {
             console.warn(`Printer profile "${printerName}" not found in INI`);
             return null;
         }
 
-        const { printer, defaultPrint, defaultFilament } = printerProfile;
+        const { printer, defaultPrint, defaultFilament } = printerData;
 
         // Generate profile metadata
-        const metadata = extractProfileMetadata(printer, parsedINI.vendor);
+        const metadata = extractProfileMetadata(printer, parsed.vendor);
 
         // Combine all settings into a single data object
         const profileData = combineProfileData(printer, defaultPrint, defaultFilament);
 
         return {
-            id: generateProfileId(printer),
+            id: generateProfileId(printerName, printer),
             name: generateProfileName(printer),
             description: generateProfileDescription(printer, metadata),
-            version: parsedINI.vendor?.data.config_version || '1.0',
+            version: parsed.vendor?.data.config_version || '1.0',
             data: profileData,
             metadata
         };
@@ -47,10 +47,10 @@ export function convertINIToBaseProfiles(
     printerNames?: string[]
 ): BaseProfile[] {
     try {
-        const parsedINI = parseINI(iniContent);
+        const parsed = parseINI(iniContent);
 
         // If no specific printer names provided, convert all non-abstract printers
-        const targetPrinters = printerNames || parsedINI.printers
+        const targetPrinters = printerNames || parsed.printers
             .filter(p => !p.name.startsWith('*') && !p.name.includes('MMU'))
             .map(p => p.name);
 
@@ -237,10 +237,12 @@ function extractFilamentSettings(data: Record<string, any>): Record<string, any>
 /**
  * Generate a unique profile ID
  */
-function generateProfileId(printer: INISection): string {
-    const name = printer.name.toLowerCase();
-    const model = printer.data.printer_model?.toLowerCase() || '';
-    const variant = printer.data.printer_variant || printer.data.nozzle_diameter || '0.4';
+function generateProfileId(
+    printerName: string,
+    _printer: INISection,
+): string {
+    const name = printerName.toLowerCase();
+    const variant = _printer.data.printer_variant || _printer.data.nozzle_diameter || '0.4';
 
     // Create a clean, unique ID
     const cleanName = name
@@ -270,7 +272,7 @@ function generateProfileName(printer: INISection): string {
  * Generate a profile description
  */
 function generateProfileDescription(
-    printer: INISection,
+    _printer: INISection,
     metadata: BaseProfile['metadata']
 ): string {
     const printerModel = metadata.printer;

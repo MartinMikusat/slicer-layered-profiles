@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import type { CompiledProfile, BaseProfile, SettingChange } from '../../../types';
 import { Badge } from './badge';
 import {

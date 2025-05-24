@@ -16,7 +16,7 @@ interface SettingPickerProps {
 interface SettingInfo {
     path: string;
     key: string;
-    currentValue: any;
+    currentValue: string | number | boolean;
     section: string;
     unit?: string;
     description?: string;
@@ -33,7 +33,7 @@ const getSettingKey = (key: string): string => {
 };
 
 // Helper to determine unit from setting key
-const getSettingUnit = (key: string, value: any): string | undefined => {
+const getSettingUnit = (key: string): string | undefined => {
     const keyLower = key.toLowerCase();
 
     if (keyLower.includes('temperature') || keyLower.includes('temp')) {
@@ -94,7 +94,7 @@ export const SettingPicker: React.FC<SettingPickerProps> = ({
                             key: getSettingKey(settingKey),
                             currentValue: value,
                             section: sectionKey,
-                            unit: getSettingUnit(settingKey, value),
+                            unit: getSettingUnit(settingKey),
                         });
                     }
                 });

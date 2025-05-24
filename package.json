@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "npm run build:profiles && tsc -b && vite build",
-    "build:profiles": "tsx src/features/profiles/utils/buildProfiles.ts",
+    "build:profiles": "npx tsx src/features/profiles/utils/buildProfiles.ts",
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "vitest",

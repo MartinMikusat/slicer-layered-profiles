@@ -27,7 +27,7 @@ interface CardFormData {
     modifications: Array<{
         path: string;
         key: string;
-        currentValue: any;
+        currentValue: string | number | boolean;
         newValue: string;
         unit?: string;
         section?: string;
@@ -37,7 +37,7 @@ interface CardFormData {
 interface SettingInfo {
     path: string;
     key: string;
-    currentValue: any;
+    currentValue: string | number | boolean;
     section: string;
     unit?: string;
     description?: string;
@@ -85,6 +85,19 @@ export const CardBuilder: React.FC<CardBuilderProps> = ({
         }
     }, [editingCard]);
 
+    const resetForm = useCallback(() => {
+        setFormData({
+            name: '',
+            description: '',
+            category: 'other',
+            author: '',
+            tags: [],
+            modifications: [],
+        });
+        setErrors({});
+        setTagInput('');
+    }, []);
+
     // Load card data when editing
     useEffect(() => {
         if (editingCard && isOpen) {
@@ -109,20 +122,7 @@ export const CardBuilder: React.FC<CardBuilderProps> = ({
         } else if (!editingCard) {
             resetForm();
         }
-    }, [editingCard, isOpen]);
-
-    const resetForm = useCallback(() => {
-        setFormData({
-            name: '',
-            description: '',
-            category: 'other',
-            author: '',
-            tags: [],
-            modifications: [],
-        });
-        setErrors({});
-        setTagInput('');
-    }, []);
+    }, [editingCard, isOpen, resetForm]);
 
     const validateForm = useCallback((): boolean => {
         const newErrors: Record<string, string> = {};
@@ -173,7 +173,7 @@ export const CardBuilder: React.FC<CardBuilderProps> = ({
         }));
     }, [formData.modifications]);
 
-    const parseValue = (value: string, targetType: string): any => {
+    const parseValue = (value: string, targetType: string): string | number | boolean => {
         if (targetType === 'number') {
             const parsed = parseFloat(value);
             return isNaN(parsed) ? 0 : parsed;
