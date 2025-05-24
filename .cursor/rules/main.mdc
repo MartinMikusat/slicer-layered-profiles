@@ -9,6 +9,8 @@ alwaysApply: true
 Building a browser-based tool for composing PrusaSlicer profiles from layers/cards.
 Tech stack: React + TypeScript + Vite, localStorage, fast-json-patch for applying changes.
 
+**IMPORTANT**: Check `PROJECT_STATE.md` first to understand what has been implemented and the current status of all features. This document provides a comprehensive overview of completed phases, architecture, and current capabilities.
+
 ## Progress Tracking
 **IMPORTANT**: Follow the detailed `IMPLEMENTATION_PLAN.md` file for development phases.
 - Update checkboxes (🔲 → ✅) as tasks are completed

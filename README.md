@@ -2,6 +2,10 @@
 
 A browser-based tool for composing PrusaSlicer profiles from simple "layers" (cards). Build custom 3D printing profiles by combining and reordering setting modifications.
 
+**Current Status**: Phase 7 (Custom Card Creation) and Phase 8.1 (Card Library) Complete ✅
+
+> 📋 **For Developers**: See [`PROJECT_STATE.md`](PROJECT_STATE.md) for comprehensive technical status, architecture details, and implementation progress.
+
 ## 🎯 What is this?
 
 Instead of manually editing complex slicer profiles, this tool lets you:
@@ -20,12 +24,25 @@ Instead of manually editing complex slicer profiles, this tool lets you:
 - 💾 **Local storage** - Your projects auto-save locally
 - 📥 **Standard export** - Generates normal PrusaSlicer `.ini` files
 
+### Custom Card Creation ✨
+- 🔧 **Build your own cards** - Create custom setting modifications
+- 🔍 **Setting browser** - Pick from any profile setting with guided interface
+- ✅ **Input validation** - Type checking and value validation
+- 💾 **Save & organize** - Persistent storage with categories and metadata
+
+### Card Management
+- 📚 **Card library** - Comprehensive collection interface with search/filter
+- 🔍 **Smart search** - Find cards by name, description, or category
+- 🏷️ **Category filtering** - Organize by temperature, speed, quality, support, etc.
+- ⚙️ **Full CRUD** - Create, edit, duplicate, delete custom cards
+
 ### User Experience
 - 🎪 **Demo mode** - Try it instantly with pre-made cards
 - 🖱️ **Drag & drop** - Intuitive card reordering
 - 👀 **Live preview** - See setting changes in real-time
 - 📱 **Mobile friendly** - Works on phones and tablets
 - ⚡ **Fast** - No server required, everything runs locally
+- 🎯 **Guided tours** - Interactive onboarding and help
 
 ### Developer Friendly
 - 🔧 **TypeScript** - Full type safety
@@ -186,29 +203,57 @@ See `.cursorrules` for detailed coding standards including:
 
 ## 📋 Roadmap
 
-### Phase 1: Core MVP ✅
-- [x] Basic profile system
-- [x] Card creation and management
-- [x] Drag & drop reordering
-- [x] Conflict detection
-- [x] INI export
+### Phase 1-2: Core MVP Foundation ✅
+- [x] Basic profile system with compilation and INI export
+- [x] Card/patch system with JSON patch operations  
+- [x] Drag & drop reordering with visual feedback and conflict detection
+- [x] Project persistence with localStorage and URL sharing
+- [x] Basic UI with responsive design
 
-### Phase 2: Polish ✅
-- [x] Undo/redo functionality
-- [x] URL-based project sharing
-- [x] Advanced conflict visualization
-- [x] Keyboard shortcuts
-- [x] Mobile responsiveness
-- [x] Error handling & loading states
+### Phase 3-6: User Experience & Polish ✅
+- [x] Advanced drag & drop with visual indicators
+- [x] Conflict visualization with tooltips and warnings
+- [x] Undo/redo system with state history
+- [x] Advanced exports with change summaries
+- [x] Comprehensive testing and browser compatibility
+- [x] Complete documentation and deployment setup
+- [x] User onboarding with guided tours
 
-### Phase 3: Advanced Features ✅
-- [x] Auto-generated change summary for RFC
-- [x] Card search/filtering
-- [x] Basic onboarding tour
-- [x] Project import/export
+### Phase 7: Custom Card Creation ✅
+- [x] CardBuilder component with intuitive form interface
+- [x] Setting path browser to pick from base profile structure
+- [x] Value input validation with type checking and previews
+- [x] Custom card management with CRUD operations and localStorage persistence
+- [x] Template system for common modification patterns
 
-### Current Status: Ready for Production 🚀
-The tool is fully functional and ready for use. All core features are implemented and tested.
+### Phase 8.1: Card Library ✅
+- [x] Card collection interface with grid/list view modes
+- [x] Search and filtering by name, description, and category
+- [x] Card management operations (edit, duplicate, delete)
+- [x] Workspace integration for adding cards to profiles
+- [x] Dual operation modes (browse vs select)
+
+### Phase 6.5: Real PrusaSlicer Profile Integration 🎯 (Next Priority)
+- [ ] Profile data collection from official Prusa repositories
+- [ ] INI parser development for real PrusaSlicer format
+- [ ] Profile integration replacing demo profiles with real ones
+- [ ] End-to-end validation with actual PrusaSlicer compatibility
+
+### Phase 8.2+: Enhanced Features 🔮 (Future)
+- [ ] Profile enhancement with multiple base profiles and import
+- [ ] Better conflict handling with manual resolution interface  
+- [ ] Card templates & presets for common modifications
+- [ ] Advanced export options with multi-profile bundles
+- [ ] Mobile optimizations for touch interactions
+
+### Current Status: Advanced MVP Complete 🚀
+The tool now includes a complete custom card creation system and card library management. Users can create, edit, and organize their own setting modifications alongside the demo cards. Ready for real-world testing with the next phase focusing on real PrusaSlicer profile integration.
+
+**Key Recent Achievements:**
+- ✅ Complete custom card creation workflow
+- ✅ Card library with search, filter, and management
+- ✅ Feature-based architecture with clean boundaries
+- ✅ Comprehensive type safety and error handling
 
 ## ❓ FAQ & Troubleshooting
 
@@ -385,18 +430,18 @@ interface PreviewItem {
 
 ### Testing Your Cards
 
-1. Add card to `src/data/demoCards.ts`
+1. Create cards using the built-in CardBuilder interface
 2. Test with different base profiles
 3. Verify preview values match actual changes
-4. Check for conflicts with other demo cards
+4. Check for conflicts with other cards
 
 ## 🐛 Known Limitations
 
-- **Profile coverage** - Currently supports basic MK4 profiles only
-- **Setting complexity** - Some advanced PrusaSlicer features not covered  
+- **Demo profiles only** - Currently uses simplified demo profiles instead of real PrusaSlicer profiles
+- **Limited base profiles** - Only MK4 series profiles currently available
+- **Basic conflict resolution** - Last-write-wins only, no manual resolution UI
 - **Browser storage** - Projects stored locally only (no cloud sync)
-- **Import validation** - Limited validation of imported profiles
-- **Large projects** - Performance may degrade with 50+ cards
+- **Storage limitations** - localStorage only, no cloud sync or backup
 
 ## 📄 License
 
@@ -411,4 +456,4 @@ MIT License - see LICENSE file for details.
 ---
 
 **Built for the PrusaSlicer community** 🧡  
-*A weekend MVP to explore layered profile composition*
+*Advanced MVP with custom card creation and library management*
