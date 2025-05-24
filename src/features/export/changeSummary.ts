@@ -69,7 +69,7 @@ export function generateChangeSummary(
             }
 
             if (includeMetadata && card.metadata) {
-                const meta = []
+                const meta: string[] = []
                 if (card.metadata.author) meta.push(`Author: ${card.metadata.author}`)
                 if (card.metadata.version) meta.push(`Version: ${card.metadata.version}`)
                 if (card.metadata.category) meta.push(`Category: ${card.metadata.category}`)

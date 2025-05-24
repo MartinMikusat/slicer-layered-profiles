@@ -293,7 +293,7 @@ function App() {
       const url = encodeProjectToURL(currentProject)
       setShareUrl(url)
       setShowShareModal(true)
-    } catch (_error) {
+    } catch {
       setShareError('Failed to create shareable URL')
     }
   }
@@ -302,7 +302,7 @@ function App() {
     try {
       await copyToClipboard(shareUrl)
       setShowShareModal(false)
-    } catch (_error) {
+    } catch {
       setShareError('Failed to copy URL to clipboard')
     }
   }

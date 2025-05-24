@@ -192,7 +192,7 @@ export function clearStoredProject(): boolean {
 export function hasStoredProject(): boolean {
     try {
         return localStorage.getItem(STORAGE_KEYS.PROJECT_STATE) !== null;
-    } catch (error) {
+    } catch {
         return false;
     }
 }
