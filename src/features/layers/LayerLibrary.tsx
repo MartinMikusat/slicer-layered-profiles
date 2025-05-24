@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { loadCustomLayers, removeCustomLayer, duplicateCustomLayer } from './customLayerService';
+import { defaultLayers } from './defaultLayers';
 import type { Layer } from '../../types';
 import { Button } from '../ui/components/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '../ui/components/dialog';
@@ -50,8 +51,11 @@ const LayerLibrary: React.FC<LayerLibraryProps> = ({
         setCustomLayers(layers);
     };
 
+    // Combine default layers with custom layers
+    const allLayers = [...defaultLayers, ...customLayers];
+
     // Filter layers based on search and category
-    const filteredLayers = customLayers.filter(layer => {
+    const filteredLayers = allLayers.filter(layer => {
         const matchesSearch = searchQuery === '' ||
             layer.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
             layer.description?.toLowerCase().includes(searchQuery.toLowerCase());
@@ -63,7 +67,7 @@ const LayerLibrary: React.FC<LayerLibraryProps> = ({
     });
 
     // Get unique categories from all layers
-    const categories = ['all', ...new Set(customLayers.map(layer => layer.metadata?.category).filter(Boolean))];
+    const categories = ['all', ...new Set(allLayers.map(layer => layer.metadata?.category).filter(Boolean))];
 
     const handleLayerSelect = (layer: Layer) => {
         if (onLayerSelect) {
@@ -98,14 +102,15 @@ const LayerLibrary: React.FC<LayerLibraryProps> = ({
     };
 
     const isLayerSelected = (layerId: string) => selectedLayerIds.includes(layerId);
+    const isDefaultLayer = (layer: Layer) => layer.id.startsWith('default-');
 
     const defaultTrigger = (
         <Button variant="outline" className="gap-2">
             <BookOpen className="h-4 w-4" />
             Layer Library
-            {customLayers.length > 0 && (
+            {allLayers.length > 0 && (
                 <Badge variant="secondary" className="ml-1">
-                    {customLayers.length}
+                    {allLayers.length}
                 </Badge>
             )}
         </Button>
@@ -122,8 +127,13 @@ const LayerLibrary: React.FC<LayerLibraryProps> = ({
                         <BookOpen className="h-5 w-5" />
                         Layer Library
                         <Badge variant="outline" className="ml-2">
-                            {customLayers.length} layers
+                            {defaultLayers.length} built-in
                         </Badge>
+                        {customLayers.length > 0 && (
+                            <Badge variant="secondary" className="ml-1">
+                                {customLayers.length} custom
+                            </Badge>
+                        )}
                     </DialogTitle>
                 </DialogHeader>
 
@@ -183,9 +193,9 @@ const LayerLibrary: React.FC<LayerLibraryProps> = ({
                     {filteredLayers.length === 0 ? (
                         <div className="flex flex-col items-center justify-center py-12 text-center">
                             <BookOpen className="h-12 w-12 text-gray-300 mb-4" />
-                            {customLayers.length === 0 ? (
+                            {allLayers.length === 0 ? (
                                 <>
-                                    <h3 className="text-lg font-medium text-gray-900 mb-2">No custom layers yet</h3>
+                                    <h3 className="text-lg font-medium text-gray-900 mb-2">No layers available</h3>
                                     <p className="text-gray-500 mb-4">Create your first custom layer to get started</p>
                                 </>
                             ) : (
@@ -207,6 +217,7 @@ const LayerLibrary: React.FC<LayerLibraryProps> = ({
                                     isSelected={isLayerSelected(layer.id)}
                                     viewMode={viewMode}
                                     mode={mode}
+                                    isDefault={isDefaultLayer(layer)}
                                     onSelect={() => handleLayerSelect(layer)}
                                     onEdit={() => handleLayerEdit(layer)}
                                     onDuplicate={() => handleLayerDuplicate(layer)}
@@ -233,6 +244,7 @@ interface LayerLibraryItemProps {
     isSelected: boolean;
     viewMode: 'grid' | 'list';
     mode: 'browse' | 'select';
+    isDefault: boolean;
     onSelect: () => void;
     onEdit: () => void;
     onDuplicate: () => void;
@@ -244,11 +256,14 @@ const LayerLibraryItem: React.FC<LayerLibraryItemProps> = ({
     isSelected,
     viewMode,
     mode,
+    isDefault,
     onSelect,
     onEdit,
     onDuplicate,
     onRemove
 }) => {
+    const { name, description, metadata } = layer;
+
     if (viewMode === 'list') {
         return (
             <div className={`
@@ -258,13 +273,18 @@ const LayerLibraryItem: React.FC<LayerLibraryItemProps> = ({
       `} onClick={mode === 'select' ? onSelect : undefined}>
                 <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
-                        <h4 className="font-medium text-gray-900 truncate">{layer.name}</h4>
+                        <h4 className="font-medium text-gray-900 truncate">{name}</h4>
+                        {isDefault && (
+                            <Badge variant="outline" className="text-xs">
+                                Built-in
+                            </Badge>
+                        )}
                         <Badge variant="outline" className="text-xs">
-                            {layer.metadata?.category || 'other'}
+                            {metadata?.category || 'other'}
                         </Badge>
                     </div>
-                    {layer.description && (
-                        <p className="text-sm text-gray-500 truncate mt-1">{layer.description}</p>
+                    {description && (
+                        <p className="text-sm text-gray-500 truncate mt-1">{description}</p>
                     )}
                     <div className="text-xs text-gray-400 mt-1">
                         {layer.preview?.length || 0} changes
@@ -277,15 +297,22 @@ const LayerLibraryItem: React.FC<LayerLibraryItemProps> = ({
                         </Button>
                     ) : (
                         <>
-                            <Button size="sm" variant="outline" onClick={onEdit}>
-                                <Edit className="h-4 w-4" />
+                            <Button size="sm" variant="outline" onClick={onSelect}>
+                                <Plus className="h-4 w-4" />
                             </Button>
                             <Button size="sm" variant="outline" onClick={onDuplicate}>
                                 <Copy className="h-4 w-4" />
                             </Button>
-                            <Button size="sm" variant="outline" onClick={onRemove} className="text-red-600 hover:text-red-700">
-                                <Trash2 className="h-4 w-4" />
-                            </Button>
+                            {!isDefault && (
+                                <>
+                                    <Button size="sm" variant="outline" onClick={onEdit}>
+                                        <Edit className="h-4 w-4" />
+                                    </Button>
+                                    <Button size="sm" variant="outline" onClick={onRemove} className="text-red-600 hover:text-red-700">
+                                        <Trash2 className="h-4 w-4" />
+                                    </Button>
+                                </>
+                            )}
                         </>
                     )}
                 </div>
@@ -300,14 +327,21 @@ const LayerLibraryItem: React.FC<LayerLibraryItemProps> = ({
       ${mode === 'select' ? 'cursor-pointer hover:bg-gray-50' : ''}
     `} onClick={mode === 'select' ? onSelect : undefined}>
             <div className="flex items-start justify-between mb-2">
-                <h4 className="font-medium text-gray-900 truncate">{layer.name}</h4>
-                <Badge variant="outline" className="text-xs ml-2 flex-shrink-0">
-                    {layer.metadata?.category || 'other'}
-                </Badge>
+                <h4 className="font-medium text-gray-900 truncate">{name}</h4>
+                <div className="flex gap-1 ml-2 flex-shrink-0">
+                    {isDefault && (
+                        <Badge variant="outline" className="text-xs">
+                            Built-in
+                        </Badge>
+                    )}
+                    <Badge variant="outline" className="text-xs">
+                        {metadata?.category || 'other'}
+                    </Badge>
+                </div>
             </div>
 
-            {layer.description && (
-                <p className="text-sm text-gray-500 line-clamp-2 mb-3">{layer.description}</p>
+            {description && (
+                <p className="text-sm text-gray-500 line-clamp-2 mb-3">{description}</p>
             )}
 
             <div className="text-xs text-gray-400 mb-3">
@@ -322,15 +356,22 @@ const LayerLibraryItem: React.FC<LayerLibraryItemProps> = ({
                     </Button>
                 ) : (
                     <>
-                        <Button size="sm" variant="outline" onClick={onEdit} className="flex-1">
-                            <Edit className="h-4 w-4" />
+                        <Button size="sm" variant="outline" onClick={onSelect} className="flex-1">
+                            <Plus className="h-4 w-4" />
                         </Button>
                         <Button size="sm" variant="outline" onClick={onDuplicate}>
                             <Copy className="h-4 w-4" />
                         </Button>
-                        <Button size="sm" variant="outline" onClick={onRemove} className="text-red-600 hover:text-red-700">
-                            <Trash2 className="h-4 w-4" />
-                        </Button>
+                        {!isDefault && (
+                            <>
+                                <Button size="sm" variant="outline" onClick={onEdit}>
+                                    <Edit className="h-4 w-4" />
+                                </Button>
+                                <Button size="sm" variant="outline" onClick={onRemove} className="text-red-600 hover:text-red-700">
+                                    <Trash2 className="h-4 w-4" />
+                                </Button>
+                            </>
+                        )}
                     </>
                 )}
             </div>

@@ -47,13 +47,13 @@ export const Layer: React.FC<LayerProps> = ({
         <div
             ref={setNodeRef}
             style={style}
-            className={`layer ${!layer.enabled ? 'disabled' : ''} ${hasConflicts ? 'has-conflicts' : ''} ${isDragging ? 'dragging' : ''}`}
+            className={`card ${!layer.enabled ? 'disabled' : ''} ${hasConflicts ? 'has-conflicts' : ''} ${isDragging ? 'dragging' : ''}`}
         >
-            <div className="layer-content">
-                <div className="layer-header">
-                    <div className="layer-title">
+            <div className="card-content">
+                <div className="card-header">
+                    <div className="card-title">
                         {/* Drag Handle */}
-                        <div className="layer-drag-handle" {...attributes} {...listeners}>
+                        <div className="card-drag-handle" {...attributes} {...listeners}>
                             <GripVertical size={16} />
                         </div>
                         <h3>{layer.name}</h3>
@@ -63,7 +63,7 @@ export const Layer: React.FC<LayerProps> = ({
                             </div>
                         )}
                     </div>
-                    <div className="layer-actions">
+                    <div className="card-actions">
                         <Button
                             onClick={() => onToggle(layer.id)}
                             variant={layer.enabled ? "outline" : "outline"}
@@ -95,11 +95,11 @@ export const Layer: React.FC<LayerProps> = ({
                     </div>
                 </div>
 
-                <p className="layer-description">{layer.description}</p>
+                <p className="card-description">{layer.description}</p>
 
                 {/* Setting Changes Preview */}
                 {preview && preview.length > 0 && (
-                    <div className="layer-preview">
+                    <div className="card-preview">
                         <div className="preview-header">
                             <span className="preview-label">Changes:</span>
                         </div>
@@ -128,11 +128,11 @@ export const Layer: React.FC<LayerProps> = ({
                 )}
 
                 {/* Layer Metadata */}
-                <div className="layer-meta">
-                    <span className="layer-order">#{index + 1}</span>
-                    <span className="layer-category">{layer.metadata?.category || 'General'}</span>
+                <div className="card-meta">
+                    <span className="card-order">#{index + 1}</span>
+                    <span className="card-category">{layer.metadata?.category || 'General'}</span>
                     {layer.metadata?.author && (
-                        <span className="layer-author">by {layer.metadata.author}</span>
+                        <span className="card-author">by {layer.metadata.author}</span>
                     )}
                 </div>
             </div>

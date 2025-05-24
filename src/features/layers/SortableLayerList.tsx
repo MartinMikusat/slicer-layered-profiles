@@ -73,7 +73,7 @@ export const SortableLayerList: React.FC<SortableLayerListProps> = ({
             onDragEnd={handleDragEnd}
         >
             <SortableContext items={layerOrder} strategy={horizontalListSortingStrategy}>
-                <div className="layer-list">
+                <div className="card-list">
                     {orderedLayers.map((layer, index) => {
                         const layerHasConflicts = layer.preview?.some(change => hasConflict(change.path)) || false
 
