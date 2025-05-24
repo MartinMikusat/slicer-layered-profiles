@@ -117,10 +117,31 @@ export function updateLayerPreviews(
     layers: Layer[],
     baseProfile: BaseProfile
 ): Layer[] {
-    return layers.map(layer => ({
-        ...layer,
-        preview: generateSettingPreview(layer, baseProfile.data),
-    }));
+    return layers.map(layer => {
+        // If layer already has a preview that looks accurate, preserve it
+        // This allows layers from defaultLayers.ts to keep their manually crafted previews
+        if (layer.preview && layer.preview.length > 0) {
+            // Check if the existing preview seems to match the current patches
+            const previewPathsSet = new Set(layer.preview.map(change => change.path));
+            const patchPathsSet = new Set(layer.patch.map(op => op.path));
+
+            // If the preview covers all the same paths as the patches, keep it
+            const previewPathsArray = Array.from(previewPathsSet);
+            const patchPathsArray = Array.from(patchPathsSet);
+
+            if (previewPathsArray.length === patchPathsArray.length &&
+                previewPathsArray.every(path => patchPathsSet.has(path))) {
+                // Preview looks complete and matches patches, keep it
+                return layer;
+            }
+        }
+
+        // Otherwise, generate a new preview
+        return {
+            ...layer,
+            preview: generateSettingPreview(layer, baseProfile.data),
+        };
+    });
 }
 
 /**

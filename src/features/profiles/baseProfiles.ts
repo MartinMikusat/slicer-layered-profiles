@@ -33,6 +33,10 @@ const demoProfiles: BaseProfile[] = [
                 support_material: false,
                 support_material_threshold: 0,
                 brim_width: 0,
+                fuzzy_skin: 'none',
+                fuzzy_skin_thickness: 0.3,
+                fuzzy_skin_point_dist: 0.8,
+                external_perimeter_speed: 25,
             },
             filament_settings: {
                 temperature: 215,
@@ -89,6 +93,10 @@ const demoProfiles: BaseProfile[] = [
                 support_material: false,
                 support_material_threshold: 0,
                 brim_width: 0,
+                fuzzy_skin: 'none',
+                fuzzy_skin_thickness: 0.3,
+                fuzzy_skin_point_dist: 0.8,
+                external_perimeter_speed: 25,
             },
             filament_settings: {
                 temperature: 220,
@@ -145,6 +153,10 @@ const demoProfiles: BaseProfile[] = [
                 support_material: false,
                 support_material_threshold: 0,
                 brim_width: 0,
+                fuzzy_skin: 'none',
+                fuzzy_skin_thickness: 0.3,
+                fuzzy_skin_point_dist: 0.8,
+                external_perimeter_speed: 25,
             },
             filament_settings: {
                 temperature: 225,
