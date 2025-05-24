@@ -10,7 +10,7 @@ import {
     importProjectFromJSON,
 } from './projectPersistence';
 import { DEFAULT_EXPORT_SETTINGS } from '../../constants';
-import type { Card, ExportSettings, BaseProfile } from '../../types';
+import type { Layer, ExportSettings, BaseProfile } from '../../types';
 
 interface UseProjectPersistenceOptions {
     autoSaveEnabled?: boolean;
@@ -26,8 +26,8 @@ interface ProjectPersistenceState {
 
 export function useProjectPersistence(
     baseProfile: BaseProfile,
-    cards: Card[],
-    cardOrder: string[],
+    layers: Layer[],
+    layerOrder: string[],
     exportSettings: ExportSettings = DEFAULT_EXPORT_SETTINGS,
     options: UseProjectPersistenceOptions = {}
 ) {
@@ -45,7 +45,7 @@ export function useProjectPersistence(
 
     // Auto-save when data changes
     useEffect(() => {
-        if (!autoSaveEnabled || cards.length === 0) {
+        if (!autoSaveEnabled || layers.length === 0) {
             return;
         }
 
@@ -54,8 +54,8 @@ export function useProjectPersistence(
         const projectData = createProjectData(
             projectName,
             baseProfile.id,
-            cards,
-            cardOrder,
+            layers,
+            layerOrder,
             exportSettings,
             projectDescription
         );
@@ -73,7 +73,7 @@ export function useProjectPersistence(
         }, autoSaveDelay + 100); // Slightly after auto-save
 
         return () => clearTimeout(timeoutId);
-    }, [baseProfile.id, cards, cardOrder, exportSettings, projectName, projectDescription, autoSaveEnabled, autoSaveDelay]);
+    }, [baseProfile.id, layers, layerOrder, exportSettings, projectName, projectDescription, autoSaveEnabled, autoSaveDelay]);
 
     // Initialize state only - no auto-loading
     useEffect(() => {
@@ -88,8 +88,8 @@ export function useProjectPersistence(
             const projectData = createProjectData(
                 projectName,
                 baseProfile.id,
-                cards,
-                cardOrder,
+                layers,
+                layerOrder,
                 exportSettings,
                 projectDescription
             );
@@ -116,7 +116,7 @@ export function useProjectPersistence(
             }));
             return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
         }
-    }, [baseProfile.id, cards, cardOrder, exportSettings, projectName, projectDescription]);
+    }, [baseProfile.id, layers, layerOrder, exportSettings, projectName, projectDescription]);
 
     // Load project
     const loadProject = useCallback(() => {
@@ -160,8 +160,8 @@ export function useProjectPersistence(
             const projectData = createProjectData(
                 projectName,
                 baseProfile.id,
-                cards,
-                cardOrder,
+                layers,
+                layerOrder,
                 exportSettings,
                 projectDescription
             );
@@ -173,7 +173,7 @@ export function useProjectPersistence(
             setState(prev => ({ ...prev, error: errorMessage }));
             return { success: false, error: errorMessage };
         }
-    }, [baseProfile.id, cards, cardOrder, exportSettings, projectName, projectDescription]);
+    }, [baseProfile.id, layers, layerOrder, exportSettings, projectName, projectDescription]);
 
     // Import project from file
     const importProject = useCallback((jsonString: string) => {

@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { compileProfile, detectConflicts, generateSettingPreview } from '../../profiles/profileCompiler';
-import type { BaseProfile, Card } from '../../../types';
+import type { BaseProfile, Layer } from '../../../types';
 
 // Mock base profile for testing
 const mockBaseProfile: BaseProfile = {
@@ -25,10 +25,10 @@ const mockBaseProfile: BaseProfile = {
     },
 };
 
-// Mock cards for testing
-const mockCards: Card[] = [
+// Mock layers for testing
+const mockLayers: Layer[] = [
     {
-        id: 'card-1',
+        id: 'layer-1',
         name: 'Higher Temperature',
         description: 'Increase temperature',
         enabled: true,
@@ -42,7 +42,7 @@ const mockCards: Card[] = [
         ],
     },
     {
-        id: 'card-2',
+        id: 'layer-2',
         name: 'Faster Speed',
         description: 'Increase speed',
         enabled: true,
@@ -56,7 +56,7 @@ const mockCards: Card[] = [
         ],
     },
     {
-        id: 'card-3',
+        id: 'layer-3',
         name: 'Another Temperature',
         description: 'Another temperature change',
         enabled: true,
@@ -74,46 +74,46 @@ const mockCards: Card[] = [
 describe('profileCompiler', () => {
     describe('compileProfile', () => {
         it('should apply patches to base profile', () => {
-            const result = compileProfile(mockBaseProfile, mockCards.slice(0, 2), ['card-1', 'card-2']);
+            const result = compileProfile(mockBaseProfile, mockLayers.slice(0, 2), ['layer-1', 'layer-2']);
 
             expect((result.finalData.filament_settings as any).temperature).toBe(225);
             expect((result.finalData.print_settings as any).perimeter_speed).toBe(60);
-            expect(result.appliedCards).toHaveLength(2);
+            expect(result.appliedLayers).toHaveLength(2);
         });
 
-        it('should handle disabled cards', () => {
-            const cardsWithDisabled = [
-                { ...mockCards[0], enabled: false },
-                mockCards[1],
+        it('should handle disabled layers', () => {
+            const layersWithDisabled = [
+                { ...mockLayers[0], enabled: false },
+                mockLayers[1],
             ];
 
-            const result = compileProfile(mockBaseProfile, cardsWithDisabled, ['card-1', 'card-2']);
+            const result = compileProfile(mockBaseProfile, layersWithDisabled, ['layer-1', 'layer-2']);
 
             expect((result.finalData.filament_settings as any).temperature).toBe(215); // Original value
             expect((result.finalData.print_settings as any).perimeter_speed).toBe(60); // Modified
-            expect(result.appliedCards).toHaveLength(1);
+            expect(result.appliedLayers).toHaveLength(1);
         });
 
         it('should implement last-write-wins for conflicts', () => {
-            const result = compileProfile(mockBaseProfile, mockCards, ['card-1', 'card-3']);
+            const result = compileProfile(mockBaseProfile, mockLayers, ['layer-1', 'layer-3']);
 
-            // card-3 should win since it's last
+            // layer-3 should win since it's last
             expect((result.finalData.filament_settings as any).temperature).toBe(230);
             expect(Object.keys(result.conflicts)).toHaveLength(1);
         });
     });
 
     describe('detectConflicts', () => {
-        it('should detect conflicts between cards', () => {
-            const conflicts = detectConflicts([mockCards[0], mockCards[2]]);
+        it('should detect conflicts between layers', () => {
+            const conflicts = detectConflicts([mockLayers[0], mockLayers[2]]);
 
             expect(conflicts['/filament_settings/temperature']).toBeDefined();
-            expect(conflicts['/filament_settings/temperature'].cards).toEqual(['card-1', 'card-3']);
+            expect(conflicts['/filament_settings/temperature'].layers).toEqual(['layer-1', 'layer-3']);
             expect(conflicts['/filament_settings/temperature'].finalValue).toBe(230);
         });
 
-        it('should not report conflicts for non-overlapping cards', () => {
-            const conflicts = detectConflicts([mockCards[0], mockCards[1]]);
+        it('should not report conflicts for non-overlapping layers', () => {
+            const conflicts = detectConflicts([mockLayers[0], mockLayers[1]]);
 
             expect(Object.keys(conflicts)).toHaveLength(0);
         });
@@ -121,7 +121,7 @@ describe('profileCompiler', () => {
 
     describe('generateSettingPreview', () => {
         it('should generate human-readable preview', () => {
-            const preview = generateSettingPreview(mockCards[0], mockBaseProfile.data);
+            const preview = generateSettingPreview(mockLayers[0], mockBaseProfile.data);
 
             expect(preview).toHaveLength(1);
             expect(preview[0].key).toBe('Nozzle Temperature');

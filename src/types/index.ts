@@ -21,8 +21,8 @@ export interface BaseProfile {
     };
 }
 
-// Card/Layer System
-export interface Card {
+// Layer System
+export interface Layer {
     id: string;
     name: string;
     description: string;
@@ -51,11 +51,11 @@ export interface SettingChange {
 // Conflict Detection
 export interface Conflict {
     path: string;
-    cards: string[]; // IDs of cards that modify this path
-    finalValue: INIValue; // The value that wins (last card)
+    layers: string[]; // IDs of layers that modify this path
+    finalValue: INIValue; // The value that wins (last layer)
     overriddenValues: Array<{
-        cardId: string;
-        cardName: string;
+        layerId: string;
+        layerName: string;
         value: INIValue;
     }>;
 }
@@ -65,8 +65,8 @@ export type ConflictMap = Record<string, Conflict>;
 // Application State
 export interface AppState {
     selectedBaseProfile: string;
-    cards: Card[];
-    cardOrder: string[]; // Ordered list of card IDs for drag/drop
+    layers: Layer[];
+    layerOrder: string[]; // Ordered list of layer IDs for drag/drop
     conflicts: ConflictMap;
     compiledProfile: CompiledProfile | null;
     exportSettings: ExportSettings;
@@ -75,12 +75,12 @@ export interface AppState {
 
 export interface CompiledProfile {
     baseProfile: BaseProfile;
-    appliedCards: Card[];
+    appliedLayers: Layer[];
     finalData: INIData;
     conflicts: ConflictMap;
     metadata: {
         compiled: string;
-        cardCount: number;
+        layerCount: number;
         conflictCount: number;
     };
 }
@@ -93,8 +93,8 @@ export interface ExportSettings {
 }
 
 export interface UIState {
-    draggedCard: string | null;
-    selectedCard: string | null;
+    draggedLayer: string | null;
+    selectedLayer: string | null;
     showConflicts: boolean;
     showDemo: boolean;
     tourStep: number | null;
@@ -105,8 +105,8 @@ export interface ProjectData {
     version: string;
     name: string;
     baseProfile: string;
-    cards: Card[];
-    cardOrder: string[];
+    layers: Layer[];
+    layerOrder: string[];
     exportSettings: ExportSettings;
     metadata: {
         created: string;
@@ -123,11 +123,11 @@ export interface ProfileService {
     generateINI(data: INIData): string;
 }
 
-export interface CardService {
-    createCard(data: Partial<Card>): Card;
-    validateCard(card: Card): ValidationResult;
-    applyCard(profile: INIData, card: Card): INIData;
-    detectConflicts(cards: Card[]): ConflictMap;
+export interface LayerService {
+    createLayer(data: Partial<Layer>): Layer;
+    validateLayer(layer: Layer): ValidationResult;
+    applyLayer(profile: INIData, layer: Layer): INIData;
+    detectConflicts(layers: Layer[]): ConflictMap;
 }
 
 export interface ValidationResult {
@@ -137,15 +137,15 @@ export interface ValidationResult {
 }
 
 // Demo Data
-export interface DemoCard extends Omit<Card, 'id'> {
+export interface DemoLayer extends Omit<Layer, 'id'> {
     demoId: string;
 }
 
 // Error Types
 export type AppError =
     | { type: 'PROFILE_NOT_FOUND'; profileId: string }
-    | { type: 'CARD_INVALID'; cardId: string; errors: string[] }
-    | { type: 'PATCH_FAILED'; cardId: string; error: string }
+    | { type: 'LAYER_INVALID'; layerId: string; errors: string[] }
+    | { type: 'PATCH_FAILED'; layerId: string; error: string }
     | { type: 'EXPORT_FAILED'; error: string }
     | { type: 'IMPORT_FAILED'; error: string };
 
@@ -158,11 +158,11 @@ export interface AppEvent {
 
 export type AppAction =
     | { type: 'SET_BASE_PROFILE'; profileId: string }
-    | { type: 'ADD_CARD'; card: Card }
-    | { type: 'UPDATE_CARD'; cardId: string; updates: Partial<Card> }
-    | { type: 'REMOVE_CARD'; cardId: string }
-    | { type: 'REORDER_CARDS'; cardOrder: string[] }
-    | { type: 'TOGGLE_CARD'; cardId: string }
+    | { type: 'ADD_LAYER'; layer: Layer }
+    | { type: 'UPDATE_LAYER'; layerId: string; updates: Partial<Layer> }
+    | { type: 'REMOVE_LAYER'; layerId: string }
+    | { type: 'REORDER_LAYERS'; layerOrder: string[] }
+    | { type: 'TOGGLE_LAYER'; layerId: string }
     | { type: 'LOAD_DEMO' }
     | { type: 'RESET_STATE' }
     | { type: 'UNDO' }

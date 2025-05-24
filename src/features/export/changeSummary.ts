@@ -1,15 +1,15 @@
-import type { BaseProfile, Card, ConflictMap } from '../../types'
+import type { BaseProfile, Layer, ConflictMap } from '../../types'
 
 interface ChangeSummaryOptions {
     includeConflicts?: boolean
     includeMetadata?: boolean
     format?: 'markdown' | 'text'
-    sections?: Array<'overview' | 'cards' | 'conflicts' | 'technical'>
+    sections?: Array<'overview' | 'layers' | 'conflicts' | 'technical'>
 }
 
 export function generateChangeSummary(
     baseProfile: BaseProfile,
-    appliedCards: Card[],
+    appliedLayers: Layer[],
     conflicts: ConflictMap,
     options: ChangeSummaryOptions = {}
 ): string {
@@ -17,7 +17,7 @@ export function generateChangeSummary(
         includeConflicts = true,
         includeMetadata = true,
         format = 'markdown',
-        sections = ['overview', 'cards', 'conflicts', 'technical']
+        sections = ['overview', 'layers', 'conflicts', 'technical']
     } = options
 
     const isMarkdown = format === 'markdown'
@@ -41,7 +41,7 @@ export function generateChangeSummary(
             summary += `${bold('Quality')}: ${baseProfile.metadata.quality || 'Unknown'}\n`
         }
 
-        summary += `${bold('Applied Cards')}: ${appliedCards.filter(c => c.enabled).length}\n`
+        summary += `${bold('Applied Layers')}: ${appliedLayers.filter(l => l.enabled).length}\n`
 
         if (includeConflicts) {
             const conflictCount = Object.keys(conflicts).length
@@ -51,29 +51,29 @@ export function generateChangeSummary(
         summary += '\n'
     }
 
-    // Cards Section
-    if (sections.includes('cards') && appliedCards.length > 0) {
+    // Layers Section
+    if (sections.includes('layers') && appliedLayers.length > 0) {
         summary += `${h2}Applied Modifications\n\n`
 
-        appliedCards.filter(card => card.enabled).forEach((card, index) => {
-            summary += `${h3}${index + 1}. ${card.name}\n`
-            summary += `${card.description}\n\n`
+        appliedLayers.filter(layer => layer.enabled).forEach((layer, index) => {
+            summary += `${h3}${index + 1}. ${layer.name}\n`
+            summary += `${layer.description}\n\n`
 
-            if (card.preview && card.preview.length > 0) {
+            if (layer.preview && layer.preview.length > 0) {
                 summary += `${bold('Changes')}:\n`
-                card.preview.forEach(change => {
+                layer.preview.forEach(change => {
                     const oldText = change.oldValue !== undefined ? ` (was: ${change.oldValue}${change.unit || ''})` : ''
                     summary += `${bullet}${change.key}: ${code(String(change.newValue))}${change.unit || ''}${oldText}\n`
                 })
                 summary += '\n'
             }
 
-            if (includeMetadata && card.metadata) {
+            if (includeMetadata && layer.metadata) {
                 const meta: string[] = []
-                if (card.metadata.author) meta.push(`Author: ${card.metadata.author}`)
-                if (card.metadata.version) meta.push(`Version: ${card.metadata.version}`)
-                if (card.metadata.category) meta.push(`Category: ${card.metadata.category}`)
-                if (card.metadata.tags?.length) meta.push(`Tags: ${card.metadata.tags.join(', ')}`)
+                if (layer.metadata.author) meta.push(`Author: ${layer.metadata.author}`)
+                if (layer.metadata.version) meta.push(`Version: ${layer.metadata.version}`)
+                if (layer.metadata.category) meta.push(`Category: ${layer.metadata.category}`)
+                if (layer.metadata.tags?.length) meta.push(`Tags: ${layer.metadata.tags.join(', ')}`)
 
                 if (meta.length > 0) {
                     summary += `${isMarkdown ? '*' : ''}${meta.join(' • ')}${isMarkdown ? '*' : ''}\n\n`
@@ -85,7 +85,7 @@ export function generateChangeSummary(
     // Conflicts Section
     if (sections.includes('conflicts') && includeConflicts && Object.keys(conflicts).length > 0) {
         summary += `${h2}Setting Conflicts\n\n`
-        summary += `The following settings are modified by multiple cards. The ${bold('rightmost card wins')}:\n\n`
+        summary += `The following settings are modified by multiple layers. The ${bold('rightmost layer wins')}:\n\n`
 
         Object.entries(conflicts).forEach(([, conflict]) => {
             summary += `${h3}${conflict.path.split('/').pop()}\n`
@@ -93,7 +93,7 @@ export function generateChangeSummary(
             summary += `${bullet}${bold('Overridden by')}:\n`
 
             conflict.overriddenValues.forEach(override => {
-                summary += `  ${bullet}${override.cardName}: ${code(String(override.value))}\n`
+                summary += `  ${bullet}${override.layerName}: ${code(String(override.value))}\n`
             })
             summary += '\n'
         })
@@ -107,16 +107,16 @@ export function generateChangeSummary(
         summary += `${bullet}${bold('Tool')}: Layered Profile Builder\n\n`
 
         if (isMarkdown) {
-            summary += `${h3}Card Order (Left to Right)\n`
+            summary += `${h3}Layer Order (Left to Right)\n`
             summary += '```\n'
-            appliedCards.filter(card => card.enabled).forEach((card, index) => {
-                summary += `${index + 1}. ${card.name}\n`
+            appliedLayers.filter(layer => layer.enabled).forEach((layer, index) => {
+                summary += `${index + 1}. ${layer.name}\n`
             })
             summary += '```\n\n'
         } else {
-            summary += `${bold('Card Order (Left to Right')}:\n`
-            appliedCards.filter(card => card.enabled).forEach((card, index) => {
-                summary += `${index + 1}. ${card.name}\n`
+            summary += `${bold('Layer Order (Left to Right')}:\n`
+            appliedLayers.filter(layer => layer.enabled).forEach((layer, index) => {
+                summary += `${index + 1}. ${layer.name}\n`
             })
             summary += '\n'
         }
@@ -127,11 +127,11 @@ export function generateChangeSummary(
 
 export function exportChangeSummaryAsFile(
     baseProfile: BaseProfile,
-    appliedCards: Card[],
+    appliedLayers: Layer[],
     conflicts: ConflictMap,
     options: ChangeSummaryOptions = {}
 ): void {
-    const summary = generateChangeSummary(baseProfile, appliedCards, conflicts, options)
+    const summary = generateChangeSummary(baseProfile, appliedLayers, conflicts, options)
     const format = options.format || 'markdown'
     const extension = format === 'markdown' ? '.md' : '.txt'
     const filename = `profile-changes-${Date.now()}${extension}`
@@ -149,21 +149,21 @@ export function exportChangeSummaryAsFile(
 
 export function generateQuickSummary(
     baseProfile: BaseProfile,
-    appliedCards: Card[],
+    appliedLayers: Layer[],
     conflicts: ConflictMap
 ): string {
-    const enabledCards = appliedCards.filter(card => card.enabled)
+    const enabledLayers = appliedLayers.filter(layer => layer.enabled)
     const conflictCount = Object.keys(conflicts).length
 
-    let summary = `Modified ${baseProfile.name} with ${enabledCards.length} cards`
+    let summary = `Modified ${baseProfile.name} with ${enabledLayers.length} layers`
 
     if (conflictCount > 0) {
         summary += ` (${conflictCount} conflicts resolved)`
     }
 
-    if (enabledCards.length > 0) {
-        const cardNames = enabledCards.map(card => card.name).join(', ')
-        summary += `\nCards: ${cardNames}`
+    if (enabledLayers.length > 0) {
+        const layerNames = enabledLayers.map(layer => layer.name).join(', ')
+        summary += `\nLayers: ${layerNames}`
     }
 
     return summary

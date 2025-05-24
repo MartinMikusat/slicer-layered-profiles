@@ -13,23 +13,23 @@ import {
     sortableKeyboardCoordinates,
     horizontalListSortingStrategy,
 } from '@dnd-kit/sortable'
-import { Card } from './Card'
-import type { Card as CardType, SettingChange } from '../../types'
+import { Layer } from './Layer'
+import type { Layer as LayerType, SettingChange } from '../../types'
 
-interface SortableCardListProps {
-    cards: CardType[]
-    cardOrder: string[]
-    cardsWithPreviews: Array<CardType & { preview?: SettingChange[] }>
+interface SortableLayerListProps {
+    layers: LayerType[]
+    layerOrder: string[]
+    layersWithPreviews: Array<LayerType & { preview?: SettingChange[] }>
     onReorder: (oldIndex: number, newIndex: number) => void
-    onToggle: (cardId: string) => void
-    onRemove: (cardId: string) => void
-    onEdit?: (card: CardType) => void
+    onToggle: (layerId: string) => void
+    onRemove: (layerId: string) => void
+    onEdit?: (layer: LayerType) => void
     hasConflict: (path: string) => boolean
 }
 
-export const SortableCardList: React.FC<SortableCardListProps> = ({
-    cardOrder,
-    cardsWithPreviews,
+export const SortableLayerList: React.FC<SortableLayerListProps> = ({
+    layerOrder,
+    layersWithPreviews,
     onReorder,
     onToggle,
     onRemove,
@@ -51,20 +51,20 @@ export const SortableCardList: React.FC<SortableCardListProps> = ({
         const { active, over } = event
 
         if (over && active.id !== over.id) {
-            const oldIndex = cardOrder.indexOf(active.id as string)
-            const newIndex = cardOrder.indexOf(over.id as string)
+            const oldIndex = layerOrder.indexOf(active.id as string)
+            const newIndex = layerOrder.indexOf(over.id as string)
 
             onReorder(oldIndex, newIndex)
         }
     }
 
-    // Create a map for quick lookup of card data
-    const cardsMap = new Map(cardsWithPreviews.map(card => [card.id, card]))
+    // Create a map for quick lookup of layer data
+    const layersMap = new Map(layersWithPreviews.map(layer => [layer.id, layer]))
 
-    // Order cards according to cardOrder
-    const orderedCards = cardOrder
-        .map(cardId => cardsMap.get(cardId))
-        .filter((card): card is NonNullable<typeof card> => card !== undefined)
+    // Order layers according to layerOrder
+    const orderedLayers = layerOrder
+        .map(layerId => layersMap.get(layerId))
+        .filter((layer): layer is NonNullable<typeof layer> => layer !== undefined)
 
     return (
         <DndContext
@@ -72,18 +72,18 @@ export const SortableCardList: React.FC<SortableCardListProps> = ({
             collisionDetection={closestCenter}
             onDragEnd={handleDragEnd}
         >
-            <SortableContext items={cardOrder} strategy={horizontalListSortingStrategy}>
-                <div className="card-list">
-                    {orderedCards.map((card, index) => {
-                        const cardHasConflicts = card.preview?.some(change => hasConflict(change.path)) || false
+            <SortableContext items={layerOrder} strategy={horizontalListSortingStrategy}>
+                <div className="layer-list">
+                    {orderedLayers.map((layer, index) => {
+                        const layerHasConflicts = layer.preview?.some(change => hasConflict(change.path)) || false
 
                         return (
-                            <Card
-                                key={card.id}
-                                card={card}
+                            <Layer
+                                key={layer.id}
+                                layer={layer}
                                 index={index}
-                                preview={card.preview}
-                                hasConflicts={cardHasConflicts}
+                                preview={layer.preview}
+                                hasConflicts={layerHasConflicts}
                                 onToggle={onToggle}
                                 onRemove={onRemove}
                                 onEdit={onEdit}

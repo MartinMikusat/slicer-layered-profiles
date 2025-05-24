@@ -1,7 +1,7 @@
-import type { DemoCard } from '../../types';
+import type { DemoLayer } from '../../types';
 
-// Demo cards that showcase the functionality
-export const demoCards: DemoCard[] = [
+// Demo layers that showcase the functionality
+export const demoLayers: DemoLayer[] = [
     {
         demoId: 'faster-perimeters',
         name: 'Faster Perimeters',

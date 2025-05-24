@@ -2,8 +2,8 @@ import { useState, useEffect, useCallback } from 'react'
 import { Download, FileText, Settings, Plus, Undo, Redo, Share, BookOpen } from 'lucide-react'
 import { arrayMove } from '@dnd-kit/sortable'
 import { baseProfiles, useProfileCompiler } from './features/profiles'
-import { demoCards, SortableCardList } from './features/layers'
-import { CardBuilder, CardLibrary, addCustomCard, removeCustomCard, updateCustomCard, isCustomCard } from './features/cards'
+import { demoLayers, SortableLayerList } from './features/layers'
+import { LayerBuilder, LayerLibrary, addCustomLayer, removeCustomLayer, updateCustomLayer, isCustomLayer } from './features/layers'
 import { useProjectPersistence, ProjectManager } from './features/projects'
 import { exportProfileAsINI, downloadINIFile } from './features/export'
 import { encodeProjectToURL, decodeProjectFromURL, clearProjectFromURL, copyToClipboard } from './features/projects'
@@ -24,27 +24,27 @@ import {
   useKeyboardShortcuts
 } from './features/ui'
 import { DEFAULT_EXPORT_SETTINGS } from './constants'
-import type { BaseProfile, Card, ProjectData } from './types'
+import type { BaseProfile, Layer, ProjectData } from './types'
 import './App.css'
 
 function App() {
   const [selectedProfile, setSelectedProfile] = useState<BaseProfile>(baseProfiles[0])
-  const [cards, setCards] = useState<Card[]>([])
-  const [cardOrder, setCardOrder] = useState<string[]>([])
+  const [layers, setLayers] = useState<Layer[]>([])
+  const [layerOrder, setLayerOrder] = useState<string[]>([])
   const [showDemo, setShowDemo] = useState(false)
   const [showTour, setShowTour] = useState(false)
   const [showShareModal, setShowShareModal] = useState(false)
   const [shareUrl, setShareUrl] = useState('')
   const [shareError, setShareError] = useState<string | null>(null)
-  const [editingCard, setEditingCard] = useState<Card | null>(null)
+  const [editingLayer, setEditingLayer] = useState<Layer | null>(null)
 
   // Use the profile compiler hook
   const {
     compiledProfile,
-    cardsWithPreviews,
+    layersWithPreviews,
     isCompiling,
     hasConflict
-  } = useProfileCompiler(selectedProfile, cards, cardOrder)
+  } = useProfileCompiler(selectedProfile, layers, layerOrder)
 
   // Use the project persistence hook
   const {
@@ -62,7 +62,7 @@ function App() {
     exportProject,
     importProject,
     clearError,
-  } = useProjectPersistence(selectedProfile, cards, cardOrder, DEFAULT_EXPORT_SETTINGS)
+  } = useProjectPersistence(selectedProfile, layers, layerOrder, DEFAULT_EXPORT_SETTINGS)
 
   // Use undo/redo functionality
   const {
@@ -73,14 +73,14 @@ function App() {
     canRedo
   } = useUndoRedo({
     selectedProfile,
-    cards,
-    cardOrder
+    layers,
+    layerOrder
   })
 
   // Clear all state and start fresh
   const clearAllState = useCallback(() => {
-    setCards([])
-    setCardOrder([])
+    setLayers([])
+    setLayerOrder([])
     setShowDemo(false)
     setSelectedProfile(baseProfiles[0])
     setProjectName('Untitled Project')
@@ -88,7 +88,7 @@ function App() {
 
     // Clear localStorage
     localStorage.removeItem('layered-profile-builder-project')
-    localStorage.removeItem('layered-profile-builder-custom-cards')
+    localStorage.removeItem('layered-profile-builder-custom-layers')
     localStorage.removeItem('hasSeenTour')
   }, [setProjectName, setProjectDescription])
 
@@ -97,9 +97,9 @@ function App() {
     const baseProfile = baseProfiles.find(p => p.id === projectData.baseProfile) || baseProfiles[0]
     setSelectedProfile(baseProfile)
 
-    // Set cards and order
-    setCards(projectData.cards)
-    setCardOrder(projectData.cardOrder)
+    // Set layers and order
+    setLayers(projectData.layers)
+    setLayerOrder(projectData.layerOrder)
 
     // Clear demo state if loading a project
     setShowDemo(false)
@@ -126,8 +126,8 @@ function App() {
     const prevState = undo()
     if (prevState && prevState.selectedProfile) {
       setSelectedProfile(prevState.selectedProfile)
-      setCards(prevState.cards)
-      setCardOrder(prevState.cardOrder)
+      setLayers(prevState.layers)
+      setLayerOrder(prevState.layerOrder)
     }
   }, [undo])
 
@@ -135,8 +135,8 @@ function App() {
     const nextState = redo()
     if (nextState && nextState.selectedProfile) {
       setSelectedProfile(nextState.selectedProfile)
-      setCards(nextState.cards)
-      setCardOrder(nextState.cardOrder)
+      setLayers(nextState.layers)
+      setLayerOrder(nextState.layerOrder)
     }
   }, [redo])
 
@@ -153,24 +153,24 @@ function App() {
   }, [compiledProfile])
 
   const loadDemo = () => {
-    const demoCardsWithIds: Card[] = demoCards.map((demoCard, index) => ({
-      ...demoCard,
+    const demoLayersWithIds: Layer[] = demoLayers.map((demoLayer, index) => ({
+      ...demoLayer,
       id: `demo-${index}`,
     }))
-    setCards(demoCardsWithIds)
-    setCardOrder(demoCardsWithIds.map(card => card.id))
+    setLayers(demoLayersWithIds)
+    setLayerOrder(demoLayersWithIds.map(layer => layer.id))
     setShowDemo(true)
   }
 
-  const clearCards = () => {
-    setCards([])
-    setCardOrder([])
+  const clearLayers = () => {
+    setLayers([])
+    setLayerOrder([])
     setShowDemo(false)
   }
 
   // Handle reset all with confirmation
   const handleResetAll = () => {
-    if (confirm('Are you sure you want to reset all app state? This will clear all cards, projects, and settings. This action cannot be undone.')) {
+    if (confirm('Are you sure you want to reset all app state? This will clear all layers, projects, and settings. This action cannot be undone.')) {
       clearAllState();
       // Force a page reload to ensure clean state
       window.location.reload();
@@ -184,23 +184,23 @@ function App() {
       (window as unknown as any).debugAppState = () => {
         console.log('Current App State:', {
           selectedProfile: selectedProfile.name,
-          cards: cards.map(c => ({ id: c.id, name: c.name, enabled: c.enabled })),
-          cardOrder,
+          layers: layers.map(l => ({ id: l.id, name: l.name, enabled: l.enabled })),
+          layerOrder,
           showDemo,
           localStorage: {
             project: localStorage.getItem('layered-profile-builder-project'),
-            customCards: localStorage.getItem('layered-profile-builder-custom-cards'),
+            customLayers: localStorage.getItem('layered-profile-builder-custom-layers'),
             hasSeenTour: localStorage.getItem('hasSeenTour')
           }
         });
       };
     }
-  }, [selectedProfile, cards, cardOrder, showDemo, projectName, projectDescription, clearAllState]);
+  }, [selectedProfile, layers, layerOrder, showDemo, projectName, projectDescription, clearAllState]);
 
   // Push state for undo/redo when changes happen
   useEffect(() => {
-    pushState({ selectedProfile, cards, cardOrder })
-  }, [selectedProfile, cards, cardOrder, pushState])
+    pushState({ selectedProfile, layers, layerOrder })
+  }, [selectedProfile, layers, layerOrder, pushState])
 
   // Set up keyboard shortcuts  
   const { getShortcutText } = useKeyboardShortcuts({
@@ -208,70 +208,70 @@ function App() {
     onRedo: handleRedo,
     onSave: saveProject,
     onExport: handleExport,
-    onLoadDemo: () => showDemo ? clearCards() : loadDemo(),
+    onLoadDemo: () => showDemo ? clearLayers() : loadDemo(),
   })
 
-  const handleCardReorder = (oldIndex: number, newIndex: number) => {
-    const newCardOrder = arrayMove(cardOrder, oldIndex, newIndex)
-    setCardOrder(newCardOrder)
+  const handleLayerReorder = (oldIndex: number, newIndex: number) => {
+    const newLayerOrder = arrayMove(layerOrder, oldIndex, newIndex)
+    setLayerOrder(newLayerOrder)
   }
 
-  const handleCardToggle = (cardId: string) => {
-    const updatedCards = cards.map(c =>
-      c.id === cardId ? { ...c, enabled: !c.enabled } : c
+  const handleLayerToggle = (layerId: string) => {
+    const updatedLayers = layers.map(l =>
+      l.id === layerId ? { ...l, enabled: !l.enabled } : l
     )
-    setCards(updatedCards)
+    setLayers(updatedLayers)
   }
 
-  const handleCardRemove = (cardId: string) => {
-    const updatedCards = cards.filter(c => c.id !== cardId)
-    setCards(updatedCards)
-    setCardOrder(cardOrder.filter(id => id !== cardId))
+  const handleLayerRemove = (layerId: string) => {
+    const updatedLayers = layers.filter(l => l.id !== layerId)
+    setLayers(updatedLayers)
+    setLayerOrder(layerOrder.filter(id => id !== layerId))
 
-    // If it's a custom card, also remove from localStorage
-    const cardToRemove = cards.find(c => c.id === cardId)
-    if (cardToRemove && isCustomCard(cardToRemove)) {
-      removeCustomCard(cardId)
+    // If it's a custom layer, also remove from localStorage
+    const layerToRemove = layers.find(l => l.id === layerId)
+    if (layerToRemove && isCustomLayer(layerToRemove)) {
+      removeCustomLayer(layerId)
     }
   }
 
-  // Add new handler for custom card creation
-  const handleCardCreated = useCallback((newCard: Card) => {
+  // Add new handler for custom layer creation
+  const handleLayerCreated = useCallback((newLayer: Layer) => {
     // Save to localStorage
-    const saved = addCustomCard(newCard)
+    const saved = addCustomLayer(newLayer)
     if (saved) {
-      setCards(prev => [...prev, newCard])
-      setCardOrder(prev => [...prev, newCard.id])
+      setLayers(prev => [...prev, newLayer])
+      setLayerOrder(prev => [...prev, newLayer.id])
     } else {
-      console.error('Failed to save custom card')
+      console.error('Failed to save custom layer')
       // Still add to state even if localStorage fails
-      setCards(prev => [...prev, newCard])
-      setCardOrder(prev => [...prev, newCard.id])
+      setLayers(prev => [...prev, newLayer])
+      setLayerOrder(prev => [...prev, newLayer.id])
     }
   }, [])
 
-  // Add new handler for card editing
-  const handleCardEdit = useCallback((card: Card) => {
-    setEditingCard(card)
+  // Add new handler for layer editing
+  const handleLayerEdit = useCallback((layer: Layer) => {
+    setEditingLayer(layer)
   }, [])
 
-  // Add new handler for card updates
-  const handleCardUpdated = useCallback((updatedCard: Card) => {
+  // Add new handler for layer updates
+  const handleLayerUpdated = useCallback((updatedLayer: Layer) => {
     // Update localStorage
-    const saved = updateCustomCard(updatedCard.id, updatedCard)
+    const saved = updateCustomLayer(updatedLayer.id, updatedLayer)
     if (saved) {
-      setCards(prev => prev.map(c => c.id === updatedCard.id ? updatedCard : c))
+      setLayers(prev => prev.map(l => l.id === updatedLayer.id ? updatedLayer : l))
     } else {
-      console.error('Failed to update custom card')
+      console.error('Failed to update custom layer')
       // Still update state even if localStorage fails
-      setCards(prev => prev.map(c => c.id === updatedCard.id ? updatedCard : c))
+      setLayers(prev => prev.map(l => l.id === updatedLayer.id ? updatedLayer : l))
     }
-    setEditingCard(null)
+    setEditingLayer(null)
   }, [])
 
   // Handler to clear editing state
   const handleClearEditing = useCallback(() => {
-    setEditingCard(null)
+    setEditingLayer(null)
   }, [])
 
   // Sharing handlers
@@ -281,8 +281,8 @@ function App() {
         version: '1.0.0',
         name: projectName || 'Shared Project',
         baseProfile: selectedProfile.id,
-        cards,
-        cardOrder,
+        layers,
+        layerOrder,
         exportSettings: DEFAULT_EXPORT_SETTINGS,
         metadata: {
           created: new Date().toISOString(),
@@ -318,19 +318,19 @@ function App() {
     localStorage.setItem('hasSeenTour', 'true')
   }
 
-  // Add handler for selecting cards from library
-  const handleCardSelected = useCallback((selectedCard: Card) => {
-    // Check if card is already in the workspace
-    const existingCard = cards.find(c => c.id === selectedCard.id)
-    if (existingCard) {
-      alert('This card is already in your workspace')
+  // Add handler for selecting layers from library
+  const handleLayerSelected = useCallback((selectedLayer: Layer) => {
+    // Check if layer is already in the workspace
+    const existingLayer = layers.find(l => l.id === selectedLayer.id)
+    if (existingLayer) {
+      alert('This layer is already in your workspace')
       return
     }
 
-    // Add the card to the workspace
-    setCards(prev => [...prev, selectedCard])
-    setCardOrder(prev => [...prev, selectedCard.id])
-  }, [cards])
+    // Add the layer to the workspace
+    setLayers(prev => [...prev, selectedLayer])
+    setLayerOrder(prev => [...prev, selectedLayer.id])
+  }, [layers])
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
@@ -368,7 +368,7 @@ function App() {
             <Button
               variant="outline"
               size="default"
-              onClick={showDemo ? clearCards : loadDemo}
+              onClick={showDemo ? clearLayers : loadDemo}
               title={`Load Demo (${getShortcutText().demo})`}
               className="demo-btn gap-2"
             >
@@ -381,7 +381,7 @@ function App() {
               variant="outline"
               size="default"
               onClick={handleShare}
-              disabled={cards.length === 0}
+              disabled={layers.length === 0}
               className="gap-2 tour-share"
             >
               <Share size={16} />
@@ -399,14 +399,14 @@ function App() {
               Tour
             </Button>
 
-            {/* Card Library for browsing/managing */}
-            <CardLibrary
+            {/* Layer Library for browsing/managing */}
+            <LayerLibrary
               mode="browse"
-              onCardEdit={handleCardEdit}
+              onLayerEdit={handleLayerEdit}
               trigger={
-                <Button variant="outline" size="default" className="gap-2 tour-my-cards">
+                <Button variant="outline" size="default" className="gap-2 tour-my-layers">
                   <BookOpen size={16} />
-                  My Cards
+                  My Layers
                 </Button>
               }
             />
@@ -415,7 +415,7 @@ function App() {
             <div className="flex gap-2 export-actions tour-export-actions">
               <LoadingButton
                 onClick={handleExport}
-                disabled={cards.length === 0}
+                disabled={layers.length === 0}
                 isLoading={isCompiling}
                 loadingText="Compiling..."
                 className="bg-primary text-primary-foreground hover:bg-primary/90 disabled:bg-muted disabled:text-muted-foreground whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none h-10 px-4 py-2 gap-2 tour-export-ini"
@@ -456,23 +456,23 @@ function App() {
             </div>
           </section>
 
-          {/* Top-center: Layer Cards header and workspace */}
+          {/* Top-center: Layers header and workspace */}
           <section className="space-y-4 card-workspace lg:row-span-2 min-w-0">
             <div className="flex justify-between items-center">
               <div>
                 <h2 className="text-xl font-semibold">Layers</h2>
-                <p className="text-sm text-muted-foreground">Drag cards to reorder horizontally • Cards to the right override those to the left</p>
+                <p className="text-sm text-muted-foreground">Drag layers to reorder horizontally • Layers to the right override those to the left</p>
               </div>
               <div className="flex gap-2">
-                <CardLibrary
+                <LayerLibrary
                   mode="select"
-                  onCardSelect={handleCardSelected}
-                  onCardEdit={handleCardEdit}
-                  selectedCardIds={cards.map(c => c.id)}
+                  onLayerSelect={handleLayerSelected}
+                  onLayerEdit={handleLayerEdit}
+                  selectedLayerIds={layers.map(l => l.id)}
                 />
-                <CardBuilder
+                <LayerBuilder
                   selectedProfile={selectedProfile}
-                  onCardCreated={handleCardCreated}
+                  onLayerCreated={handleLayerCreated}
                 />
                 <Button onClick={loadDemo} variant="outline" className="gap-2">
                   <Plus size={16} />
@@ -481,39 +481,39 @@ function App() {
               </div>
             </div>
 
-            {cards.length === 0 ? (
+            {layers.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-12 text-center space-y-4 bg-card rounded-xl border border-dashed h-auto lg:h-[calc(100%-80px)]">
                 <FileText size={48} className="text-muted-foreground" />
                 <div>
-                  <h3 className="text-lg font-semibold">No cards yet</h3>
-                  <p className="text-muted-foreground">Load the demo or create your first custom card to get started</p>
+                  <h3 className="text-lg font-semibold">No layers yet</h3>
+                  <p className="text-muted-foreground">Load the demo or create your first custom layer to get started</p>
                 </div>
                 <div className="flex gap-2">
-                  <CardLibrary
+                  <LayerLibrary
                     mode="select"
-                    onCardSelect={handleCardSelected}
-                    onCardEdit={handleCardEdit}
-                    selectedCardIds={cards.map(c => c.id)}
+                    onLayerSelect={handleLayerSelected}
+                    onLayerEdit={handleLayerEdit}
+                    selectedLayerIds={layers.map(l => l.id)}
                   />
-                  <CardBuilder
+                  <LayerBuilder
                     selectedProfile={selectedProfile}
-                    onCardCreated={handleCardCreated}
+                    onLayerCreated={handleLayerCreated}
                   />
                   <Button onClick={loadDemo} variant="outline" className="gap-2">
-                    Load Demo Cards
+                    Load Demo Layers
                   </Button>
                 </div>
               </div>
             ) : (
               <div className="bg-card rounded-xl border p-4 h-auto lg:h-[calc(100%-80px)] overflow-hidden w-full">
-                <SortableCardList
-                  cards={cards}
-                  cardOrder={cardOrder}
-                  cardsWithPreviews={cardsWithPreviews}
-                  onReorder={handleCardReorder}
-                  onToggle={handleCardToggle}
-                  onRemove={handleCardRemove}
-                  onEdit={handleCardEdit}
+                <SortableLayerList
+                  layers={layers}
+                  layerOrder={layerOrder}
+                  layersWithPreviews={layersWithPreviews}
+                  onReorder={handleLayerReorder}
+                  onToggle={handleLayerToggle}
+                  onRemove={handleLayerRemove}
+                  onEdit={handleLayerEdit}
                   hasConflict={hasConflict}
                 />
               </div>
@@ -616,13 +616,13 @@ function App() {
         onSkip={handleTourSkip}
       />
 
-      {/* Card Editing Modal */}
-      {editingCard && (
-        <CardBuilder
+      {/* Layer Editing Modal */}
+      {editingLayer && (
+        <LayerBuilder
           selectedProfile={selectedProfile}
-          onCardCreated={handleCardCreated}
-          onCardUpdated={handleCardUpdated}
-          editingCard={editingCard}
+          onLayerCreated={handleLayerCreated}
+          onLayerUpdated={handleLayerUpdated}
+          editingLayer={editingLayer}
           onEditingClear={handleClearEditing}
           trigger={null}
         />

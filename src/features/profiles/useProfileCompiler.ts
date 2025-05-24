@@ -1,29 +1,29 @@
 import { useState, useEffect, useMemo } from 'react';
-import { compileProfile, updateCardPreviews } from './profileCompiler';
-import type { BaseProfile, Card, CompiledProfile } from '../../types';
+import { compileProfile, updateLayerPreviews } from './profileCompiler';
+import type { BaseProfile, Layer, CompiledProfile } from '../../types';
 
 /**
  * Hook for managing profile compilation
  */
 export function useProfileCompiler(
     baseProfile: BaseProfile,
-    cards: Card[],
-    cardOrder: string[]
+    layers: Layer[],
+    layerOrder: string[]
 ) {
     const [compiledProfile, setCompiledProfile] = useState<CompiledProfile | null>(null);
     const [isCompiling, setIsCompiling] = useState(false);
 
-    // Update card previews when base profile changes
-    const cardsWithPreviews = useMemo(() => {
-        return updateCardPreviews(cards, baseProfile);
-    }, [cards, baseProfile]);
+    // Update layer previews when base profile changes
+    const layersWithPreviews = useMemo(() => {
+        return updateLayerPreviews(layers, baseProfile);
+    }, [layers, baseProfile]);
 
     // Immediate compilation effect
     useEffect(() => {
         setIsCompiling(true);
 
         try {
-            const compiled = compileProfile(baseProfile, cardsWithPreviews, cardOrder);
+            const compiled = compileProfile(baseProfile, layersWithPreviews, layerOrder);
             setCompiledProfile(compiled);
         } catch (error) {
             console.error('Profile compilation failed:', error);
@@ -31,7 +31,7 @@ export function useProfileCompiler(
         } finally {
             setIsCompiling(false);
         }
-    }, [baseProfile, cardsWithPreviews, cardOrder]);
+    }, [baseProfile, layersWithPreviews, layerOrder]);
 
     // Helper to get final setting values
     const getFinalValue = (path: string) => {
@@ -62,7 +62,7 @@ export function useProfileCompiler(
 
     return {
         compiledProfile,
-        cardsWithPreviews,
+        layersWithPreviews,
         isCompiling,
         getFinalValue,
         hasConflict,

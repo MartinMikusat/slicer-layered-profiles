@@ -3,22 +3,22 @@ import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { AlertTriangle, GripVertical, Eye, EyeOff, Edit } from 'lucide-react'
 import { Button } from '../ui/components/button'
-import { isCustomCard } from '../cards/customCardService'
-import type { Card as CardType, SettingChange } from '../../types'
+import { isCustomLayer } from './customLayerService'
+import type { Layer as LayerType, SettingChange } from '../../types'
 
-interface CardProps {
-    card: CardType
+interface LayerProps {
+    layer: LayerType
     index: number
     preview?: SettingChange[]
     hasConflicts: boolean
-    onToggle: (cardId: string) => void
-    onRemove: (cardId: string) => void
-    onEdit?: (card: CardType) => void
+    onToggle: (layerId: string) => void
+    onRemove: (layerId: string) => void
+    onEdit?: (layer: LayerType) => void
     hasConflict: (path: string) => boolean
 }
 
-export const Card: React.FC<CardProps> = ({
-    card,
+export const Layer: React.FC<LayerProps> = ({
+    layer,
     index,
     preview,
     hasConflicts,
@@ -34,72 +34,72 @@ export const Card: React.FC<CardProps> = ({
         transform,
         transition,
         isDragging,
-    } = useSortable({ id: card.id })
+    } = useSortable({ id: layer.id })
 
     const style = {
         transform: CSS.Transform.toString(transform),
         transition,
     }
 
-    const canEdit = isCustomCard(card) && onEdit;
+    const canEdit = isCustomLayer(layer) && onEdit;
 
     return (
         <div
             ref={setNodeRef}
             style={style}
-            className={`card ${!card.enabled ? 'disabled' : ''} ${hasConflicts ? 'has-conflicts' : ''} ${isDragging ? 'dragging' : ''}`}
+            className={`layer ${!layer.enabled ? 'disabled' : ''} ${hasConflicts ? 'has-conflicts' : ''} ${isDragging ? 'dragging' : ''}`}
         >
-            <div className="card-content">
-                <div className="card-header">
-                    <div className="card-title">
+            <div className="layer-content">
+                <div className="layer-header">
+                    <div className="layer-title">
                         {/* Drag Handle */}
-                        <div className="card-drag-handle" {...attributes} {...listeners}>
+                        <div className="layer-drag-handle" {...attributes} {...listeners}>
                             <GripVertical size={16} />
                         </div>
-                        <h3>{card.name}</h3>
+                        <h3>{layer.name}</h3>
                         {hasConflicts && (
-                            <div className="conflict-icon" title="This card has conflicts with other cards">
+                            <div className="conflict-icon" title="This layer has conflicts with other layers">
                                 <AlertTriangle size={16} />
                             </div>
                         )}
                     </div>
-                    <div className="card-actions">
+                    <div className="layer-actions">
                         <Button
-                            onClick={() => onToggle(card.id)}
-                            variant={card.enabled ? "outline" : "outline"}
+                            onClick={() => onToggle(layer.id)}
+                            variant={layer.enabled ? "outline" : "outline"}
                             size="sm"
-                            title={card.enabled ? 'Disable card' : 'Enable card'}
-                            className={`gap-2 ${card.enabled ? 'bg-white border-gray-300 text-black hover:bg-gray-50' : ''}`}
+                            title={layer.enabled ? 'Disable layer' : 'Enable layer'}
+                            className={`gap-2 ${layer.enabled ? 'bg-white border-gray-300 text-black hover:bg-gray-50' : ''}`}
                         >
-                            {card.enabled ? <Eye size={16} /> : <EyeOff size={16} />}
-                            {card.enabled ? 'Enabled' : 'Disabled'}
+                            {layer.enabled ? <Eye size={16} /> : <EyeOff size={16} />}
+                            {layer.enabled ? 'Enabled' : 'Disabled'}
                         </Button>
                         {canEdit && (
                             <Button
-                                onClick={() => onEdit(card)}
+                                onClick={() => onEdit(layer)}
                                 variant="outline"
                                 size="sm"
-                                title="Edit card"
+                                title="Edit layer"
                             >
                                 <Edit size={16} />
                             </Button>
                         )}
                         <Button
-                            onClick={() => onRemove(card.id)}
+                            onClick={() => onRemove(layer.id)}
                             variant="destructive"
                             size="sm"
-                            title="Remove card"
+                            title="Remove layer"
                         >
                             ×
                         </Button>
                     </div>
                 </div>
 
-                <p className="card-description">{card.description}</p>
+                <p className="layer-description">{layer.description}</p>
 
                 {/* Setting Changes Preview */}
                 {preview && preview.length > 0 && (
-                    <div className="card-preview">
+                    <div className="layer-preview">
                         <div className="preview-header">
                             <span className="preview-label">Changes:</span>
                         </div>
@@ -116,7 +116,7 @@ export const Card: React.FC<CardProps> = ({
                                         <span className="new-value">{change.newValue}</span>
                                         {change.unit && <span className="unit">{change.unit}</span>}
                                         {isConflicted && (
-                                            <span className="conflict-indicator" title="This setting is overridden by a later card">
+                                            <span className="conflict-indicator" title="This setting is overridden by a later layer">
                                                 ⚠️
                                             </span>
                                         )}
@@ -127,12 +127,12 @@ export const Card: React.FC<CardProps> = ({
                     </div>
                 )}
 
-                {/* Card Metadata */}
-                <div className="card-meta">
-                    <span className="card-order">#{index + 1}</span>
-                    <span className="card-category">{card.metadata?.category || 'General'}</span>
-                    {card.metadata?.author && (
-                        <span className="card-author">by {card.metadata.author}</span>
+                {/* Layer Metadata */}
+                <div className="layer-meta">
+                    <span className="layer-order">#{index + 1}</span>
+                    <span className="layer-category">{layer.metadata?.category || 'General'}</span>
+                    {layer.metadata?.author && (
+                        <span className="layer-author">by {layer.metadata.author}</span>
                     )}
                 </div>
             </div>

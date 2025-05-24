@@ -1,6 +1,6 @@
 # Layered Profile Builder
 
-A browser-based tool for composing PrusaSlicer profiles from simple "layers" (cards). Build custom 3D printing profiles by combining and reordering setting modifications.
+A browser-based tool for composing PrusaSlicer profiles from simple "layers". Build custom 3D printing profiles by combining and reordering setting modifications.
 
 **Status**: Advanced MVP Complete ✅  
 **Ready For**: Real-world testing and PrusaSlicer profile integration
@@ -12,34 +12,34 @@ A browser-based tool for composing PrusaSlicer profiles from simple "layers" (ca
 Instead of manually editing complex slicer profiles, this tool lets you:
 
 1. **Pick a base profile** (e.g., "MK4 0.4mm Quality")  
-2. **Add change cards** (e.g., "Higher Temperature", "Faster Speed")  
-3. **Drag to reorder** - later cards override earlier ones  
+2. **Add change layers** (e.g., "Higher Temperature", "Faster Speed")  
+3. **Drag to reorder** - later layers override earlier ones  
 4. **Download** a standard PrusaSlicer `.ini` file  
 
 ## ✨ Complete Features
 
 ### Core Functionality ✅
-- 🔄 **Layer-based editing** - Apply changes as composable cards
+- 🔄 **Layer-based editing** - Apply changes as composable layers
 - 🎯 **Conflict resolution** - Last-write-wins with visual conflict indicators
 - 📱 **Browser-based** - No installation, runs entirely in your browser
 - 💾 **Local storage** - Your projects auto-save locally
 - 📥 **Standard export** - Generates normal PrusaSlicer `.ini` files
 
-### Custom Card Creation ✅
-- 🔧 **Build your own cards** - Create custom setting modifications
+### Custom Layer Creation ✅
+- 🔧 **Build your own layers** - Create custom setting modifications
 - 🔍 **Setting browser** - Pick from any profile setting with guided interface
 - ✅ **Input validation** - Type checking and value validation
 - 💾 **Save & organize** - Persistent storage with categories and metadata
 
-### Card Library Management ✅
-- 📚 **Card library** - Comprehensive collection interface with search/filter
-- 🔍 **Smart search** - Find cards by name, description, or category
+### Layer Library Management ✅
+- 📚 **Layer library** - Comprehensive collection interface with search/filter
+- 🔍 **Smart search** - Find layers by name, description, or category
 - 🏷️ **Category filtering** - Organize by temperature, speed, quality, support, etc.
-- ⚙️ **Full CRUD** - Create, edit, duplicate, delete custom cards
+- ⚙️ **Full CRUD** - Create, edit, duplicate, delete custom layers
 
 ### User Experience ✅
-- 🎪 **Demo mode** - Try it instantly with pre-made cards
-- 🖱️ **Drag & drop** - Intuitive card reordering
+- 🎪 **Demo mode** - Try it instantly with pre-made layers
+- 🖱️ **Drag & drop** - Intuitive layer reordering
 - 👀 **Live preview** - See setting changes in real-time
 - 📱 **Mobile friendly** - Works on phones and tablets
 - ⚡ **Fast** - No server required, everything runs locally
@@ -72,9 +72,9 @@ npm run dev
 ### Try the Demo
 
 1. Click "Load Demo" in the header
-2. See 5 example cards with different modifications
-3. Drag cards to reorder them
-4. Toggle cards on/off to see conflicts
+2. See 5 example layers with different modifications
+3. Drag layers to reorder them
+4. Toggle layers on/off to see conflicts
 5. Export the final profile as `.ini`
 
 ## 🎮 How to Use
@@ -85,14 +85,14 @@ npm run dev
    - Choose from MK4 profiles (Quality, Speed, Draft)
    - See profile summary in sidebar
 
-2. **Add Cards**
-   - Load demo cards or create custom ones
-   - Each card modifies specific settings
+2. **Add Layers**
+   - Load demo layers or create custom ones
+   - Each layer modifies specific settings
    - Preview shows exactly what changes
 
-3. **Organize Cards**
-   - Drag cards to reorder
-   - Later cards override earlier ones
+3. **Organize Layers**
+   - Drag layers to reorder
+   - Later layers override earlier ones
    - Conflicts are highlighted automatically
 
 4. **Export Profile**
@@ -100,9 +100,9 @@ npm run dev
    - Download standard PrusaSlicer file
    - Import into PrusaSlicer normally
 
-### Understanding Cards
+### Understanding Layers
 
-Cards are simple JSON patches that modify settings:
+Layers are simple JSON patches that modify settings:
 
 ```json
 {
@@ -118,7 +118,7 @@ Cards are simple JSON patches that modify settings:
 }
 ```
 
-Each card shows:
+Each layer shows:
 - **Name & description** - What it does
 - **Setting preview** - "Temperature: 215°C → 225°C"
 - **Category badge** - temperature, speed, quality, etc.
@@ -126,10 +126,10 @@ Each card shows:
 
 ### Conflict Resolution
 
-When multiple cards modify the same setting:
-- **Last card wins** - Cards lower in the list override earlier ones
-- **Visual indicators** - Conflicting cards show warning icons
-- **Clear tooltips** - Hover to see which card's value is used
+When multiple layers modify the same setting:
+- **Last layer wins** - Layers lower in the list override earlier ones
+- **Visual indicators** - Conflicting layers show warning icons
+- **Clear tooltips** - Hover to see which layer's value is used
 
 ## 🏗️ Project Structure
 
@@ -140,7 +140,7 @@ src/
 ├── types/          # TypeScript type definitions
 ├── utils/          # Utility functions
 ├── constants/      # App constants and settings
-├── data/           # Sample profiles and demo cards
+├── data/           # Sample profiles and demo layers
 └── App.tsx         # Main application
 ```
 
@@ -162,7 +162,7 @@ src/
 
 ### Data Flow
 ```
-Base Profile → Apply Cards (ordered) → Detect Conflicts → Export INI
+Base Profile → Apply Layers (ordered) → Detect Conflicts → Export INI
 ```
 
 ## 🧪 Testing
@@ -180,9 +180,9 @@ npm run build
 
 ## 🤝 Contributing
 
-### Adding New Cards
+### Adding New Layers
 
-1. Create card definition in `src/data/demoCards.ts`
+1. Create layer definition in `src/data/demoLayers.ts`
 2. Use JSON Patch format for modifications
 3. Include preview for user-friendly display
 4. Test with different base profiles
@@ -192,7 +192,7 @@ npm run build
 1. Add profile to `src/data/baseProfiles.ts`
 2. Follow PrusaSlicer INI structure
 3. Include comprehensive metadata
-4. Test card compatibility
+4. Test layer compatibility
 
 ### Development Guidelines
 
@@ -207,8 +207,8 @@ See `.cursorrules` for detailed coding standards including:
 ### ✅ Completed Advanced MVP
 The project includes a complete, production-ready foundation:
 - **Complete profile building workflow** from base selection to INI export
-- **Custom card creation system** with guided interface and validation
-- **Card library management** with search, filter, and organization
+- **Custom layer creation system** with guided interface and validation
+- **Layer library management** with search, filter, and organization
 - **Full user experience** with tours, mobile support, and accessibility
 - **Technical excellence** with TypeScript, testing, and clean architecture
 
@@ -217,12 +217,12 @@ The next logical step is integrating real PrusaSlicer profiles to unlock product
 
 - **Profile data collection** from official Prusa repositories
 - **INI parser development** for real PrusaSlicer format  
-- **Profile integration** replacing demo profiles with real ones
+- **Profile integration** replacing demo layers with real ones
 - **End-to-end validation** with actual PrusaSlicer compatibility
 
 ### 🔮 Future Enhancements
 With the solid MVP foundation, future opportunities include:
-- **Community card sharing** and marketplace
+- **Community layer sharing** and marketplace
 - **Advanced conflict resolution** with manual override options
 - **Multi-profile export** for complete printer setups
 - **Cloud synchronization** for cross-device project sharing
@@ -231,7 +231,7 @@ With the solid MVP foundation, future opportunities include:
 
 The MVP has successfully met all objectives:
 - ✅ **Functional workflow** - Complete profile building from start to finish
-- ✅ **Custom creation** - Users can build their own modification cards
+- ✅ **Custom creation** - Users can build their own modification layers
 - ✅ **Library management** - Comprehensive organization and search
 - ✅ **PrusaSlicer compatibility** - Standard INI export format
 - ✅ **User experience** - Intuitive interface with guided onboarding
@@ -249,11 +249,11 @@ A: The tool generates standard `.ini` files compatible with PrusaSlicer 2.4+ and
 **Q: Can I use this with other slicers like Cura or SuperSlicer?**
 A: Currently optimized for PrusaSlicer. Other slicers may not recognize all settings or formatting.
 
-**Q: How many cards can I add?**
-A: No hard limit, but performance is optimized for up to 50 cards. More cards may slow down the interface.
+**Q: How many layers can I add?**
+A: No hard limit, but performance is optimized for up to 50 layers. More layers may slow down the interface.
 
-**Q: Can I create my own cards?**
-A: Yes! See the "Card Creation Format" section below for the JSON structure.
+**Q: Can I create my own layers?**
+A: Yes! See the "Layer Creation Format" section below for the JSON structure.
 
 ### Technical Issues
 
@@ -261,19 +261,19 @@ A: Yes! See the "Card Creation Format" section below for the JSON structure.
 A: 
 - Check browser console for errors
 - Ensure you have a base profile selected
-- Try with demo cards first to verify functionality
+- Try with demo layers first to verify functionality
 - Clear browser cache and reload
 
-**Q: Cards aren't applying / Settings not changing**
+**Q: Layers aren't applying / Settings not changing**
 A:
 - Verify your JSON patch syntax
 - Check that paths exist in the base profile
-- Ensure cards are enabled (not grayed out)
-- Try reordering cards - later cards override earlier ones
+- Ensure layers are enabled (not grayed out)
+- Try reordering layers - later layers override earlier ones
 
 **Q: App is slow / Unresponsive**
 A:
-- Reduce number of cards (especially if you have 20+)
+- Reduce number of layers (especially if you have 20+)
 - Try clearing localStorage: `localStorage.clear()` in browser console
 - Close other browser tabs to free up memory
 
@@ -295,23 +295,23 @@ A: Modern browsers with ES2020 support:
 **Q: Does this work on mobile?**
 A: Yes! The interface is mobile-responsive, though desktop is recommended for the best experience.
 
-## 📝 Card Creation Format
+## 📝 Layer Creation Format
 
-Want to create your own cards? Here's the complete structure:
+Want to create your own layers? Here's the complete structure:
 
-### Basic Card Structure
+### Basic Layer Structure
 
 ```typescript
-interface DemoCard {
+interface DemoLayer {
   demoId: string;           // Unique identifier
   name: string;             // Display name
-  description: string;      // What the card does
-  enabled: boolean;         // Whether card is active
+  description: string;      // What the layer does
+  enabled: boolean;         // Whether layer is active
   metadata: {
     category: 'speed' | 'temperature' | 'quality' | 'infill' | 'other';
     tags: string[];         // Searchable tags
     author?: string;        // Creator name
-    version?: string;       // Card version
+    version?: string;       // Layer version
   };
   patch: Operation[];       // JSON Patch operations
   preview: PreviewItem[];   // User-friendly change descriptions
@@ -320,7 +320,7 @@ interface DemoCard {
 
 ### JSON Patch Operations
 
-Cards use [RFC 6902 JSON Patch](https://tools.ietf.org/html/rfc6902) format:
+Layers use [RFC 6902 JSON Patch](https://tools.ietf.org/html/rfc6902) format:
 
 ```json
 {

@@ -1,9 +1,9 @@
-import type { ProjectData, Card } from '../../types'
+import type { ProjectData, Layer } from '../../types'
 
 interface ShareableData {
     baseProfile: string
-    cards: Card[]
-    cardOrder: string[]
+    layers: Layer[]
+    layerOrder: string[]
     name?: string
     description?: string
 }
@@ -12,8 +12,8 @@ export function encodeProjectToURL(projectData: ProjectData): string {
     try {
         const shareableData: ShareableData = {
             baseProfile: projectData.baseProfile,
-            cards: projectData.cards,
-            cardOrder: projectData.cardOrder,
+            layers: projectData.layers,
+            layerOrder: projectData.layerOrder,
             name: projectData.name,
             description: projectData.metadata?.description
         }
@@ -49,8 +49,8 @@ export function decodeProjectFromURL(): ProjectData | null {
             version: '1.0.0',
             name: shareableData.name || 'Shared Project',
             baseProfile: shareableData.baseProfile,
-            cards: shareableData.cards,
-            cardOrder: shareableData.cardOrder,
+            layers: shareableData.layers,
+            layerOrder: shareableData.layerOrder,
             exportSettings: {
                 filename: 'shared_profile.ini',
                 includeComments: true,

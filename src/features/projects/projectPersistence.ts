@@ -1,5 +1,5 @@
 import { PROJECT_VERSION, STORAGE_KEYS, ERROR_MESSAGES } from '../../constants';
-import type { ProjectData, Card, ExportSettings } from '../../types';
+import type { ProjectData, Layer, ExportSettings } from '../../types';
 
 /**
  * Create project data structure for saving
@@ -7,8 +7,8 @@ import type { ProjectData, Card, ExportSettings } from '../../types';
 export function createProjectData(
     name: string,
     baseProfile: string,
-    cards: Card[],
-    cardOrder: string[],
+    layers: Layer[],
+    layerOrder: string[],
     exportSettings: ExportSettings,
     description?: string
 ): ProjectData {
@@ -18,8 +18,8 @@ export function createProjectData(
         version: PROJECT_VERSION,
         name,
         baseProfile,
-        cards,
-        cardOrder,
+        layers,
+        layerOrder,
         exportSettings,
         metadata: {
             created: now,
@@ -143,8 +143,8 @@ function validateProjectData(data: unknown): data is ProjectData {
         typeof obj.version === 'string' &&
         typeof obj.name === 'string' &&
         typeof obj.baseProfile === 'string' &&
-        Array.isArray(obj.cards) &&
-        Array.isArray(obj.cardOrder) &&
+        Array.isArray(obj.layers) &&
+        Array.isArray(obj.layerOrder) &&
         !!obj.exportSettings &&
         typeof obj.exportSettings === 'object' &&
         !!obj.metadata &&

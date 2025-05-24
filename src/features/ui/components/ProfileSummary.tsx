@@ -19,13 +19,13 @@ const ProfileSummary: React.FC<ProfileSummaryProps> = ({
 }) => {
     // Get all changes as a flat list instead of grouped by section
     const getAllChanges = () => {
-        if (!compiledProfile || !compiledProfile.appliedCards.length) return [];
+        if (!compiledProfile || !compiledProfile.appliedLayers.length) return [];
 
         const allChanges: SettingChange[] = [];
 
-        compiledProfile.appliedCards.forEach(card => {
-            if (card.preview) {
-                card.preview.forEach(change => {
+        compiledProfile.appliedLayers.forEach(layer => {
+            if (layer.preview) {
+                layer.preview.forEach(change => {
                     allChanges.push(change);
                 });
             }
@@ -116,12 +116,12 @@ const ProfileSummary: React.FC<ProfileSummaryProps> = ({
                 })}
             </div>
 
-            {/* Applied Cards Summary */}
+            {/* Applied Layers Summary */}
             {compiledProfile && (
                 <div className="pt-3 border-t space-y-3">
                     <div className="flex justify-between items-center text-sm">
-                        <span className="text-muted-foreground">Applied Cards:</span>
-                        <span className="font-semibold">{compiledProfile.appliedCards.length}</span>
+                        <span className="text-muted-foreground">Applied Layers:</span>
+                        <span className="font-semibold">{compiledProfile.appliedLayers.length}</span>
                     </div>
 
                     {hasConflicts && (
@@ -179,26 +179,26 @@ const ProfileSummary: React.FC<ProfileSummaryProps> = ({
                 </div>
             )}
 
-            {/* Applied Cards List */}
-            {compiledProfile && compiledProfile.appliedCards.length > 0 && (
+            {/* Applied Layers List */}
+            {compiledProfile && compiledProfile.appliedLayers.length > 0 && (
                 <div className="pt-3 border-t space-y-2">
-                    <h4 className="font-medium text-sm">Applied Cards</h4>
+                    <h4 className="font-medium text-sm">Applied Layers</h4>
                     <div className="space-y-1">
-                        {compiledProfile.appliedCards.map((card, index) => (
-                            <div key={card.id} className="text-xs flex items-center justify-between p-2 bg-accent/30 rounded">
+                        {compiledProfile.appliedLayers.map((layer, index) => (
+                            <div key={layer.id} className="text-xs flex items-center justify-between p-2 bg-accent/30 rounded">
                                 <div className="flex items-center gap-2">
                                     <span className="w-4 h-4 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-xs font-medium">
                                         {index + 1}
                                     </span>
-                                    <span className="font-medium">{card.name}</span>
-                                    {card.metadata?.category && (
+                                    <span className="font-medium">{layer.name}</span>
+                                    {layer.metadata?.category && (
                                         <Badge variant="outline" className="text-xs">
-                                            {card.metadata.category}
+                                            {layer.metadata.category}
                                         </Badge>
                                     )}
                                 </div>
                                 <span className="text-muted-foreground">
-                                    {card.preview?.length || 0} changes
+                                    {layer.preview?.length || 0} changes
                                 </span>
                             </div>
                         ))}
@@ -213,8 +213,8 @@ const ProfileSummary: React.FC<ProfileSummaryProps> = ({
                     <p className="text-sm text-muted-foreground">
                         No modifications applied
                     </p>
-                    <p className="text-xs text-muted-foreground">
-                        Add cards to see changes here
+                    <p className="text-xs text-muted-foreground mt-1">
+                        Add layers to see changes here
                     </p>
                 </div>
             )}

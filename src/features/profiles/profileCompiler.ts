@@ -1,6 +1,6 @@
 import { applyPatch, deepClone } from 'fast-json-patch';
 import type {
-    Card,
+    Layer,
     BaseProfile,
     CompiledProfile,
     ConflictMap,
@@ -10,96 +10,96 @@ import type {
 } from '../../types';
 
 /**
- * Compiles a final profile by applying cards to a base profile
+ * Compiles a final profile by applying layers to a base profile
  */
 export function compileProfile(
     baseProfile: BaseProfile,
-    cards: Card[],
-    cardOrder: string[]
+    layers: Layer[],
+    layerOrder: string[]
 ): CompiledProfile {
     // Start with a deep clone of the base profile data
     let compiledData = deepClone(baseProfile.data);
 
-    // Get enabled cards in the correct order
-    const enabledCards = cardOrder
-        .map(id => cards.find(card => card.id === id))
-        .filter((card): card is Card => card !== undefined && card.enabled);
+    // Get enabled layers in the correct order
+    const enabledLayers = layerOrder
+        .map(id => layers.find(layer => layer.id === id))
+        .filter((layer): layer is Layer => layer !== undefined && layer.enabled);
 
     // Apply patches in order
-    const appliedCards: Card[] = [];
-    for (const card of enabledCards) {
+    const appliedLayers: Layer[] = [];
+    for (const layer of enabledLayers) {
         try {
-            // Apply the card's patches
-            const result = applyPatch(compiledData, card.patch, /* validate */ true);
+            // Apply the layer's patches
+            const result = applyPatch(compiledData, layer.patch, /* validate */ true);
 
             if (result.newDocument) {
                 compiledData = result.newDocument;
-                appliedCards.push(card);
+                appliedLayers.push(layer);
             }
         } catch (error) {
-            console.warn(`Failed to apply card "${card.name}":`, error);
-            // Continue with other cards even if one fails
+            console.warn(`Failed to apply layer "${layer.name}":`, error);
+            // Continue with other layers even if one fails
         }
     }
 
     // Detect conflicts
-    const conflicts = detectConflicts(enabledCards);
+    const conflicts = detectConflicts(enabledLayers);
 
     return {
         baseProfile,
-        appliedCards,
+        appliedLayers,
         finalData: compiledData,
         conflicts,
         metadata: {
             compiled: new Date().toISOString(),
-            cardCount: appliedCards.length,
+            layerCount: appliedLayers.length,
             conflictCount: Object.keys(conflicts).length,
         },
     };
 }
 
 /**
- * Detects conflicts between cards by finding overlapping paths
+ * Detects conflicts between layers by finding overlapping paths
  */
-export function detectConflicts(cards: Card[]): ConflictMap {
+export function detectConflicts(layers: Layer[]): ConflictMap {
     const conflicts: ConflictMap = {};
-    const pathToCards: Record<string, Array<{ card: Card; index: number }>> = {};
+    const pathToLayers: Record<string, Array<{ layer: Layer; index: number }>> = {};
 
-    // Group cards by the paths they modify
-    cards.forEach((card, index) => {
-        card.patch.forEach(operation => {
+    // Group layers by the paths they modify
+    layers.forEach((layer, index) => {
+        layer.patch.forEach(operation => {
             if (operation.op === 'replace' || operation.op === 'add') {
                 const path = operation.path;
-                if (!pathToCards[path]) {
-                    pathToCards[path] = [];
+                if (!pathToLayers[path]) {
+                    pathToLayers[path] = [];
                 }
-                pathToCards[path].push({ card, index });
+                pathToLayers[path].push({ layer, index });
             }
         });
     });
 
-    // Find conflicts (paths modified by multiple cards)
-    Object.entries(pathToCards).forEach(([path, cardEntries]) => {
-        if (cardEntries.length > 1) {
+    // Find conflicts (paths modified by multiple layers)
+    Object.entries(pathToLayers).forEach(([path, layerEntries]) => {
+        if (layerEntries.length > 1) {
             // Sort by order (last one wins)
-            cardEntries.sort((a, b) => a.index - b.index);
+            layerEntries.sort((a, b) => a.index - b.index);
 
-            const winningEntry = cardEntries[cardEntries.length - 1];
-            const overriddenEntries = cardEntries.slice(0, -1);
+            const winningEntry = layerEntries[layerEntries.length - 1];
+            const overriddenEntries = layerEntries.slice(0, -1);
 
             // Get the winning value from the patch
-            const winningOperation = winningEntry.card.patch.find(op => op.path === path);
+            const winningOperation = winningEntry.layer.patch.find(op => op.path === path);
             const finalValue = winningOperation && 'value' in winningOperation ? winningOperation.value : undefined;
 
             conflicts[path] = {
                 path,
-                cards: cardEntries.map(entry => entry.card.id),
+                layers: layerEntries.map(entry => entry.layer.id),
                 finalValue,
                 overriddenValues: overriddenEntries.map(entry => {
-                    const operation = entry.card.patch.find(op => op.path === path);
+                    const operation = entry.layer.patch.find(op => op.path === path);
                     return {
-                        cardId: entry.card.id,
-                        cardName: entry.card.name,
+                        layerId: entry.layer.id,
+                        layerName: entry.layer.name,
                         value: operation && 'value' in operation ? operation.value : undefined,
                     };
                 }),
@@ -111,28 +111,28 @@ export function detectConflicts(cards: Card[]): ConflictMap {
 }
 
 /**
- * Updates setting previews for cards based on a base profile
+ * Updates setting previews for layers based on a base profile
  */
-export function updateCardPreviews(
-    cards: Card[],
+export function updateLayerPreviews(
+    layers: Layer[],
     baseProfile: BaseProfile
-): Card[] {
-    return cards.map(card => ({
-        ...card,
-        preview: generateSettingPreview(card, baseProfile.data),
+): Layer[] {
+    return layers.map(layer => ({
+        ...layer,
+        preview: generateSettingPreview(layer, baseProfile.data),
     }));
 }
 
 /**
- * Generates human-readable preview of what a card changes
+ * Generates human-readable preview of what a layer changes
  */
 export function generateSettingPreview(
-    card: Card,
+    layer: Layer,
     baseData: INIData
 ): SettingChange[] {
     const changes: SettingChange[] = [];
 
-    card.patch.forEach(operation => {
+    layer.patch.forEach(operation => {
         if (operation.op === 'replace' || operation.op === 'add') {
             const path = operation.path;
             const newValue = operation.value as INIValue;
@@ -219,7 +219,7 @@ function parseSettingPath(path: string): {
 /**
  * Validates that a patch can be applied to a profile
  */
-export function validateCard(card: Card, baseData: INIData): {
+export function validateLayer(layer: Layer, baseData: INIData): {
     valid: boolean;
     errors: string[];
     warnings: string[];
@@ -230,13 +230,13 @@ export function validateCard(card: Card, baseData: INIData): {
     try {
         // Try to apply the patch to a clone to see if it works
         const testData = deepClone(baseData);
-        applyPatch(testData, card.patch, true);
+        applyPatch(testData, layer.patch, true);
     } catch (error) {
         errors.push(`Patch application failed: ${error}`);
     }
 
     // Check for common issues
-    card.patch.forEach((operation, index) => {
+    layer.patch.forEach((operation, index) => {
         if (!operation.path || !operation.path.startsWith('/')) {
             errors.push(`Operation ${index}: Invalid path "${operation.path}"`);
         }

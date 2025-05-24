@@ -3,7 +3,7 @@
 ## ✅ MVP Complete - Status
 
 **Project Status**: Advanced MVP Complete (2025-05-24)  
-**All core phases completed**: Phases 1-8.1 including custom card creation and library management  
+**All core phases completed**: Phases 1-8.1 including custom layer creation and library management  
 **Ready for**: Real-world testing and production deployment
 
 See [`PROJECT_COMPLETION_SUMMARY.md`](PROJECT_COMPLETION_SUMMARY.md) for complete documentation of achieved features.
@@ -40,7 +40,7 @@ See [`PROJECT_COMPLETION_SUMMARY.md`](PROJECT_COMPLETION_SUMMARY.md) for complet
 #### 🔲 6.5.4 Validation & Testing
 - [ ] Test profile compilation with real settings
 - [ ] Validate INI export produces PrusaSlicer-compatible files
-- [ ] Test card patches work correctly with real profile structure
+- [ ] Test layer patches work correctly with real profile structure
 - [ ] Verify exported profiles can be imported into actual PrusaSlicer
 - [ ] Test with multiple printer types (i3 MK3S+, MK4, Ender 3, etc.)
 
@@ -52,7 +52,7 @@ See [`PROJECT_COMPLETION_SUMMARY.md`](PROJECT_COMPLETION_SUMMARY.md) for complet
 
 - [ ] Profile enhancement with multiple base profiles and import
 - [ ] Better conflict handling with manual resolution interface
-- [ ] Card templates & presets for common modifications
+- [ ] Layer templates & presets for common modifications
 - [ ] Advanced export options with multi-profile bundles
 - [ ] Mobile optimizations for touch interactions
 
@@ -60,9 +60,9 @@ See [`PROJECT_COMPLETION_SUMMARY.md`](PROJECT_COMPLETION_SUMMARY.md) for complet
 **Priority**: Lower  
 **Goal**: Enable sharing and collaboration
 
-- [ ] Card sharing and marketplace features
-- [ ] Community card collections and templates
-- [ ] Export/import card collections
+- [ ] Layer sharing and marketplace features
+- [ ] Community layer collections and templates
+- [ ] Export/import layer collections
 - [ ] User profile and contribution tracking
 
 ### Phase 10: Advanced Features
@@ -105,7 +105,7 @@ Based on official PrusaSlicer repositories:
 ```
 
 #### Integration Architecture
-- Maintain existing card system architecture
+- Maintain existing layer system architecture
 - Profile compiler already supports real profile structures
 - INI export system designed for PrusaSlicer compatibility
 - UI components already handle dynamic profile data
@@ -114,8 +114,8 @@ Based on official PrusaSlicer repositories:
 
 The completed MVP includes:
 - ✅ Complete profile building workflow
-- ✅ Custom card creation with guided interface
-- ✅ Card library with search and management
+- ✅ Custom layer creation with guided interface
+- ✅ Layer library with search and management
 - ✅ Drag & drop reordering with conflict detection
 - ✅ Export system with PrusaSlicer INI compatibility
 - ✅ User onboarding and comprehensive documentation

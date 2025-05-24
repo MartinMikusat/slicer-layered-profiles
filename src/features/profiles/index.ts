@@ -4,7 +4,7 @@ export { useProfileCompiler } from './useProfileCompiler'
 export {
     compileProfile,
     detectConflicts,
-    updateCardPreviews,
+    updateLayerPreviews,
     generateSettingPreview,
-    validateCard
+    validateLayer
 } from './profileCompiler' 

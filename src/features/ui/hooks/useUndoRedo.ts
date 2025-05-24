@@ -1,10 +1,10 @@
 import { useState, useCallback, useRef } from 'react'
-import type { BaseProfile, Card } from '../../../types'
+import type { BaseProfile, Layer } from '../../../types'
 
 interface HistoryState {
     selectedProfile: BaseProfile | null
-    cards: Card[]
-    cardOrder: string[]
+    layers: Layer[]
+    layerOrder: string[]
 }
 
 interface UseUndoRedoOptions {
@@ -35,8 +35,8 @@ export function useUndoRedo(
             const current = prev[currentIndex]
             if (current &&
                 current.selectedProfile?.id === state.selectedProfile?.id &&
-                JSON.stringify(current.cards) === JSON.stringify(state.cards) &&
-                JSON.stringify(current.cardOrder) === JSON.stringify(state.cardOrder)) {
+                JSON.stringify(current.layers) === JSON.stringify(state.layers) &&
+                JSON.stringify(current.layerOrder) === JSON.stringify(state.layerOrder)) {
                 return prev
             }
 

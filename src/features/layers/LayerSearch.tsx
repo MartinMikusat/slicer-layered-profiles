@@ -1,10 +1,10 @@
 import { useState, useMemo } from 'react'
 import { Search, Filter, X, Tag } from 'lucide-react'
-import type { Card } from '../../types'
+import type { Layer } from '../../types'
 
-interface CardSearchProps {
-    cards: Card[]
-    onFilteredCardsChange: (filteredCards: Card[]) => void
+interface LayerSearchProps {
+    layers: Layer[]
+    onFilteredLayersChange: (filteredLayers: Layer[]) => void
     className?: string
 }
 
@@ -17,57 +17,57 @@ const categories = [
     'other'
 ] as const
 
-export function CardSearch({ cards, onFilteredCardsChange, className = '' }: CardSearchProps) {
+export function LayerSearch({ layers, onFilteredLayersChange, className = '' }: LayerSearchProps) {
     const [searchTerm, setSearchTerm] = useState('')
     const [selectedCategories, setSelectedCategories] = useState<Set<string>>(new Set())
     const [selectedTags, setSelectedTags] = useState<Set<string>>(new Set())
     const [showFilters, setShowFilters] = useState(false)
 
-    // Get all unique tags from cards
+    // Get all unique tags from layers
     const allTags = useMemo(() => {
         const tagSet = new Set<string>()
-        cards.forEach(card => {
-            card.metadata.tags?.forEach(tag => tagSet.add(tag))
+        layers.forEach(layer => {
+            layer.metadata.tags?.forEach(tag => tagSet.add(tag))
         })
         return Array.from(tagSet).sort()
-    }, [cards])
+    }, [layers])
 
-    // Filter cards based on search term and filters
-    const filteredCards = useMemo(() => {
-        let filtered = cards
+    // Filter layers based on search term and filters
+    const filteredLayers = useMemo(() => {
+        let filtered = layers
 
         // Text search
         if (searchTerm.trim()) {
             const term = searchTerm.toLowerCase()
-            filtered = filtered.filter(card =>
-                card.name.toLowerCase().includes(term) ||
-                card.description.toLowerCase().includes(term) ||
-                card.metadata.tags?.some(tag => tag.toLowerCase().includes(term)) ||
-                card.metadata.author?.toLowerCase().includes(term)
+            filtered = filtered.filter(layer =>
+                layer.name.toLowerCase().includes(term) ||
+                layer.description.toLowerCase().includes(term) ||
+                layer.metadata.tags?.some(tag => tag.toLowerCase().includes(term)) ||
+                layer.metadata.author?.toLowerCase().includes(term)
             )
         }
 
         // Category filter
         if (selectedCategories.size > 0) {
-            filtered = filtered.filter(card =>
-                card.metadata.category && selectedCategories.has(card.metadata.category)
+            filtered = filtered.filter(layer =>
+                layer.metadata.category && selectedCategories.has(layer.metadata.category)
             )
         }
 
         // Tag filter
         if (selectedTags.size > 0) {
-            filtered = filtered.filter(card =>
-                card.metadata.tags?.some(tag => selectedTags.has(tag))
+            filtered = filtered.filter(layer =>
+                layer.metadata.tags?.some(tag => selectedTags.has(tag))
             )
         }
 
         return filtered
-    }, [cards, searchTerm, selectedCategories, selectedTags])
+    }, [layers, searchTerm, selectedCategories, selectedTags])
 
-    // Notify parent of filtered cards
+    // Notify parent of filtered layers
     useMemo(() => {
-        onFilteredCardsChange(filteredCards)
-    }, [filteredCards, onFilteredCardsChange])
+        onFilteredLayersChange(filteredLayers)
+    }, [filteredLayers, onFilteredLayersChange])
 
     const handleCategoryToggle = (category: string) => {
         setSelectedCategories(prev => {
@@ -102,13 +102,13 @@ export function CardSearch({ cards, onFilteredCardsChange, className = '' }: Car
     const hasActiveFilters = searchTerm.trim() || selectedCategories.size > 0 || selectedTags.size > 0
 
     return (
-        <div className={`card-search ${className}`}>
+        <div className={`layer-search ${className}`}>
             <div className="search-header">
                 <div className="search-input-wrapper">
                     <Search size={16} className="search-icon" />
                     <input
                         type="text"
-                        placeholder="Search cards by name, description, or tags..."
+                        placeholder="Search layers by name, description, or tags..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                         className="search-input"
@@ -182,7 +182,7 @@ export function CardSearch({ cards, onFilteredCardsChange, className = '' }: Car
 
             <div className="search-results">
                 <span className="results-count">
-                    {filteredCards.length} of {cards.length} cards
+                    {filteredLayers.length} of {layers.length} layers
                     {hasActiveFilters && ' (filtered)'}
                 </span>
             </div>

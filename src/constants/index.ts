@@ -6,7 +6,7 @@ export const PROJECT_VERSION = '1.0';
 export const UI = {
     DRAG_DELAY: 200,
     TOAST_DURATION: 3000,
-    CARD_ANIMATION_DURATION: 300,
+    LAYER_ANIMATION_DURATION: 300,
 } as const;
 
 // Storage Keys
@@ -24,8 +24,8 @@ export const DEFAULT_EXPORT_SETTINGS = {
     format: 'ini' as const,
 };
 
-// Card Categories
-export const CARD_CATEGORIES = {
+// Layer Categories
+export const LAYER_CATEGORIES = {
     temperature: 'Temperature',
     speed: 'Speed & Acceleration',
     quality: 'Quality & Resolution',
@@ -41,7 +41,7 @@ export const INI_SECTIONS = {
     PRINTER_SETTINGS: 'printer_settings',
 } as const;
 
-// Common Setting Paths (for easier card creation)
+// Common Setting Paths (for easier layer creation)
 export const SETTING_PATHS = {
     // Quality
     LAYER_HEIGHT: '/print_settings/layer_height',
@@ -86,8 +86,8 @@ export const SETTING_NAMES: Record<string, { name: string; unit?: string; sectio
 // Error Messages
 export const ERROR_MESSAGES = {
     PROFILE_NOT_FOUND: 'Base profile not found',
-    CARD_VALIDATION_FAILED: 'Card validation failed',
-    PATCH_APPLICATION_FAILED: 'Failed to apply card changes',
+    LAYER_VALIDATION_FAILED: 'Layer validation failed',
+    PATCH_APPLICATION_FAILED: 'Failed to apply layer changes',
     EXPORT_FAILED: 'Failed to export profile',
     IMPORT_FAILED: 'Failed to import project',
     INVALID_JSON: 'Invalid JSON format',
@@ -99,6 +99,6 @@ export const SUCCESS_MESSAGES = {
     PROFILE_EXPORTED: 'Profile exported successfully',
     PROJECT_SAVED: 'Project saved successfully',
     PROJECT_LOADED: 'Project loaded successfully',
-    CARD_ADDED: 'Card added successfully',
-    DEMO_LOADED: 'Demo cards loaded',
+    LAYER_ADDED: 'Layer added successfully',
+    DEMO_LOADED: 'Demo layers loaded',
 } as const; 

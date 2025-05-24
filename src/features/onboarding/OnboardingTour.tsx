@@ -13,7 +13,7 @@ const tourSteps: TourStep[] = [
     {
         id: 'welcome',
         title: 'Welcome to Layered Profile Builder!',
-        content: 'This tool helps you build custom PrusaSlicer profiles by combining a base profile with modular "cards" that modify specific settings.',
+        content: 'This tool helps you build custom PrusaSlicer profiles by combining a base profile with modular "layers" that modify specific settings.',
         position: 'center'
     },
     {
@@ -38,44 +38,44 @@ const tourSteps: TourStep[] = [
         position: 'bottom'
     },
     {
-        id: 'demo-cards',
-        title: 'Load Demo Cards',
-        content: 'Click this button to load some example cards that demonstrate common modifications like temperature adjustments, speed settings, and quality tweaks.',
+        id: 'demo-layers',
+        title: 'Load Demo Layers',
+        content: 'Click this button to load some example layers that demonstrate common modifications like temperature adjustments, speed settings, and quality tweaks.',
         target: '.demo-btn',
         position: 'bottom'
     },
     {
-        id: 'card-library',
-        title: 'My Cards Library',
-        content: 'Access your saved custom cards! Browse, search, edit, and manage all your custom cards in one place. You can also add cards directly to your workspace from here.',
-        target: '.tour-my-cards',
+        id: 'layer-library',
+        title: 'My Layers Library',
+        content: 'Access your saved custom layers! Browse, search, edit, and manage all your custom layers in one place. You can also add layers directly to your workspace from here.',
+        target: '.tour-my-layers',
         position: 'bottom'
     },
     {
-        id: 'custom-card-creation',
-        title: 'Create Custom Cards',
-        content: 'Build your own setting modifications! Click "Create Custom Card" in the workspace to modify any profile setting like temperatures, speeds, or quality parameters.',
-        target: '.tour-create-card',
+        id: 'custom-layer-creation',
+        title: 'Create Custom Layers',
+        content: 'Build your own setting modifications! Click "Create Custom Layer" in the workspace to modify any profile setting like temperatures, speeds, or quality parameters.',
+        target: '.tour-create-layer',
         position: 'bottom'
     },
     {
-        id: 'card-ordering',
+        id: 'layer-ordering',
         title: 'Drag to Reorder',
-        content: 'Cards are applied left to right. If cards conflict, the rightmost card wins. Drag cards to reorder them and control which settings take priority.',
-        target: '.card-workspace',
+        content: 'Layers are applied left to right. If layers conflict, the rightmost layer wins. Drag layers to reorder them and control which settings take priority.',
+        target: '.layer-workspace',
         position: 'top'
     },
     {
         id: 'profile-summary',
         title: 'Profile Summary',
-        content: 'See exactly what changes your cards make! This panel shows your base profile settings and highlights all modifications in real-time.',
+        content: 'See exactly what changes your layers make! This panel shows your base profile settings and highlights all modifications in real-time.',
         target: '.tour-profile-summary',
         position: 'left'
     },
     {
         id: 'share',
         title: 'Share Your Project',
-        content: 'Share your project configuration with others! Click Share to generate a URL that contains your entire project setup - cards, profile, and all settings.',
+        content: 'Share your project configuration with others! Click Share to generate a URL that contains your entire project setup - layers, profile, and all settings.',
         target: '.tour-share',
         position: 'bottom'
     },
@@ -120,7 +120,7 @@ export function OnboardingTour({ isVisible, onComplete, onSkip }: OnboardingTour
         const tooltipHeight = 200 // approximate height
 
         // Center only if element takes up significant space in BOTH dimensions
-        // This ensures wide panels (like card workspace) and tall panels (like profile summary) 
+        // This ensures wide panels (like layer workspace) and tall panels (like profile summary) 
         // only get centered if they're truly large in both width and height
         const shouldCenter = (elementWidth / viewportWidth > 0.6) && (elementHeight / viewportHeight > 0.6)
 
@@ -185,7 +185,7 @@ export function OnboardingTour({ isVisible, onComplete, onSkip }: OnboardingTour
         const elementHeight = rect.height
 
         // Center only if element takes up significant space in BOTH dimensions
-        // This ensures wide panels (like card workspace) and tall panels (like profile summary) 
+        // This ensures wide panels (like layer workspace) and tall panels (like profile summary) 
         // only get centered if they're truly large in both width and height
         return (elementWidth / viewportWidth > 0.6) && (elementHeight / viewportHeight > 0.6)
     }, [])

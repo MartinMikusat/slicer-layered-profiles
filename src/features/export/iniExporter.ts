@@ -15,13 +15,13 @@ export function exportProfileAsINI(
         lines.push('# PrusaSlicer profile exported from Layered Profile Builder');
         lines.push(`# Generated: ${new Date().toISOString()}`);
         lines.push(`# Base profile: ${compiledProfile.baseProfile.name}`);
-        lines.push(`# Applied cards: ${compiledProfile.appliedCards.length}`);
+        lines.push(`# Applied layers: ${compiledProfile.appliedLayers.length}`);
 
-        if (compiledProfile.appliedCards.length > 0) {
+        if (compiledProfile.appliedLayers.length > 0) {
             lines.push('#');
             lines.push('# Applied changes:');
-            compiledProfile.appliedCards.forEach((card, index) => {
-                lines.push(`#   ${index + 1}. ${card.name} - ${card.description}`);
+            compiledProfile.appliedLayers.forEach((layer, index) => {
+                lines.push(`#   ${index + 1}. ${layer.name} - ${layer.description}`);
             });
         }
 
@@ -29,10 +29,10 @@ export function exportProfileAsINI(
             lines.push('#');
             lines.push('# Conflicts resolved (last-write-wins):');
             Object.values(compiledProfile.conflicts).forEach(conflict => {
-                const overridden = conflict.overriddenValues.map(v => v.cardName).join(', ');
-                const winner = conflict.cards[conflict.cards.length - 1];
-                const winnerCard = compiledProfile.appliedCards.find(c => c.id === winner);
-                lines.push(`#   ${conflict.path}: "${overridden}" overridden by "${winnerCard?.name}"`);
+                const overridden = conflict.overriddenValues.map(v => v.layerName).join(', ');
+                const winner = conflict.layers[conflict.layers.length - 1];
+                const winnerLayer = compiledProfile.appliedLayers.find(c => c.id === winner);
+                lines.push(`#   ${conflict.path}: "${overridden}" overridden by "${winnerLayer?.name}"`);
             });
         }
 
@@ -64,12 +64,12 @@ export function exportProfileAsINI(
         lines.push('[metadata]');
         lines.push(`generator = Layered Profile Builder v${APP_VERSION}`);
         lines.push(`base_profile = ${compiledProfile.baseProfile.id}`);
-        lines.push(`card_count = ${compiledProfile.appliedCards.length}`);
+        lines.push(`layer_count = ${compiledProfile.appliedLayers.length}`);
         lines.push(`compiled = ${compiledProfile.metadata.compiled}`);
 
-        if (compiledProfile.appliedCards.length > 0) {
-            const cardNames = compiledProfile.appliedCards.map(c => c.name).join(', ');
-            lines.push(`applied_cards = ${cardNames}`);
+        if (compiledProfile.appliedLayers.length > 0) {
+            const layerNames = compiledProfile.appliedLayers.map(c => c.name).join(', ');
+            lines.push(`applied_layers = ${layerNames}`);
         }
 
         lines.push('');
@@ -138,22 +138,22 @@ export function generateChangesSummary(compiledProfile: CompiledProfile): string
     lines.push('# Profile Changes Summary');
     lines.push('');
     lines.push(`**Base Profile:** ${compiledProfile.baseProfile.name}`);
-    lines.push(`**Cards Applied:** ${compiledProfile.appliedCards.length}`);
+    lines.push(`**Layers Applied:** ${compiledProfile.appliedLayers.length}`);
     lines.push(`**Conflicts:** ${Object.keys(compiledProfile.conflicts).length}`);
     lines.push('');
 
-    if (compiledProfile.appliedCards.length > 0) {
+    if (compiledProfile.appliedLayers.length > 0) {
         lines.push('## Applied Modifications');
         lines.push('');
 
-        compiledProfile.appliedCards.forEach((card, index) => {
-            lines.push(`### ${index + 1}. ${card.name}`);
-            lines.push(`**Category:** ${card.metadata.category || 'Other'}`);
-            lines.push(`**Description:** ${card.description}`);
+        compiledProfile.appliedLayers.forEach((layer, index) => {
+            lines.push(`### ${index + 1}. ${layer.name}`);
+            lines.push(`**Category:** ${layer.metadata.category || 'Other'}`);
+            lines.push(`**Description:** ${layer.description}`);
 
-            if (card.preview && card.preview.length > 0) {
+            if (layer.preview && layer.preview.length > 0) {
                 lines.push('**Changes:**');
-                card.preview.forEach(change => {
+                layer.preview.forEach(change => {
                     const oldVal = change.oldValue !== undefined ? `${change.oldValue}` : 'unset';
                     const newVal = `${change.newValue}`;
                     const unit = change.unit || '';
@@ -168,21 +168,21 @@ export function generateChangesSummary(compiledProfile: CompiledProfile): string
     if (Object.keys(compiledProfile.conflicts).length > 0) {
         lines.push('## Conflicts Resolved');
         lines.push('');
-        lines.push('The following settings were modified by multiple cards. The last card wins:');
+        lines.push('The following settings were modified by multiple layers. The last layer wins:');
         lines.push('');
 
         Object.values(compiledProfile.conflicts).forEach(conflict => {
-            const winnerCard = compiledProfile.appliedCards.find(c =>
-                c.id === conflict.cards[conflict.cards.length - 1]
+            const winnerLayer = compiledProfile.appliedLayers.find(c =>
+                c.id === conflict.layers[conflict.layers.length - 1]
             );
 
             lines.push(`**${conflict.path}**`);
-            lines.push(`- Winner: "${winnerCard?.name}" (value: \`${conflict.finalValue}\`)`);
+            lines.push(`- Winner: "${winnerLayer?.name}" (value: \`${conflict.finalValue}\`)`);
 
             if (conflict.overriddenValues.length > 0) {
                 lines.push('- Overridden:');
                 conflict.overriddenValues.forEach(override => {
-                    lines.push(`  - "${override.cardName}" (value: \`${override.value}\`)`);
+                    lines.push(`  - "${override.layerName}" (value: \`${override.value}\`)`);
                 });
             }
 

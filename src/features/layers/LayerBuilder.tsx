@@ -6,20 +6,20 @@ import { Input } from '../ui/components/input';
 import { Textarea } from '../ui/components/textarea';
 import { Label } from '../ui/components/label';
 import { SettingPicker } from './SettingPicker';
-import type { Card, BaseProfile, SettingChange } from '../../types';
+import type { Layer, BaseProfile, SettingChange } from '../../types';
 import type { Operation } from 'fast-json-patch';
 import type { INIValue } from '../../types';
 
-interface CardBuilderProps {
+interface LayerBuilderProps {
     selectedProfile: BaseProfile;
-    onCardCreated: (card: Card) => void;
-    onCardUpdated?: (card: Card) => void;
-    editingCard?: Card | null;
+    onLayerCreated: (layer: Layer) => void;
+    onLayerUpdated?: (layer: Layer) => void;
+    editingLayer?: Layer | null;
     onEditingClear?: () => void;
     trigger?: React.ReactNode;
 }
 
-interface CardFormData {
+interface LayerFormData {
     name: string;
     description: string;
     category: 'temperature' | 'speed' | 'quality' | 'support' | 'infill' | 'other';
@@ -54,17 +54,17 @@ const CATEGORIES = [
     { value: 'other', label: 'Other' },
 ] as const;
 
-export const CardBuilder: React.FC<CardBuilderProps> = ({
+export const LayerBuilder: React.FC<LayerBuilderProps> = ({
     selectedProfile,
-    onCardCreated,
-    onCardUpdated,
-    editingCard,
+    onLayerCreated,
+    onLayerUpdated,
+    editingLayer,
     onEditingClear,
     trigger,
 }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [showSettingPicker, setShowSettingPicker] = useState(false);
-    const [formData, setFormData] = useState<CardFormData>({
+    const [formData, setFormData] = useState<LayerFormData>({
         name: '',
         description: '',
         category: 'other',
@@ -77,14 +77,14 @@ export const CardBuilder: React.FC<CardBuilderProps> = ({
     const [tagInput, setTagInput] = useState('');
 
     // Determine if we're in edit mode
-    const isEditMode = Boolean(editingCard);
+    const isEditMode = Boolean(editingLayer);
 
-    // Automatically open dialog when editing a card
+    // Automatically open dialog when editing a layer
     useEffect(() => {
-        if (editingCard) {
+        if (editingLayer) {
             setIsOpen(true);
         }
-    }, [editingCard]);
+    }, [editingLayer]);
 
     const resetForm = useCallback(() => {
         setFormData({
@@ -99,11 +99,11 @@ export const CardBuilder: React.FC<CardBuilderProps> = ({
         setTagInput('');
     }, []);
 
-    // Load card data when editing
+    // Load layer data when editing
     useEffect(() => {
-        if (editingCard && isOpen) {
+        if (editingLayer && isOpen) {
             // Convert patch operations back to modifications
-            const modifications = editingCard.preview?.map(change => ({
+            const modifications = editingLayer.preview?.map(change => ({
                 path: change.path,
                 key: change.key,
                 currentValue: change.oldValue ?? '',
@@ -113,23 +113,23 @@ export const CardBuilder: React.FC<CardBuilderProps> = ({
             })) || [];
 
             setFormData({
-                name: editingCard.name,
-                description: editingCard.description,
-                category: (editingCard.metadata?.category as CardFormData['category']) || 'other',
-                author: editingCard.metadata?.author || '',
-                tags: editingCard.metadata?.tags || [],
+                name: editingLayer.name,
+                description: editingLayer.description,
+                category: (editingLayer.metadata?.category as LayerFormData['category']) || 'other',
+                author: editingLayer.metadata?.author || '',
+                tags: editingLayer.metadata?.tags || [],
                 modifications,
             });
-        } else if (!editingCard) {
+        } else if (!editingLayer) {
             resetForm();
         }
-    }, [editingCard, isOpen, resetForm]);
+    }, [editingLayer, isOpen, resetForm]);
 
     const validateForm = useCallback((): boolean => {
         const newErrors: Record<string, string> = {};
 
         if (!formData.name.trim()) {
-            newErrors.name = 'Card name is required';
+            newErrors.name = 'Layer name is required';
         }
 
         if (!formData.description.trim()) {
@@ -151,7 +151,7 @@ export const CardBuilder: React.FC<CardBuilderProps> = ({
         return Object.keys(newErrors).length === 0;
     }, [formData]);
 
-    const generateCardId = useCallback((): string => {
+    const generateLayerId = useCallback((): string => {
         return `custom-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
     }, []);
 
@@ -191,15 +191,15 @@ export const CardBuilder: React.FC<CardBuilderProps> = ({
             return;
         }
 
-        if (isEditMode && editingCard && onCardUpdated) {
-            // Update existing card
-            const updatedCard: Card = {
-                ...editingCard,
+        if (isEditMode && editingLayer && onLayerUpdated) {
+            // Update existing layer
+            const updatedLayer: Layer = {
+                ...editingLayer,
                 name: formData.name.trim(),
                 description: formData.description.trim(),
                 patch: createPatchOperations(),
                 metadata: {
-                    ...editingCard.metadata,
+                    ...editingLayer.metadata,
                     category: formData.category,
                     author: formData.author.trim() || 'Custom',
                     tags: formData.tags,
@@ -208,11 +208,11 @@ export const CardBuilder: React.FC<CardBuilderProps> = ({
                 preview: createPreview(),
             };
 
-            onCardUpdated(updatedCard);
+            onLayerUpdated(updatedLayer);
         } else {
-            // Create new card
-            const newCard: Card = {
-                id: generateCardId(),
+            // Create new layer
+            const newLayer: Layer = {
+                id: generateLayerId(),
                 name: formData.name.trim(),
                 description: formData.description.trim(),
                 enabled: true,
@@ -228,12 +228,12 @@ export const CardBuilder: React.FC<CardBuilderProps> = ({
                 preview: createPreview(),
             };
 
-            onCardCreated(newCard);
+            onLayerCreated(newLayer);
         }
 
         setIsOpen(false);
         resetForm();
-    }, [formData, validateForm, isEditMode, editingCard, onCardUpdated, createPatchOperations, createPreview, onCardCreated, resetForm, generateCardId]);
+    }, [formData, validateForm, isEditMode, editingLayer, onLayerUpdated, createPatchOperations, createPreview, onLayerCreated, resetForm, generateLayerId]);
 
     const handleTagAdd = useCallback(() => {
         const tag = tagInput.trim().toLowerCase();
@@ -308,9 +308,9 @@ export const CardBuilder: React.FC<CardBuilderProps> = ({
     }, []);
 
     const defaultTrigger = (
-        <Button className="flex items-center gap-2 tour-create-card">
+        <Button className="flex items-center gap-2 tour-create-layer">
             <Plus size={16} />
-            Create Custom Card
+            Create Custom Layer
         </Button>
     );
 
@@ -337,7 +337,7 @@ export const CardBuilder: React.FC<CardBuilderProps> = ({
                     <DialogHeader>
                         <DialogTitle className="flex items-center gap-2">
                             {isEditMode ? <Edit size={20} /> : <Wrench size={20} />}
-                            {isEditMode ? 'Edit Custom Card' : 'Create Custom Card'}
+                            {isEditMode ? 'Edit Custom Layer' : 'Create Custom Layer'}
                         </DialogTitle>
                     </DialogHeader>
 
@@ -345,9 +345,9 @@ export const CardBuilder: React.FC<CardBuilderProps> = ({
                         {/* Basic Information */}
                         <div className="space-y-4">
                             <div>
-                                <Label htmlFor="card-name">Card Name *</Label>
+                                <Label htmlFor="layer-name">Layer Name *</Label>
                                 <Input
-                                    id="card-name"
+                                    id="layer-name"
                                     value={formData.name}
                                     onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
                                     placeholder="e.g., Faster Print Speed"
@@ -357,12 +357,12 @@ export const CardBuilder: React.FC<CardBuilderProps> = ({
                             </div>
 
                             <div>
-                                <Label htmlFor="card-description">Description *</Label>
+                                <Label htmlFor="layer-description">Description *</Label>
                                 <Textarea
-                                    id="card-description"
+                                    id="layer-description"
                                     value={formData.description}
                                     onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
-                                    placeholder="Describe what this card does and why someone would use it..."
+                                    placeholder="Describe what this layer does and why someone would use it..."
                                     rows={3}
                                     className={errors.description ? 'border-destructive' : ''}
                                 />
@@ -371,13 +371,13 @@ export const CardBuilder: React.FC<CardBuilderProps> = ({
 
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
-                                    <Label htmlFor="card-category">Category</Label>
+                                    <Label htmlFor="layer-category">Category</Label>
                                     <select
-                                        id="card-category"
+                                        id="layer-category"
                                         value={formData.category}
                                         onChange={(e) => setFormData(prev => ({
                                             ...prev,
-                                            category: e.target.value as CardFormData['category']
+                                            category: e.target.value as LayerFormData['category']
                                         }))}
                                         className="w-full px-3 py-2 border border-input bg-background rounded-md text-sm"
                                     >
@@ -390,9 +390,9 @@ export const CardBuilder: React.FC<CardBuilderProps> = ({
                                 </div>
 
                                 <div>
-                                    <Label htmlFor="card-author">Author</Label>
+                                    <Label htmlFor="layer-author">Author</Label>
                                     <Input
-                                        id="card-author"
+                                        id="layer-author"
                                         value={formData.author}
                                         onChange={(e) => setFormData(prev => ({ ...prev, author: e.target.value }))}
                                         placeholder="Your name (optional)"
@@ -510,7 +510,7 @@ export const CardBuilder: React.FC<CardBuilderProps> = ({
                                 Cancel
                             </Button>
                             <Button onClick={handleSubmit}>
-                                {isEditMode ? 'Update Card' : 'Create Card'}
+                                {isEditMode ? 'Update Layer' : 'Create Layer'}
                             </Button>
                         </div>
                     </div>
