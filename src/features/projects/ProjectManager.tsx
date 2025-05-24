@@ -1,9 +1,9 @@
 import React, { useRef } from 'react';
 import { Save, FolderOpen, Download, Upload, X, AlertCircle } from 'lucide-react';
-import { Button } from './ui/button';
-import { Input } from './ui/input';
-import { Textarea } from './ui/textarea';
-import { Label } from './ui/label';
+import { Button } from '../ui/components/button';
+import { Input } from '../ui/components/input';
+import { Textarea } from '../ui/components/textarea';
+import { Label } from '../ui/components/label';
 
 interface ProjectManagerProps {
     projectName: string;

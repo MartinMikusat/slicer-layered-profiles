@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { compileProfile, detectConflicts, generateSettingPreview } from '../profileCompiler';
-import type { BaseProfile, Card } from '../../types';
+import { compileProfile, detectConflicts, generateSettingPreview } from '../../profiles/profileCompiler';
+import type { BaseProfile, Card } from '../../../types';
 
 // Mock base profile for testing
 const mockBaseProfile: BaseProfile = {

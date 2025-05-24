@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
-import { compileProfile, updateCardPreviews } from '../utils/profileCompiler';
-import type { BaseProfile, Card, CompiledProfile } from '../types';
+import { compileProfile, updateCardPreviews } from './profileCompiler';
+import type { BaseProfile, Card, CompiledProfile } from '../../types';
 
 /**
  * Hook for managing profile compilation

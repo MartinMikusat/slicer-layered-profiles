@@ -1,5 +1,5 @@
-import type { CompiledProfile, ExportSettings } from '../types';
-import { APP_VERSION } from '../constants';
+import type { CompiledProfile, ExportSettings } from '../../types';
+import { APP_VERSION } from '../../constants';
 
 /**
  * Exports a compiled profile as a PrusaSlicer INI file

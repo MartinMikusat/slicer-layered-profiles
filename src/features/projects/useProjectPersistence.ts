@@ -8,9 +8,9 @@ import {
     clearStoredProject,
     downloadProjectFile,
     importProjectFromJSON,
-} from '../utils/projectPersistence';
-import { DEFAULT_EXPORT_SETTINGS } from '../constants';
-import type { Card, ExportSettings, BaseProfile } from '../types';
+} from './projectPersistence';
+import { DEFAULT_EXPORT_SETTINGS } from '../../constants';
+import type { Card, ExportSettings, BaseProfile } from '../../types';
 
 interface UseProjectPersistenceOptions {
     autoSaveEnabled?: boolean;

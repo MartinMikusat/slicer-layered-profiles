@@ -1,4 +1,4 @@
-import type { BaseProfile } from '../types';
+import type { BaseProfile } from '../../types';
 
 // Sample base profiles representing common PrusaSlicer configurations
 export const baseProfiles: BaseProfile[] = [

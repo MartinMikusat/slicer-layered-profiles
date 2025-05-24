@@ -27,11 +27,30 @@ Tech stack: React + TypeScript + Vite, localStorage, fast-json-patch for applyin
 - Prefer composition over inheritance
 
 ### File Organization
-- Components in `src/components/` with co-located styles
-- Custom hooks in `src/hooks/`
-- Types in `src/types/` or co-located with components
-- Utils in `src/utils/`
-- Constants in `src/constants/`
+**Feature-Based Structure**: Organize code by feature domains, not by file type.
+
+- **Features in `src/features/`** - Each feature is a self-contained module:
+  - `src/features/profiles/` - Base profile management, compilation, hooks
+  - `src/features/layers/` - Layer cards, drag/drop, card components  
+  - `src/features/export/` - INI export, change summaries, file downloads
+  - `src/features/projects/` - Project persistence, sharing, URL encoding
+  - `src/features/ui/` - Shared UI components and hooks
+  - `src/features/onboarding/` - Tours, demos, help content
+
+- **Each feature folder contains**:
+  - `index.ts` - Clean exports for the feature's public API
+  - Components, hooks, utilities specific to that feature
+  - Types can be co-located or use shared `src/types/`
+
+- **Shared resources**:
+  - `src/types/` - Global type definitions
+  - `src/constants/` - App-wide constants
+  - `src/lib/` - Third-party library configurations
+
+- **Import patterns**:
+  - Import from feature index: `import { Card, demoCards } from './features/layers'`
+  - Cross-feature imports: `import { Button } from '../ui/components/button'`
+  - Shared types: `import type { Card } from '../../types'`
 
 ### State Management
 - Use React's built-in state (useState, useReducer) for local state

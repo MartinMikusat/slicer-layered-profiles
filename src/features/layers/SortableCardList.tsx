@@ -14,7 +14,7 @@ import {
     horizontalListSortingStrategy,
 } from '@dnd-kit/sortable'
 import { Card } from './Card'
-import type { Card as CardType, SettingChange } from '../types'
+import type { Card as CardType, SettingChange } from '../../types'
 
 interface SortableCardListProps {
     cards: CardType[]

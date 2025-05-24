@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react'
 import { Search, Filter, X, Tag } from 'lucide-react'
-import type { Card } from '../types'
+import type { Card } from '../../types'
 
 interface CardSearchProps {
     cards: Card[]

@@ -1,5 +1,5 @@
-import { PROJECT_VERSION, STORAGE_KEYS, ERROR_MESSAGES } from '../constants';
-import type { ProjectData, Card, ExportSettings } from '../types';
+import { PROJECT_VERSION, STORAGE_KEYS, ERROR_MESSAGES } from '../../constants';
+import type { ProjectData, Card, ExportSettings } from '../../types';
 
 /**
  * Create project data structure for saving

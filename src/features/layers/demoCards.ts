@@ -1,4 +1,4 @@
-import type { DemoCard } from '../types';
+import type { DemoCard } from '../../types';
 
 // Demo cards that showcase the functionality
 export const demoCards: DemoCard[] = [

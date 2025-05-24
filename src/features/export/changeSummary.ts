@@ -1,4 +1,4 @@
-import type { BaseProfile, Card, ConflictMap } from '../types'
+import type { BaseProfile, Card, ConflictMap } from '../../types'
 
 interface ChangeSummaryOptions {
     includeConflicts?: boolean

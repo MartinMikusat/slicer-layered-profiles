@@ -2,8 +2,8 @@ import React from 'react'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { AlertTriangle, GripVertical, Eye, EyeOff } from 'lucide-react'
-import { Button } from './ui/button'
-import type { Card as CardType, SettingChange } from '../types'
+import { Button } from '../ui/components/button'
+import type { Card as CardType, SettingChange } from '../../types'
 
 interface CardProps {
     card: CardType

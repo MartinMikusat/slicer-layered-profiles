@@ -5,7 +5,7 @@ import type {
     CompiledProfile,
     ConflictMap,
     SettingChange
-} from '../types';
+} from '../../types';
 
 /**
  * Compiles a final profile by applying cards to a base profile

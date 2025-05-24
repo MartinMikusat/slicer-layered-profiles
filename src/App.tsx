@@ -1,23 +1,27 @@
 import { useState, useEffect, useCallback } from 'react'
 import { Download, FileText, Settings, Plus, Undo, Redo, Share, BookOpen } from 'lucide-react'
 import { arrayMove } from '@dnd-kit/sortable'
-import { baseProfiles } from './data/baseProfiles'
-import { demoCards } from './data/demoCards'
-import { useProfileCompiler } from './hooks/useProfileCompiler'
-import { useProjectPersistence } from './hooks/useProjectPersistence'
-import { useUndoRedo } from './hooks/useUndoRedo'
-import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts'
-import { exportProfileAsINI, downloadINIFile } from './utils/iniExporter'
-import { encodeProjectToURL, decodeProjectFromURL, clearProjectFromURL, copyToClipboard } from './utils/urlSharing'
-import { exportChangeSummaryAsFile } from './utils/changeSummary'
+import { baseProfiles, useProfileCompiler } from './features/profiles'
+import { demoCards, SortableCardList } from './features/layers'
+import { useProjectPersistence, ProjectManager } from './features/projects'
+import { exportProfileAsINI, downloadINIFile, exportChangeSummaryAsFile } from './features/export'
+import { encodeProjectToURL, decodeProjectFromURL, clearProjectFromURL, copyToClipboard } from './features/projects'
+import { OnboardingTour } from './features/onboarding'
+import {
+  LoadingButton,
+  ErrorMessage,
+  Button,
+  Input,
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+  useUndoRedo,
+  useKeyboardShortcuts
+} from './features/ui'
 import { DEFAULT_EXPORT_SETTINGS } from './constants'
-import { SortableCardList } from './components/SortableCardList'
-import { ProjectManager } from './components/ProjectManager'
-import { OnboardingTour } from './components/OnboardingTour'
-import { LoadingButton, ErrorMessage } from './components/LoadingStates'
-import { Button } from './components/ui/button'
-import { Input } from './components/ui/input'
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from './components/ui/dialog'
 import type { BaseProfile, Card, ProjectData } from './types'
 import './App.css'
 
