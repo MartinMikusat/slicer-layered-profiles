@@ -117,4 +117,22 @@ interface AppState {
 4. **Commit working states** frequently with descriptive messages
 5. **Test core flow** after each major feature addition
 
+## Progress Documentation
+**IMPORTANT**: After each git commit (when user asks for commit), create a comprehensive progress summary and save it to the `progress/` folder:
+
+### Progress Summary Format
+- **Filename**: `YYYY-MM-DD-HHMMSS-brief-description.md`
+- **Content**: Include milestone achieved, commit hash, files changed, key features implemented, what users can now do, and next steps
+- **Structure**: Use markdown with sections for changes summary, new files, modified files, key features, user capabilities, and next steps
+- **Implementation plan progress**: Reference current phase completion status
+- **IMPORTANT**: Always use `date +"%Y-%m-%d %H:%M:%S"` terminal command to get accurate timestamps - do not rely on training data which may be outdated
+
+### When to Create Progress Summaries
+- After completing major phases or milestones
+- When user requests git commit of significant work
+- At natural breaking points in development
+- When major functionality becomes available to users
+
+This documentation helps track project evolution and maintain development momentum.
+
 Remember: Keep it simple, ship fast, iterate based on feedback. Follow the implementation plan to maintain steady progress toward the weekend MVP goal. 
