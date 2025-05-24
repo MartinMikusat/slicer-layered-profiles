@@ -49,14 +49,13 @@ export const Card: React.FC<CardProps> = ({
             style={style}
             className={`card ${!card.enabled ? 'disabled' : ''} ${hasConflicts ? 'has-conflicts' : ''} ${isDragging ? 'dragging' : ''}`}
         >
-            {/* Drag Handle */}
-            <div className="card-drag-handle" {...attributes} {...listeners}>
-                <GripVertical size={16} />
-            </div>
-
             <div className="card-content">
                 <div className="card-header">
                     <div className="card-title">
+                        {/* Drag Handle */}
+                        <div className="card-drag-handle" {...attributes} {...listeners}>
+                            <GripVertical size={16} />
+                        </div>
                         <h3>{card.name}</h3>
                         {hasConflicts && (
                             <div className="conflict-icon" title="This card has conflicts with other cards">
@@ -67,10 +66,10 @@ export const Card: React.FC<CardProps> = ({
                     <div className="card-actions">
                         <Button
                             onClick={() => onToggle(card.id)}
-                            variant={card.enabled ? "default" : "outline"}
+                            variant={card.enabled ? "outline" : "outline"}
                             size="sm"
                             title={card.enabled ? 'Disable card' : 'Enable card'}
-                            className="gap-2"
+                            className={`gap-2 ${card.enabled ? 'bg-white border-gray-300 text-black hover:bg-gray-50' : ''}`}
                         >
                             {card.enabled ? <Eye size={16} /> : <EyeOff size={16} />}
                             {card.enabled ? 'Enabled' : 'Disabled'}

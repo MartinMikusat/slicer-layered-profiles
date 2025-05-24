@@ -34,7 +34,7 @@
 }
 
 .status-info {
-  @apply space-y-1;
+  @apply flex flex-col;
 }
 
 .save-status {
@@ -162,15 +162,17 @@
 }
 
 .card {
-  @apply bg-card border rounded-lg shadow-sm transition-all duration-200 flex items-start gap-3 p-4 min-w-72 flex-shrink-0;
+  @apply bg-card border rounded-lg shadow-sm flex flex-col gap-3 p-4 w-64 max-w-64 flex-shrink-0;
 }
 
 .card:hover {
   @apply shadow-md;
+  transition: box-shadow 0.2s ease;
 }
 
 .card.disabled {
   @apply opacity-60;
+  transition: opacity 0.2s ease;
 }
 
 .card.has-conflicts {
@@ -182,7 +184,7 @@
 }
 
 .card-drag-handle {
-  @apply flex items-center justify-center w-6 h-6 text-muted-foreground hover:text-foreground cursor-grab active:cursor-grabbing rounded;
+  @apply flex items-center justify-center w-6 h-6 text-muted-foreground hover:text-foreground cursor-grab active:cursor-grabbing rounded flex-shrink-0;
 }
 
 .card-content {
@@ -190,15 +192,15 @@
 }
 
 .card-header {
-  @apply flex justify-between items-start gap-4;
+  @apply flex flex-col gap-3;
 }
 
 .card-title {
-  @apply flex items-center gap-2;
+  @apply flex items-center gap-3 w-full;
 }
 
 .card-title h3 {
-  @apply font-semibold text-base;
+  @apply font-semibold text-base flex-1;
 }
 
 .conflict-icon {
@@ -206,11 +208,11 @@
 }
 
 .card-actions {
-  @apply flex gap-2;
+  @apply flex flex-wrap gap-2;
 }
 
 .card-description {
-  @apply text-sm text-muted-foreground;
+  @apply text-sm text-muted-foreground line-clamp-3;
 }
 
 .card-preview {
@@ -226,7 +228,7 @@
 }
 
 .setting-change {
-  @apply flex justify-between items-center text-xs;
+  @apply flex flex-col gap-1 text-xs;
 }
 
 .setting-change.conflicted {
@@ -234,11 +236,11 @@
 }
 
 .setting-name {
-  @apply font-medium;
+  @apply font-medium text-muted-foreground;
 }
 
 .setting-value {
-  @apply flex items-center gap-1;
+  @apply flex items-center gap-1 font-medium;
 }
 
 .old-value {
@@ -437,11 +439,15 @@
   }
   
   .card {
-    @apply flex-col gap-2;
+    @apply w-56 max-w-56 gap-2 p-3;
   }
   
   .card-drag-handle {
-    @apply self-start;
+    @apply w-5 h-5;
+  }
+  
+  .card-title h3 {
+    @apply text-sm;
   }
   
   .tour-tooltip {
