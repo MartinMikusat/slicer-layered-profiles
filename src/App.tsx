@@ -325,6 +325,7 @@ function App() {
                 onClick={handleUndo}
                 disabled={!canUndo}
                 title={`Undo (${getShortcutText().undo})`}
+                className="gap-2"
               >
                 <Undo size={16} />
               </Button>
@@ -334,6 +335,7 @@ function App() {
                 onClick={handleRedo}
                 disabled={!canRedo}
                 title={`Redo (${getShortcutText().redo})`}
+                className="gap-2"
               >
                 <Redo size={16} />
               </Button>
@@ -344,7 +346,7 @@ function App() {
               size="default"
               onClick={showDemo ? clearCards : loadDemo}
               title={`Load Demo (${getShortcutText().demo})`}
-              className="demo-btn"
+              className="demo-btn gap-2"
             >
               <Plus size={16} />
               {showDemo ? 'Clear Demo' : 'Load Demo'}
@@ -356,6 +358,7 @@ function App() {
               size="default"
               onClick={handleShare}
               disabled={cards.length === 0}
+              className="gap-2"
             >
               <Share size={16} />
               Share
@@ -366,6 +369,7 @@ function App() {
               variant="outline"
               size="default"
               onClick={() => setShowTour(true)}
+              className="gap-2"
             >
               <BookOpen size={16} />
               Tour
@@ -376,7 +380,7 @@ function App() {
               mode="browse"
               onCardEdit={handleCardEdit}
               trigger={
-                <Button variant="outline" size="default">
+                <Button variant="outline" size="default" className="gap-2">
                   <BookOpen size={16} />
                   My Cards
                 </Button>
@@ -390,6 +394,7 @@ function App() {
                 size="default"
                 onClick={handleExportSummary}
                 disabled={cards.length === 0}
+                className="gap-2"
               >
                 <FileText size={16} />
                 Summary
@@ -400,7 +405,7 @@ function App() {
                 disabled={cards.length === 0}
                 isLoading={isCompiling}
                 loadingText="Compiling..."
-                className="bg-primary text-primary-foreground hover:bg-primary/90 disabled:bg-muted disabled:text-muted-foreground whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none h-10 px-4 py-2"
+                className="bg-primary text-primary-foreground hover:bg-primary/90 disabled:bg-muted disabled:text-muted-foreground whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none h-10 px-4 py-2 gap-2"
               >
                 <Download size={16} />
                 Export INI
@@ -455,8 +460,8 @@ function App() {
                   selectedProfile={selectedProfile}
                   onCardCreated={handleCardCreated}
                 />
-                <Button onClick={loadDemo} variant="outline">
-                  <Plus size={16} className="mr-1" />
+                <Button onClick={loadDemo} variant="outline" className="gap-2">
+                  <Plus size={16} />
                   {showDemo ? 'Clear Demo' : 'Load Demo'}
                 </Button>
               </div>
@@ -480,7 +485,7 @@ function App() {
                     selectedProfile={selectedProfile}
                     onCardCreated={handleCardCreated}
                   />
-                  <Button onClick={loadDemo} variant="outline">
+                  <Button onClick={loadDemo} variant="outline" className="gap-2">
                     Load Demo Cards
                   </Button>
                 </div>
@@ -549,7 +554,7 @@ function App() {
           <p className="text-sm text-muted-foreground">
             Layered Profile Builder • Weekend MVP • Built with React + TypeScript
           </p>
-          <Button variant="ghost" size="sm">
+          <Button variant="ghost" size="sm" className="gap-2">
             <Settings size={16} />
             Settings
           </Button>

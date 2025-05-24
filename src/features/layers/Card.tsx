@@ -70,6 +70,7 @@ export const Card: React.FC<CardProps> = ({
                             variant={card.enabled ? "default" : "outline"}
                             size="sm"
                             title={card.enabled ? 'Disable card' : 'Enable card'}
+                            className="gap-2"
                         >
                             {card.enabled ? <Eye size={16} /> : <EyeOff size={16} />}
                             {card.enabled ? 'Enabled' : 'Disabled'}

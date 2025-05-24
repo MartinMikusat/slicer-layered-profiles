@@ -444,8 +444,9 @@ export const CardBuilder: React.FC<CardBuilderProps> = ({
                                     onClick={() => setShowSettingPicker(true)}
                                     variant="outline"
                                     size="sm"
+                                    className="gap-2"
                                 >
-                                    <Plus size={16} className="mr-1" />
+                                    <Plus size={16} />
                                     Add Setting
                                 </Button>
                             </div>

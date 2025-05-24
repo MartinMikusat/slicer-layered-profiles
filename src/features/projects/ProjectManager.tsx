@@ -136,6 +136,7 @@ export const ProjectManager: React.FC<ProjectManagerProps> = ({
                     variant="default"
                     size="sm"
                     title="Save project to browser storage"
+                    className="gap-2"
                 >
                     <Save size={16} />
                     {isLoading ? 'Saving...' : 'Save'}
@@ -147,6 +148,7 @@ export const ProjectManager: React.FC<ProjectManagerProps> = ({
                     variant="outline"
                     size="sm"
                     title="Load saved project from browser storage"
+                    className="gap-2"
                 >
                     <FolderOpen size={16} />
                     Load
@@ -158,6 +160,7 @@ export const ProjectManager: React.FC<ProjectManagerProps> = ({
                     variant="outline"
                     size="sm"
                     title="Export project as JSON file"
+                    className="gap-2"
                 >
                     <Download size={16} />
                     Export
@@ -169,6 +172,7 @@ export const ProjectManager: React.FC<ProjectManagerProps> = ({
                     variant="outline"
                     size="sm"
                     title="Import project from JSON file"
+                    className="gap-2"
                 >
                     <Upload size={16} />
                     Import

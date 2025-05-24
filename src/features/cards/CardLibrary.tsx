@@ -316,8 +316,8 @@ const CardLibraryItem: React.FC<CardLibraryItemProps> = ({
 
             <div className="flex gap-1">
                 {mode === 'select' ? (
-                    <Button size="sm" className="w-full" onClick={onSelect}>
-                        <Plus className="h-4 w-4 mr-1" />
+                    <Button size="sm" className="w-full gap-2" onClick={onSelect}>
+                        <Plus className="h-4 w-4" />
                         Add to Profile
                     </Button>
                 ) : (
