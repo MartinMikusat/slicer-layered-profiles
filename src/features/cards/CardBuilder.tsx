@@ -1,5 +1,5 @@
-import React, { useState, useCallback } from 'react';
-import { Plus, X, FileText, Wrench } from 'lucide-react';
+import React, { useState, useCallback, useEffect } from 'react';
+import { Plus, X, FileText, Wrench, Edit } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '../ui/components/dialog';
 import { Button } from '../ui/components/button';
 import { Input } from '../ui/components/input';
@@ -12,6 +12,10 @@ import type { Operation } from 'fast-json-patch';
 interface CardBuilderProps {
     selectedProfile: BaseProfile;
     onCardCreated: (card: Card) => void;
+    onCardUpdated?: (card: Card) => void;
+    editingCard?: Card | null;
+    onEditingClear?: () => void;
+    trigger?: React.ReactNode;
 }
 
 interface CardFormData {
@@ -52,6 +56,10 @@ const CATEGORIES = [
 export const CardBuilder: React.FC<CardBuilderProps> = ({
     selectedProfile,
     onCardCreated,
+    onCardUpdated,
+    editingCard,
+    onEditingClear,
+    trigger,
 }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [showSettingPicker, setShowSettingPicker] = useState(false);
@@ -66,6 +74,42 @@ export const CardBuilder: React.FC<CardBuilderProps> = ({
 
     const [errors, setErrors] = useState<Record<string, string>>({});
     const [tagInput, setTagInput] = useState('');
+
+    // Determine if we're in edit mode
+    const isEditMode = Boolean(editingCard);
+
+    // Automatically open dialog when editing a card
+    useEffect(() => {
+        if (editingCard) {
+            setIsOpen(true);
+        }
+    }, [editingCard]);
+
+    // Load card data when editing
+    useEffect(() => {
+        if (editingCard && isOpen) {
+            // Convert patch operations back to modifications
+            const modifications = editingCard.preview?.map(change => ({
+                path: change.path,
+                key: change.key,
+                currentValue: change.oldValue,
+                newValue: String(change.newValue),
+                unit: change.unit,
+                section: change.section,
+            })) || [];
+
+            setFormData({
+                name: editingCard.name,
+                description: editingCard.description,
+                category: (editingCard.metadata?.category as CardFormData['category']) || 'other',
+                author: editingCard.metadata?.author || '',
+                tags: editingCard.metadata?.tags || [],
+                modifications,
+            });
+        } else if (!editingCard) {
+            resetForm();
+        }
+    }, [editingCard, isOpen]);
 
     const resetForm = useCallback(() => {
         setFormData({
@@ -140,32 +184,54 @@ export const CardBuilder: React.FC<CardBuilderProps> = ({
         return value;
     };
 
-    const handleCreateCard = useCallback(() => {
+    const handleSubmit = useCallback(() => {
         if (!validateForm()) {
             return;
         }
 
-        const newCard: Card = {
-            id: generateCardId(),
-            name: formData.name.trim(),
-            description: formData.description.trim(),
-            enabled: true,
-            patch: createPatchOperations(),
-            metadata: {
-                category: formData.category,
-                author: formData.author.trim() || 'Custom',
-                version: '1.0',
-                tags: formData.tags,
-                created: new Date().toISOString(),
-                modified: new Date().toISOString(),
-            },
-            preview: createPreview(),
-        };
+        if (isEditMode && editingCard && onCardUpdated) {
+            // Update existing card
+            const updatedCard: Card = {
+                ...editingCard,
+                name: formData.name.trim(),
+                description: formData.description.trim(),
+                patch: createPatchOperations(),
+                metadata: {
+                    ...editingCard.metadata,
+                    category: formData.category,
+                    author: formData.author.trim() || 'Custom',
+                    tags: formData.tags,
+                    modified: new Date().toISOString(),
+                },
+                preview: createPreview(),
+            };
 
-        onCardCreated(newCard);
+            onCardUpdated(updatedCard);
+        } else {
+            // Create new card
+            const newCard: Card = {
+                id: generateCardId(),
+                name: formData.name.trim(),
+                description: formData.description.trim(),
+                enabled: true,
+                patch: createPatchOperations(),
+                metadata: {
+                    category: formData.category,
+                    author: formData.author.trim() || 'Custom',
+                    version: '1.0',
+                    tags: formData.tags,
+                    created: new Date().toISOString(),
+                    modified: new Date().toISOString(),
+                },
+                preview: createPreview(),
+            };
+
+            onCardCreated(newCard);
+        }
+
         setIsOpen(false);
         resetForm();
-    }, [formData, validateForm, generateCardId, createPatchOperations, createPreview, onCardCreated, resetForm]);
+    }, [formData, validateForm, isEditMode, editingCard, onCardUpdated, createPatchOperations, createPreview, onCardCreated, resetForm, generateCardId]);
 
     const handleTagAdd = useCallback(() => {
         const tag = tagInput.trim().toLowerCase();
@@ -239,20 +305,37 @@ export const CardBuilder: React.FC<CardBuilderProps> = ({
         }));
     }, []);
 
+    const defaultTrigger = (
+        <Button className="flex items-center gap-2">
+            <Plus size={16} />
+            Create Custom Card
+        </Button>
+    );
+
+    const handleDialogOpenChange = (open: boolean) => {
+        setIsOpen(open);
+        if (!open && isEditMode) {
+            // When closing in edit mode, clear the editing state
+            resetForm();
+            if (onEditingClear) {
+                onEditingClear();
+            }
+        }
+    };
+
     return (
         <>
-            <Dialog open={isOpen} onOpenChange={setIsOpen}>
-                <DialogTrigger asChild>
-                    <Button className="flex items-center gap-2">
-                        <Plus size={16} />
-                        Create Custom Card
-                    </Button>
-                </DialogTrigger>
+            <Dialog open={isOpen} onOpenChange={handleDialogOpenChange}>
+                {!isEditMode && (
+                    <DialogTrigger asChild>
+                        {trigger || defaultTrigger}
+                    </DialogTrigger>
+                )}
                 <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
                     <DialogHeader>
                         <DialogTitle className="flex items-center gap-2">
-                            <Wrench size={20} />
-                            Create Custom Card
+                            {isEditMode ? <Edit size={20} /> : <Wrench size={20} />}
+                            {isEditMode ? 'Edit Custom Card' : 'Create Custom Card'}
                         </DialogTitle>
                     </DialogHeader>
 
@@ -423,8 +506,8 @@ export const CardBuilder: React.FC<CardBuilderProps> = ({
                             >
                                 Cancel
                             </Button>
-                            <Button onClick={handleCreateCard}>
-                                Create Card
+                            <Button onClick={handleSubmit}>
+                                {isEditMode ? 'Update Card' : 'Create Card'}
                             </Button>
                         </div>
                     </div>

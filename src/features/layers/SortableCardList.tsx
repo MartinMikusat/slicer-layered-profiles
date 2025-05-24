@@ -23,6 +23,7 @@ interface SortableCardListProps {
     onReorder: (oldIndex: number, newIndex: number) => void
     onToggle: (cardId: string) => void
     onRemove: (cardId: string) => void
+    onEdit?: (card: CardType) => void
     hasConflict: (path: string) => boolean
 }
 
@@ -32,6 +33,7 @@ export const SortableCardList: React.FC<SortableCardListProps> = ({
     onReorder,
     onToggle,
     onRemove,
+    onEdit,
     hasConflict,
 }) => {
     const sensors = useSensors(
@@ -84,6 +86,7 @@ export const SortableCardList: React.FC<SortableCardListProps> = ({
                                 hasConflicts={cardHasConflicts}
                                 onToggle={onToggle}
                                 onRemove={onRemove}
+                                onEdit={onEdit}
                                 hasConflict={hasConflict}
                             />
                         )

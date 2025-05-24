@@ -1,8 +1,9 @@
 import React from 'react'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { AlertTriangle, GripVertical, Eye, EyeOff } from 'lucide-react'
+import { AlertTriangle, GripVertical, Eye, EyeOff, Edit } from 'lucide-react'
 import { Button } from '../ui/components/button'
+import { isCustomCard } from '../cards/customCardService'
 import type { Card as CardType, SettingChange } from '../../types'
 
 interface CardProps {
@@ -12,6 +13,7 @@ interface CardProps {
     hasConflicts: boolean
     onToggle: (cardId: string) => void
     onRemove: (cardId: string) => void
+    onEdit?: (card: CardType) => void
     hasConflict: (path: string) => boolean
 }
 
@@ -22,6 +24,7 @@ export const Card: React.FC<CardProps> = ({
     hasConflicts,
     onToggle,
     onRemove,
+    onEdit,
     hasConflict,
 }) => {
     const {
@@ -37,6 +40,8 @@ export const Card: React.FC<CardProps> = ({
         transform: CSS.Transform.toString(transform),
         transition,
     }
+
+    const canEdit = isCustomCard(card) && onEdit;
 
     return (
         <div
@@ -69,6 +74,16 @@ export const Card: React.FC<CardProps> = ({
                             {card.enabled ? <Eye size={16} /> : <EyeOff size={16} />}
                             {card.enabled ? 'Enabled' : 'Disabled'}
                         </Button>
+                        {canEdit && (
+                            <Button
+                                onClick={() => onEdit(card)}
+                                variant="outline"
+                                size="sm"
+                                title="Edit card"
+                            >
+                                <Edit size={16} />
+                            </Button>
+                        )}
                         <Button
                             onClick={() => onRemove(card.id)}
                             variant="destructive"

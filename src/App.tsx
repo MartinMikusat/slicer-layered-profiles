@@ -3,7 +3,7 @@ import { Download, FileText, Settings, Plus, Undo, Redo, Share, BookOpen } from 
 import { arrayMove } from '@dnd-kit/sortable'
 import { baseProfiles, useProfileCompiler } from './features/profiles'
 import { demoCards, SortableCardList } from './features/layers'
-import { CardBuilder, loadCustomCards, addCustomCard, removeCustomCard, isCustomCard } from './features/cards'
+import { CardBuilder, loadCustomCards, addCustomCard, removeCustomCard, updateCustomCard, isCustomCard } from './features/cards'
 import { useProjectPersistence, ProjectManager } from './features/projects'
 import { exportProfileAsINI, downloadINIFile, exportChangeSummaryAsFile } from './features/export'
 import { encodeProjectToURL, decodeProjectFromURL, clearProjectFromURL, copyToClipboard } from './features/projects'
@@ -35,6 +35,7 @@ function App() {
   const [showShareModal, setShowShareModal] = useState(false)
   const [shareUrl, setShareUrl] = useState('')
   const [shareError, setShareError] = useState<string | null>(null)
+  const [editingCard, setEditingCard] = useState<Card | null>(null)
 
   // Use the profile compiler hook
   const {
@@ -197,6 +198,30 @@ function App() {
       setCards(prev => [...prev, newCard])
       setCardOrder(prev => [...prev, newCard.id])
     }
+  }, [])
+
+  // Add new handler for card editing
+  const handleCardEdit = useCallback((card: Card) => {
+    setEditingCard(card)
+  }, [])
+
+  // Add new handler for card updates
+  const handleCardUpdated = useCallback((updatedCard: Card) => {
+    // Update localStorage
+    const saved = updateCustomCard(updatedCard.id, updatedCard)
+    if (saved) {
+      setCards(prev => prev.map(c => c.id === updatedCard.id ? updatedCard : c))
+    } else {
+      console.error('Failed to update custom card')
+      // Still update state even if localStorage fails
+      setCards(prev => prev.map(c => c.id === updatedCard.id ? updatedCard : c))
+    }
+    setEditingCard(null)
+  }, [])
+
+  // Handler to clear editing state
+  const handleClearEditing = useCallback(() => {
+    setEditingCard(null)
   }, [])
 
   // Sharing handlers
@@ -430,6 +455,7 @@ function App() {
                   onReorder={handleCardReorder}
                   onToggle={handleCardToggle}
                   onRemove={handleCardRemove}
+                  onEdit={handleCardEdit}
                   hasConflict={hasConflict}
                 />
               </div>
@@ -576,6 +602,18 @@ function App() {
         onComplete={handleTourComplete}
         onSkip={handleTourSkip}
       />
+
+      {/* Card Editing Modal */}
+      {editingCard && (
+        <CardBuilder
+          selectedProfile={selectedProfile}
+          onCardCreated={handleCardCreated}
+          onCardUpdated={handleCardUpdated}
+          editingCard={editingCard}
+          onEditingClear={handleClearEditing}
+          trigger={null}
+        />
+      )}
     </div>
   )
 }
