@@ -60,8 +60,7 @@ function App() {
     undo,
     redo,
     canUndo,
-    canRedo,
-    reset
+    canRedo
   } = useUndoRedo({
     selectedProfile,
     cards,

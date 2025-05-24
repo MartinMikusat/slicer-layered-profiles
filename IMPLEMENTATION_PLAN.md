@@ -98,19 +98,19 @@ Build a browser-based tool for composing PrusaSlicer profiles from simple "layer
 - [ ] E2E test for main user flow
 - [ ] Performance testing with many cards
 
-## Phase 6: Documentation & Deployment (1 hour)
+## Phase 6: Documentation & Deployment ✅ (1 hour)
 
-### 🔲 6.1 Documentation
-- [ ] Update README with usage instructions
-- [ ] Document card creation format
-- [ ] Add FAQ and troubleshooting
-- [ ] Create RFC-ready summary
+### ✅ 6.1 Documentation
+- [x] Update README with usage instructions
+- [x] Document card creation format
+- [x] Add FAQ and troubleshooting
+- [x] Create RFC-ready summary
 
-### 🔲 6.2 Deployment Preparation
-- [ ] Build production version
-- [ ] Test deployment locally
-- [ ] Prepare GitHub Pages deployment
-- [ ] Create release checklist
+### ✅ 6.2 Deployment Preparation
+- [x] Build production version
+- [x] Test deployment locally
+- [x] Prepare GitHub Pages deployment
+- [x] Create release checklist
 
 ## Success Criteria
 

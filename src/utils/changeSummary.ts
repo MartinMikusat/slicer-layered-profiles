@@ -1,4 +1,4 @@
-import type { BaseProfile, Card, CompiledProfile, SettingChange, ConflictMap } from '../types'
+import type { BaseProfile, Card, ConflictMap } from '../types'
 
 interface ChangeSummaryOptions {
     includeConflicts?: boolean
@@ -87,7 +87,7 @@ export function generateChangeSummary(
         summary += `${h2}Setting Conflicts\n\n`
         summary += `The following settings are modified by multiple cards. The ${bold('rightmost card wins')}:\n\n`
 
-        Object.entries(conflicts).forEach(([path, conflict]) => {
+        Object.entries(conflicts).forEach(([, conflict]) => {
             summary += `${h3}${conflict.path.split('/').pop()}\n`
             summary += `${bullet}${bold('Final Value')}: ${code(String(conflict.finalValue))}\n`
             summary += `${bullet}${bold('Overridden by')}:\n`

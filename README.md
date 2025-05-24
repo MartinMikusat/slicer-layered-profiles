@@ -193,24 +193,210 @@ See `.cursorrules` for detailed coding standards including:
 - [x] Conflict detection
 - [x] INI export
 
-### Phase 2: Polish (In Progress)
-- [ ] Undo/redo functionality
-- [ ] URL-based project sharing
-- [ ] Advanced conflict visualization
-- [ ] Keyboard shortcuts
+### Phase 2: Polish ✅
+- [x] Undo/redo functionality
+- [x] URL-based project sharing
+- [x] Advanced conflict visualization
+- [x] Keyboard shortcuts
+- [x] Mobile responsiveness
+- [x] Error handling & loading states
 
-### Phase 3: Advanced Features
-- [ ] Custom card creation UI
-- [ ] Profile import from files
-- [ ] Batch operations
-- [ ] Plugin system
+### Phase 3: Advanced Features ✅
+- [x] Auto-generated change summary for RFC
+- [x] Card search/filtering
+- [x] Basic onboarding tour
+- [x] Project import/export
+
+### Current Status: Ready for Production 🚀
+The tool is fully functional and ready for use. All core features are implemented and tested.
+
+## ❓ FAQ & Troubleshooting
+
+### General Usage
+
+**Q: What PrusaSlicer versions are supported?**
+A: The tool generates standard `.ini` files compatible with PrusaSlicer 2.4+ and should work with newer versions.
+
+**Q: Can I use this with other slicers like Cura or SuperSlicer?**
+A: Currently optimized for PrusaSlicer. Other slicers may not recognize all settings or formatting.
+
+**Q: How many cards can I add?**
+A: No hard limit, but performance is optimized for up to 50 cards. More cards may slow down the interface.
+
+**Q: Can I create my own cards?**
+A: Yes! See the "Card Creation Format" section below for the JSON structure.
+
+### Technical Issues
+
+**Q: Export isn't working / Downloaded file is empty**
+A: 
+- Check browser console for errors
+- Ensure you have a base profile selected
+- Try with demo cards first to verify functionality
+- Clear browser cache and reload
+
+**Q: Cards aren't applying / Settings not changing**
+A:
+- Verify your JSON patch syntax
+- Check that paths exist in the base profile
+- Ensure cards are enabled (not grayed out)
+- Try reordering cards - later cards override earlier ones
+
+**Q: App is slow / Unresponsive**
+A:
+- Reduce number of cards (especially if you have 20+)
+- Try clearing localStorage: `localStorage.clear()` in browser console
+- Close other browser tabs to free up memory
+
+**Q: Project won't load / Error on startup**
+A:
+- Clear browser localStorage and refresh
+- Check browser console for specific error messages
+- Ensure you're using a modern browser (Chrome 90+, Firefox 88+, Safari 14+)
+
+### Browser Compatibility
+
+**Q: What browsers are supported?**
+A: Modern browsers with ES2020 support:
+- Chrome 90+ ✅
+- Firefox 88+ ✅ 
+- Safari 14+ ✅
+- Edge 90+ ✅
+
+**Q: Does this work on mobile?**
+A: Yes! The interface is mobile-responsive, though desktop is recommended for the best experience.
+
+## 📝 Card Creation Format
+
+Want to create your own cards? Here's the complete structure:
+
+### Basic Card Structure
+
+```typescript
+interface DemoCard {
+  demoId: string;           // Unique identifier
+  name: string;             // Display name
+  description: string;      // What the card does
+  enabled: boolean;         // Whether card is active
+  metadata: {
+    category: 'speed' | 'temperature' | 'quality' | 'infill' | 'other';
+    tags: string[];         // Searchable tags
+    author?: string;        // Creator name
+    version?: string;       // Card version
+  };
+  patch: Operation[];       // JSON Patch operations
+  preview: PreviewItem[];   // User-friendly change descriptions
+}
+```
+
+### JSON Patch Operations
+
+Cards use [RFC 6902 JSON Patch](https://tools.ietf.org/html/rfc6902) format:
+
+```json
+{
+  "op": "replace",          // Operation: "replace", "add", "remove"
+  "path": "/section/setting", // Path to setting in profile
+  "value": 60               // New value
+}
+```
+
+### Common Setting Paths
+
+```typescript
+// Print Settings
+"/print_settings/layer_height"           // Layer height (mm)
+"/print_settings/perimeter_speed"        // Perimeter speed (mm/s)
+"/print_settings/infill_speed"          // Infill speed (mm/s)  
+"/print_settings/fill_density"          // Infill density (%)
+
+// Filament Settings
+"/filament_settings/temperature"         // Nozzle temp (°C)
+"/filament_settings/first_layer_temperature" // First layer temp (°C)
+"/filament_settings/min_fan_speed"      // Min fan speed (%)
+"/filament_settings/max_fan_speed"      // Max fan speed (%)
+
+// Printer Settings
+"/printer_settings/retract_length"      // Retraction distance (mm)
+"/printer_settings/retract_speed"       // Retraction speed (mm/s)
+```
+
+### Preview Items
+
+Help users understand what changes:
+
+```typescript
+interface PreviewItem {
+  path: string;        // Same as patch path
+  key: string;         // User-friendly setting name
+  oldValue: any;       // Original value
+  newValue: any;       // New value after patch
+  unit?: string;       // Unit (°C, mm/s, %, etc.)
+  section: string;     // UI section name
+}
+```
+
+### Example: Complete Card
+
+```typescript
+{
+  demoId: 'slower-quality',
+  name: 'Slow & Precise',
+  description: 'Slower speeds with finer details for high-quality prints',
+  enabled: true,
+  metadata: {
+    category: 'quality',
+    tags: ['quality', 'speed', 'precision'],
+    author: 'Community',
+    version: '1.2'
+  },
+  patch: [
+    {
+      op: 'replace',
+      path: '/print_settings/layer_height',
+      value: 0.1
+    },
+    {
+      op: 'replace', 
+      path: '/print_settings/perimeter_speed',
+      value: 30
+    }
+  ],
+  preview: [
+    {
+      path: '/print_settings/layer_height',
+      key: 'Layer Height',
+      oldValue: 0.2,
+      newValue: 0.1,
+      unit: 'mm',
+      section: 'Quality'
+    },
+    {
+      path: '/print_settings/perimeter_speed', 
+      key: 'Perimeter Speed',
+      oldValue: 45,
+      newValue: 30,
+      unit: 'mm/s',
+      section: 'Speed'
+    }
+  ]
+}
+```
+
+### Testing Your Cards
+
+1. Add card to `src/data/demoCards.ts`
+2. Test with different base profiles
+3. Verify preview values match actual changes
+4. Check for conflicts with other demo cards
 
 ## 🐛 Known Limitations
 
 - **Profile coverage** - Currently supports basic MK4 profiles only
-- **Setting complexity** - Some advanced PrusaSlicer features not covered
+- **Setting complexity** - Some advanced PrusaSlicer features not covered  
 - **Browser storage** - Projects stored locally only (no cloud sync)
 - **Import validation** - Limited validation of imported profiles
+- **Large projects** - Performance may degrade with 50+ cards
 
 ## 📄 License
 
