@@ -62,8 +62,31 @@
 }
 
 /* Card-specific styles */
+.card-list {
+  @apply flex gap-4 overflow-x-auto pb-4 w-full max-w-full;
+  /* Horizontal scrolling with nice scrollbar */
+  scrollbar-width: thin;
+  scrollbar-color: hsl(var(--muted-foreground)) hsl(var(--background));
+}
+
+.card-list::-webkit-scrollbar {
+  height: 8px;
+}
+
+.card-list::-webkit-scrollbar-track {
+  @apply bg-muted rounded;
+}
+
+.card-list::-webkit-scrollbar-thumb {
+  @apply bg-muted-foreground rounded;
+}
+
+.card-list::-webkit-scrollbar-thumb:hover {
+  @apply bg-foreground;
+}
+
 .card {
-  @apply bg-card border rounded-lg shadow-sm transition-all duration-200 flex items-start gap-3 p-4;
+  @apply bg-card border rounded-lg shadow-sm transition-all duration-200 flex items-start gap-3 p-4 min-w-72 flex-shrink-0;
 }
 
 .card:hover {

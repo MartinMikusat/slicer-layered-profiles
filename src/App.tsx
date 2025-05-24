@@ -240,7 +240,7 @@ function App() {
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <header className="border-b bg-background p-6">
-        <div className="max-w-7xl mx-auto flex justify-between items-center">
+        <div className="w-full flex justify-between items-center">
           <div>
             <h1 className="text-2xl font-bold text-foreground">Slicer Layer Composer</h1>
             <p className="text-muted-foreground text-sm">Build PrusaSlicer profiles from simple layers</p>
@@ -327,9 +327,9 @@ function App() {
         </div>
       </header>
 
-      <main className="flex-1 max-w-7xl mx-auto w-full p-6">
-        {/* New grid layout matching the Excalidraw sketch */}
-        <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr_300px] lg:grid-rows-[auto_1fr] gap-6 h-auto lg:h-[calc(100vh-200px)]">
+      <main className="flex-1 w-full p-6 overflow-hidden">
+        {/* Full-width grid layout with proper constraints */}
+        <div className="grid grid-cols-1 lg:grid-cols-[300px_minmax(0,1fr)_320px] lg:grid-rows-[auto_1fr] gap-6 h-auto lg:h-[calc(100vh-200px)] w-full max-w-full">
           {/* Top-left: Project Management */}
           <section className="bg-card rounded-xl border p-6 shadow-sm">
             <h2 className="text-lg font-semibold mb-4">Project Management</h2>
@@ -353,7 +353,7 @@ function App() {
           </section>
 
           {/* Top-center: Layer Cards header and workspace */}
-          <section className="space-y-4 card-workspace lg:row-span-2">
+          <section className="space-y-4 card-workspace lg:row-span-2 min-w-0">
             <div>
               <h2 className="text-xl font-semibold">Layers</h2>
               <p className="text-sm text-muted-foreground">Drag cards to reorder horizontally • Cards to the right override those to the left</p>
@@ -371,7 +371,7 @@ function App() {
                 </Button>
               </div>
             ) : (
-              <div className="bg-card rounded-xl border p-4 h-auto lg:h-[calc(100%-80px)] overflow-auto">
+              <div className="bg-card rounded-xl border p-4 h-auto lg:h-[calc(100%-80px)] overflow-hidden w-full">
                 <SortableCardList
                   cards={cards}
                   cardOrder={cardOrder}
@@ -474,7 +474,7 @@ function App() {
       </main>
 
       <footer className="border-t bg-muted/30 py-4">
-        <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
+        <div className="w-full px-6 flex justify-between items-center">
           <p className="text-sm text-muted-foreground">
             Slicer Layer Composer • Weekend MVP • Built with React + TypeScript
           </p>
