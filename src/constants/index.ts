@@ -5,7 +5,6 @@ export const PROJECT_VERSION = '1.0';
 // UI Constants
 export const UI = {
     DRAG_DELAY: 200,
-    DEBOUNCE_DELAY: 500,
     TOAST_DURATION: 3000,
     CARD_ANIMATION_DURATION: 300,
 } as const;

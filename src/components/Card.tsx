@@ -2,6 +2,7 @@ import React from 'react'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { AlertTriangle, GripVertical, Eye, EyeOff } from 'lucide-react'
+import { Button } from './ui/button'
 import type { Card as CardType, SettingChange } from '../types'
 
 interface CardProps {
@@ -59,21 +60,23 @@ export const Card: React.FC<CardProps> = ({
                         )}
                     </div>
                     <div className="card-actions">
-                        <button
+                        <Button
                             onClick={() => onToggle(card.id)}
-                            className={`toggle-btn ${card.enabled ? 'enabled' : 'disabled'}`}
+                            variant={card.enabled ? "default" : "outline"}
+                            size="sm"
                             title={card.enabled ? 'Disable card' : 'Enable card'}
                         >
                             {card.enabled ? <Eye size={16} /> : <EyeOff size={16} />}
                             {card.enabled ? 'Enabled' : 'Disabled'}
-                        </button>
-                        <button
+                        </Button>
+                        <Button
                             onClick={() => onRemove(card.id)}
-                            className="remove-btn"
+                            variant="destructive"
+                            size="sm"
                             title="Remove card"
                         >
                             ×
-                        </button>
+                        </Button>
                     </div>
                 </div>
 

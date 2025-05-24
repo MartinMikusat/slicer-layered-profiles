@@ -41,7 +41,7 @@ const tourSteps: TourStep[] = [
         id: 'export',
         title: 'Export Your Profile',
         content: 'When you\'re happy with your configuration, click Export INI to download a PrusaSlicer-compatible profile file.',
-        target: '.export-group',
+        target: '.export-actions',
         position: 'bottom'
     }
 ]
@@ -143,8 +143,12 @@ export function OnboardingTour({ isVisible, onComplete, onSkip }: OnboardingTour
 
     return (
         <>
-            {/* Overlay */}
-            <div className="tour-overlay" onClick={handleSkip} />
+            {/* Invisible overlay for click handling */}
+            <div
+                className="tour-overlay"
+                onClick={handleSkip}
+                style={{ pointerEvents: 'auto' }}
+            />
 
             {/* Highlight box */}
             {highlightElement && (
@@ -165,7 +169,10 @@ export function OnboardingTour({ isVisible, onComplete, onSkip }: OnboardingTour
             {/* Tour tooltip */}
             <div
                 className={`tour-tooltip ${currentTourStep.position}`}
-                style={getTooltipStyle(currentTourStep.position, highlightElement)}
+                style={{
+                    ...getTooltipStyle(currentTourStep.position, highlightElement),
+                    pointerEvents: 'auto'
+                }}
             >
                 <div className="tour-header">
                     <h3>{currentTourStep.title}</h3>

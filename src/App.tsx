@@ -15,6 +15,9 @@ import { SortableCardList } from './components/SortableCardList'
 import { ProjectManager } from './components/ProjectManager'
 import { OnboardingTour } from './components/OnboardingTour'
 import { LoadingButton, ErrorMessage } from './components/LoadingStates'
+import { Button } from './components/ui/button'
+import { Input } from './components/ui/input'
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from './components/ui/dialog'
 import type { BaseProfile, Card, ProjectData } from './types'
 import './App.css'
 
@@ -231,88 +234,96 @@ function App() {
   }
 
   return (
-    <div className="app">
-      <header className="app-header">
-        <div className="header-content">
-          <h1>Slicer Layer Composer</h1>
-          <p>Build PrusaSlicer profiles from simple layers</p>
-        </div>
-        <div className="header-actions">
-          {/* Undo/Redo */}
-          <div className="undo-redo-group">
-            <button
-              onClick={handleUndo}
-              disabled={!canUndo}
-              className="undo-btn"
-              title={`Undo (${getShortcutText().undo})`}
-            >
-              <Undo size={16} />
-            </button>
-            <button
-              onClick={handleRedo}
-              disabled={!canRedo}
-              className="redo-btn"
-              title={`Redo (${getShortcutText().redo})`}
-            >
-              <Redo size={16} />
-            </button>
+    <div className="min-h-screen flex flex-col bg-background">
+      <header className="border-b bg-background p-6">
+        <div className="max-w-7xl mx-auto flex justify-between items-center">
+          <div>
+            <h1 className="text-2xl font-bold text-foreground">Slicer Layer Composer</h1>
+            <p className="text-muted-foreground text-sm">Build PrusaSlicer profiles from simple layers</p>
           </div>
+          <div className="flex items-center gap-3">
+            {/* Undo/Redo */}
+            <div className="flex gap-1">
+              <Button
+                variant="outline"
+                size="default"
+                onClick={handleUndo}
+                disabled={!canUndo}
+                title={`Undo (${getShortcutText().undo})`}
+              >
+                <Undo size={16} />
+              </Button>
+              <Button
+                variant="outline"
+                size="default"
+                onClick={handleRedo}
+                disabled={!canRedo}
+                title={`Redo (${getShortcutText().redo})`}
+              >
+                <Redo size={16} />
+              </Button>
+            </div>
 
-          <button
-            onClick={showDemo ? clearCards : loadDemo}
-            className="demo-btn"
-            title={`Load Demo (${getShortcutText().demo})`}
-          >
-            <Plus size={16} />
-            {showDemo ? 'Clear Demo' : 'Load Demo'}
-          </button>
-
-          {/* Share */}
-          <button
-            onClick={handleShare}
-            disabled={cards.length === 0}
-            className="share-btn"
-          >
-            <Share size={16} />
-            Share
-          </button>
-
-          {/* Tour */}
-          <button
-            onClick={() => setShowTour(true)}
-            className="tour-btn"
-          >
-            <BookOpen size={16} />
-            Tour
-          </button>
-
-          {/* Export group */}
-          <div className="export-group">
-            <LoadingButton
-              onClick={handleExportSummary}
-              disabled={cards.length === 0 || !compiledProfile}
-              isLoading={false}
-              className="summary-btn"
+            <Button
+              variant="outline"
+              size="default"
+              onClick={showDemo ? clearCards : loadDemo}
+              title={`Load Demo (${getShortcutText().demo})`}
+              className="demo-btn"
             >
-              <FileText size={16} />
-              Summary
-            </LoadingButton>
+              <Plus size={16} />
+              {showDemo ? 'Clear Demo' : 'Load Demo'}
+            </Button>
 
-            <LoadingButton
-              onClick={handleExport}
-              disabled={cards.length === 0 || !compiledProfile}
-              isLoading={isCompiling}
-              loadingText="Compiling..."
-              className="export-btn primary"
+            {/* Share */}
+            <Button
+              variant="outline"
+              size="default"
+              onClick={handleShare}
+              disabled={cards.length === 0}
             >
-              <Download size={16} />
-              Export INI
-            </LoadingButton>
+              <Share size={16} />
+              Share
+            </Button>
+
+            {/* Tour */}
+            <Button
+              variant="outline"
+              size="default"
+              onClick={() => setShowTour(true)}
+            >
+              <BookOpen size={16} />
+              Tour
+            </Button>
+
+            {/* Export group */}
+            <div className="flex gap-2 export-actions">
+              <Button
+                variant="outline"
+                size="default"
+                onClick={handleExportSummary}
+                disabled={cards.length === 0}
+              >
+                <FileText size={16} />
+                Summary
+              </Button>
+
+              <LoadingButton
+                onClick={handleExport}
+                disabled={cards.length === 0}
+                isLoading={isCompiling}
+                loadingText="Compiling..."
+                className="bg-primary text-primary-foreground hover:bg-primary/90 disabled:bg-muted disabled:text-muted-foreground whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none h-10 px-4 py-2"
+              >
+                <Download size={16} />
+                Export INI
+              </LoadingButton>
+            </div>
           </div>
         </div>
       </header>
 
-      <main className="app-main">
+      <main className="flex-1 max-w-7xl mx-auto w-full p-6 space-y-6">
         <ProjectManager
           projectName={projectName}
           projectDescription={projectDescription}
@@ -331,24 +342,28 @@ function App() {
           onProjectLoaded={handleProjectLoaded}
         />
 
-        <div className="main-content">
-          <aside className="sidebar">
-            <section className="profile-section">
-              <h2>Base Profile</h2>
-              <div className="profile-selector">
+        <div className="grid grid-cols-1 lg:grid-cols-[320px_1fr] gap-6">
+          <aside className="space-y-6">
+            <section className="bg-card rounded-xl border p-6 shadow-sm profile-section">
+              <h2 className="text-xl font-semibold mb-4">Base Profile</h2>
+              <div className="space-y-3">
                 {baseProfiles.map((profile) => (
-                  <label key={profile.id} className="profile-option">
+                  <label key={profile.id} className="cursor-pointer block">
                     <input
                       type="radio"
                       name="baseProfile"
                       value={profile.id}
                       checked={selectedProfile.id === profile.id}
                       onChange={() => setSelectedProfile(profile)}
+                      className="sr-only"
                     />
-                    <div className="profile-card">
-                      <h3>{profile.name}</h3>
-                      <p>{profile.description}</p>
-                      <div className="profile-meta">
+                    <div className={`p-4 rounded-lg border-2 transition-all ${selectedProfile.id === profile.id
+                      ? 'border-primary bg-primary/5'
+                      : 'border-border hover:border-border/80 hover:bg-accent/50'
+                      }`}>
+                      <h3 className="font-semibold text-sm">{profile.name}</h3>
+                      <p className="text-xs text-muted-foreground mt-1">{profile.description}</p>
+                      <div className="text-xs text-muted-foreground mt-2 font-medium">
                         {profile.metadata.printer} • {profile.metadata.quality}
                       </div>
                     </div>
@@ -357,39 +372,39 @@ function App() {
               </div>
             </section>
 
-            <section className="info-section">
-              <h3>Profile Summary</h3>
-              <div className="profile-info">
-                <div className="info-item">
-                  <span>Layer Height:</span>
-                  <span>
+            <section className="bg-card rounded-xl border p-6 shadow-sm">
+              <h3 className="text-lg font-semibold mb-4">Profile Summary</h3>
+              <div className="space-y-3">
+                <div className="flex justify-between items-center text-sm">
+                  <span className="text-muted-foreground">Layer Height:</span>
+                  <span className="font-semibold">
                     {compiledProfile ?
                       `${compiledProfile.finalData.print_settings?.layer_height || selectedProfile.data.print_settings.layer_height}mm` :
                       `${selectedProfile.data.print_settings.layer_height}mm`
                     }
                   </span>
                 </div>
-                <div className="info-item">
-                  <span>Temperature:</span>
-                  <span>
+                <div className="flex justify-between items-center text-sm">
+                  <span className="text-muted-foreground">Temperature:</span>
+                  <span className="font-semibold">
                     {compiledProfile ?
                       `${compiledProfile.finalData.filament_settings?.temperature || selectedProfile.data.filament_settings.temperature}°C` :
                       `${selectedProfile.data.filament_settings.temperature}°C`
                     }
                   </span>
                 </div>
-                <div className="info-item">
-                  <span>Speed:</span>
-                  <span>
+                <div className="flex justify-between items-center text-sm">
+                  <span className="text-muted-foreground">Speed:</span>
+                  <span className="font-semibold">
                     {compiledProfile ?
                       `${compiledProfile.finalData.print_settings?.perimeter_speed || selectedProfile.data.print_settings.perimeter_speed}mm/s` :
                       `${selectedProfile.data.print_settings.perimeter_speed}mm/s`
                     }
                   </span>
                 </div>
-                <div className="info-item">
-                  <span>Infill:</span>
-                  <span>
+                <div className="flex justify-between items-center text-sm">
+                  <span className="text-muted-foreground">Infill:</span>
+                  <span className="font-semibold">
                     {compiledProfile ?
                       `${compiledProfile.finalData.print_settings?.fill_density || selectedProfile.data.print_settings.fill_density}%` :
                       `${selectedProfile.data.print_settings.fill_density}%`
@@ -397,15 +412,15 @@ function App() {
                   </span>
                 </div>
                 {compiledProfile && compiledProfile.appliedCards.length > 0 && (
-                  <div className="compilation-status">
-                    <div className="info-item">
-                      <span>Applied Cards:</span>
-                      <span>{compiledProfile.appliedCards.length}</span>
+                  <div className="pt-3 border-t space-y-2">
+                    <div className="flex justify-between items-center text-sm">
+                      <span className="text-muted-foreground">Applied Cards:</span>
+                      <span className="font-semibold">{compiledProfile.appliedCards.length}</span>
                     </div>
                     {Object.keys(compiledProfile.conflicts).length > 0 && (
-                      <div className="info-item">
-                        <span>Conflicts:</span>
-                        <span className="conflict-count">{Object.keys(compiledProfile.conflicts).length}</span>
+                      <div className="flex justify-between items-center text-sm">
+                        <span className="text-muted-foreground">Conflicts:</span>
+                        <span className="font-semibold text-destructive">{Object.keys(compiledProfile.conflicts).length}</span>
                       </div>
                     )}
                   </div>
@@ -414,20 +429,22 @@ function App() {
             </section>
           </aside>
 
-          <section className="card-workspace">
-            <div className="workspace-header">
-              <h2>Layer Cards</h2>
-              <p>Drag cards to reorder horizontally • Cards to the right override those to the left</p>
+          <section className="space-y-4 card-workspace">
+            <div>
+              <h2 className="text-xl font-semibold">Layer Cards</h2>
+              <p className="text-sm text-muted-foreground">Drag cards to reorder horizontally • Cards to the right override those to the left</p>
             </div>
 
             {cards.length === 0 ? (
-              <div className="empty-state">
-                <FileText size={48} />
-                <h3>No cards yet</h3>
-                <p>Load the demo or create your first card to get started</p>
-                <button onClick={loadDemo} className="primary-btn">
+              <div className="flex flex-col items-center justify-center py-12 text-center space-y-4 bg-card rounded-xl border border-dashed">
+                <FileText size={48} className="text-muted-foreground" />
+                <div>
+                  <h3 className="text-lg font-semibold">No cards yet</h3>
+                  <p className="text-muted-foreground">Load the demo or create your first card to get started</p>
+                </div>
+                <Button onClick={loadDemo}>
                   Load Demo Cards
-                </button>
+                </Button>
               </div>
             ) : (
               <SortableCardList
@@ -444,53 +461,51 @@ function App() {
         </div>
       </main>
 
-      <footer className="app-footer">
-        <div className="footer-content">
-          <p>
+      <footer className="border-t bg-muted/30 py-4">
+        <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
+          <p className="text-sm text-muted-foreground">
             Slicer Layer Composer • Weekend MVP • Built with React + TypeScript
           </p>
-          <div className="footer-actions">
-            <button className="settings-btn">
-              <Settings size={16} />
-              Settings
-            </button>
-          </div>
+          <Button variant="ghost" size="sm">
+            <Settings size={16} />
+            Settings
+          </Button>
         </div>
       </footer>
 
       {/* Share Modal */}
-      {showShareModal && (
-        <div className="modal-overlay" onClick={() => setShowShareModal(false)}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <h3>Share Project</h3>
-            <p>Copy this URL to share your project with others:</p>
-            <div className="share-url-container">
-              <input
-                type="text"
-                value={shareUrl}
-                readOnly
-                className="share-url-input"
-              />
-              <LoadingButton
-                onClick={handleCopyShareUrl}
-                isLoading={false}
-                className="copy-btn"
-              >
-                Copy
-              </LoadingButton>
-            </div>
-            {shareError && (
-              <ErrorMessage
-                error={shareError}
-                onDismiss={() => setShareError(null)}
-              />
-            )}
-            <div className="modal-actions">
-              <button onClick={() => setShowShareModal(false)}>Close</button>
-            </div>
+      <Dialog open={showShareModal} onOpenChange={setShowShareModal}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Share Project</DialogTitle>
+            <DialogDescription>
+              Copy this URL to share your project with others:
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex gap-2">
+            <Input
+              value={shareUrl}
+              readOnly
+              className="flex-1"
+            />
+            <LoadingButton
+              onClick={handleCopyShareUrl}
+              isLoading={false}
+            >
+              Copy
+            </LoadingButton>
           </div>
-        </div>
-      )}
+          {shareError && (
+            <ErrorMessage
+              error={shareError}
+              onDismiss={() => setShareError(null)}
+            />
+          )}
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowShareModal(false)}>Close</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Onboarding Tour */}
       <OnboardingTour

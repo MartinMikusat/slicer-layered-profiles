@@ -80,10 +80,10 @@ export function LoadingButton({
         <button
             onClick={onClick}
             disabled={disabled || isLoading}
-            className={`loading-button ${className} ${isLoading ? 'loading' : ''}`}
+            className={`inline-flex items-center justify-center gap-2 ${className} ${isLoading ? 'loading' : ''}`}
         >
             {isLoading && <LoadingSpinner size={16} />}
-            <span>{isLoading && loadingText ? loadingText : children}</span>
+            <span className="flex items-center gap-2">{isLoading && loadingText ? loadingText : children}</span>
         </button>
     )
 } 

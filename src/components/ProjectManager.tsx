@@ -1,5 +1,9 @@
 import React, { useRef } from 'react';
 import { Save, FolderOpen, Download, Upload, X, AlertCircle } from 'lucide-react';
+import { Button } from './ui/button';
+import { Input } from './ui/input';
+import { Textarea } from './ui/textarea';
+import { Label } from './ui/label';
 
 interface ProjectManagerProps {
     projectName: string;
@@ -91,25 +95,23 @@ export const ProjectManager: React.FC<ProjectManagerProps> = ({
             <div className="project-info">
                 <div className="project-fields">
                     <div className="field-group">
-                        <label htmlFor="project-name">Project Name</label>
-                        <input
+                        <Label htmlFor="project-name">Project Name</Label>
+                        <Input
                             id="project-name"
                             type="text"
                             value={projectName}
                             onChange={(e) => onProjectNameChange(e.target.value)}
                             placeholder="Enter project name..."
-                            className="project-name-input"
                         />
                     </div>
 
                     <div className="field-group">
-                        <label htmlFor="project-description">Description (optional)</label>
-                        <textarea
+                        <Label htmlFor="project-description">Description (optional)</Label>
+                        <Textarea
                             id="project-description"
                             value={projectDescription}
                             onChange={(e) => onProjectDescriptionChange(e.target.value)}
                             placeholder="Describe your profile modifications..."
-                            className="project-description-input"
                             rows={2}
                         />
                     </div>
@@ -128,54 +130,58 @@ export const ProjectManager: React.FC<ProjectManagerProps> = ({
             </div>
 
             <div className="project-actions">
-                <button
+                <Button
                     onClick={onSave}
                     disabled={isLoading}
-                    className="action-btn save-btn"
+                    variant="default"
+                    size="sm"
                     title="Save project to browser storage"
                 >
                     <Save size={16} />
                     {isLoading ? 'Saving...' : 'Save'}
-                </button>
+                </Button>
 
-                <button
+                <Button
                     onClick={handleLoadProject}
                     disabled={isLoading || !hasStoredProject}
-                    className="action-btn load-btn"
+                    variant="outline"
+                    size="sm"
                     title="Load saved project from browser storage"
                 >
                     <FolderOpen size={16} />
                     Load
-                </button>
+                </Button>
 
-                <button
+                <Button
                     onClick={() => onExport()}
                     disabled={isLoading}
-                    className="action-btn export-btn"
+                    variant="outline"
+                    size="sm"
                     title="Export project as JSON file"
                 >
                     <Download size={16} />
                     Export
-                </button>
+                </Button>
 
-                <button
+                <Button
                     onClick={handleImportFile}
                     disabled={isLoading}
-                    className="action-btn import-btn"
+                    variant="outline"
+                    size="sm"
                     title="Import project from JSON file"
                 >
                     <Upload size={16} />
                     Import
-                </button>
+                </Button>
             </div>
 
             {error && (
                 <div className="error-message">
                     <AlertCircle size={16} />
                     <span>{error}</span>
-                    <button onClick={onClearError} className="error-close">
+                    <Button onClick={onClearError} variant="ghost" size="sm">
                         <X size={14} />
-                    </button>
+                    </Button>
                 </div>
             )}
 

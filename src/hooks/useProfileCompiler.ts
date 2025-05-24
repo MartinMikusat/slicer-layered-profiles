@@ -1,10 +1,9 @@
 import { useState, useEffect, useMemo } from 'react';
 import { compileProfile, updateCardPreviews } from '../utils/profileCompiler';
-import { UI } from '../constants';
 import type { BaseProfile, Card, CompiledProfile } from '../types';
 
 /**
- * Hook for managing profile compilation with debounced updates
+ * Hook for managing profile compilation
  */
 export function useProfileCompiler(
     baseProfile: BaseProfile,
@@ -19,23 +18,19 @@ export function useProfileCompiler(
         return updateCardPreviews(cards, baseProfile);
     }, [cards, baseProfile]);
 
-    // Debounced compilation effect
+    // Immediate compilation effect
     useEffect(() => {
         setIsCompiling(true);
 
-        const timeoutId = setTimeout(() => {
-            try {
-                const compiled = compileProfile(baseProfile, cardsWithPreviews, cardOrder);
-                setCompiledProfile(compiled);
-            } catch (error) {
-                console.error('Profile compilation failed:', error);
-                setCompiledProfile(null);
-            } finally {
-                setIsCompiling(false);
-            }
-        }, UI.DEBOUNCE_DELAY);
-
-        return () => clearTimeout(timeoutId);
+        try {
+            const compiled = compileProfile(baseProfile, cardsWithPreviews, cardOrder);
+            setCompiledProfile(compiled);
+        } catch (error) {
+            console.error('Profile compilation failed:', error);
+            setCompiledProfile(null);
+        } finally {
+            setIsCompiling(false);
+        }
     }, [baseProfile, cardsWithPreviews, cardOrder]);
 
     // Helper to get final setting values
