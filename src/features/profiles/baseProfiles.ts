@@ -1,7 +1,8 @@
 import type { BaseProfile } from '../../types';
+import { realProfiles } from './realProfiles';
 
-// Sample base profiles representing common PrusaSlicer configurations
-export const baseProfiles: BaseProfile[] = [
+// Demo profiles as fallback (keeping original demo profiles for reference)
+const demoProfiles: BaseProfile[] = [
     {
         id: 'mk4-04-quality',
         name: 'MK4 0.4mm Quality',
@@ -170,4 +171,7 @@ export const baseProfiles: BaseProfile[] = [
             },
         },
     },
-]; 
+];
+
+// Use real profiles if available, otherwise fall back to demo profiles
+export const baseProfiles: BaseProfile[] = realProfiles.length > 0 ? realProfiles : demoProfiles; 

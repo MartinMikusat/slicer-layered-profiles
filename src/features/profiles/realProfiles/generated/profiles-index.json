@@ -1,0 +1,109 @@
+{
+  "profiles": [
+    {
+      "id": "mk3s-mk3s-0.4",
+      "name": "Original Prusa i3 MK3S & MK3S+ 0.4mm",
+      "description": "Standard profile for MK3S with 0.4mm nozzle",
+      "metadata": {
+        "printer": "MK3S",
+        "nozzle": "0.4mm",
+        "material": "PLA",
+        "quality": "Standard",
+        "author": "Prusa Research",
+        "created": "2025-05-24"
+      }
+    },
+    {
+      "id": "mk3s-mk3s-06-nozzle-0.6",
+      "name": "Original Prusa i3 MK3S & MK3S+ 0.6 nozzle",
+      "description": "Standard profile for MK3S with 0.6mm nozzle",
+      "metadata": {
+        "printer": "MK3S",
+        "nozzle": "0.6mm",
+        "material": "PLA",
+        "quality": "Standard",
+        "author": "Prusa Research",
+        "created": "2025-05-24"
+      }
+    },
+    {
+      "id": "mk3s-mk3s-025-nozzle-0.25",
+      "name": "Original Prusa i3 MK3S & MK3S+ 0.25 nozzle",
+      "description": "Standard profile for MK3S with 0.25mm nozzle",
+      "metadata": {
+        "printer": "MK3S",
+        "nozzle": "0.25mm",
+        "material": "PLA",
+        "quality": "Standard",
+        "author": "Prusa Research",
+        "created": "2025-05-24"
+      }
+    },
+    {
+      "id": "mini-mini-0.4",
+      "name": "Original Prusa MINI & MINI+ 0.4mm",
+      "description": "Standard profile for MINI with 0.4mm nozzle",
+      "metadata": {
+        "printer": "MINI",
+        "nozzle": "0.4mm",
+        "material": "PLA",
+        "quality": "Standard",
+        "author": "Prusa Research",
+        "created": "2025-05-24"
+      }
+    },
+    {
+      "id": "mini-mini-input-shaper-0.4",
+      "name": "Original Prusa MINI & MINI+ Input Shaper 0.4mm",
+      "description": "Standard profile for MINIIS with 0.4mm nozzle",
+      "metadata": {
+        "printer": "MINIIS",
+        "nozzle": "0.4mm",
+        "material": "PLA",
+        "quality": "Standard",
+        "author": "Prusa Research",
+        "created": "2025-05-24"
+      }
+    },
+    {
+      "id": "mini-mini-06-nozzle-0.6",
+      "name": "Original Prusa MINI & MINI+ 0.6 nozzle",
+      "description": "Standard profile for MINI with 0.6mm nozzle",
+      "metadata": {
+        "printer": "MINI",
+        "nozzle": "0.6mm",
+        "material": "PLA",
+        "quality": "Standard",
+        "author": "Prusa Research",
+        "created": "2025-05-24"
+      }
+    },
+    {
+      "id": "xl-04-nozzle-0.4",
+      "name": "Original Prusa XL 0.4 nozzle",
+      "description": "Standard profile for XL with 0.4mm nozzle",
+      "metadata": {
+        "printer": "XL",
+        "nozzle": "0.4mm",
+        "material": "PLA",
+        "quality": "Standard",
+        "author": "Prusa Research",
+        "created": "2025-05-24"
+      }
+    },
+    {
+      "id": "xl-2t-04-nozzle-0.4",
+      "name": "Original Prusa XL - 2T 0.4 nozzle",
+      "description": "Standard profile for XL2 with 0.4,0.4mm nozzle",
+      "metadata": {
+        "printer": "XL2",
+        "nozzle": "0.4,0.4mm",
+        "material": "PLA",
+        "quality": "Standard",
+        "author": "Prusa Research",
+        "created": "2025-05-24"
+      }
+    }
+  ],
+  "generated": "2025-05-24T15:19:39.288Z"
+}
