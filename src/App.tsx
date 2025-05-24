@@ -3,6 +3,7 @@ import { Download, FileText, Settings, Plus, Undo, Redo, Share, BookOpen } from 
 import { arrayMove } from '@dnd-kit/sortable'
 import { baseProfiles, useProfileCompiler } from './features/profiles'
 import { demoCards, SortableCardList } from './features/layers'
+import { CardBuilder, loadCustomCards, addCustomCard, removeCustomCard, isCustomCard } from './features/cards'
 import { useProjectPersistence, ProjectManager } from './features/projects'
 import { exportProfileAsINI, downloadINIFile, exportChangeSummaryAsFile } from './features/export'
 import { encodeProjectToURL, decodeProjectFromURL, clearProjectFromURL, copyToClipboard } from './features/projects'
@@ -166,7 +167,37 @@ function App() {
     const updatedCards = cards.filter(c => c.id !== cardId)
     setCards(updatedCards)
     setCardOrder(cardOrder.filter(id => id !== cardId))
+
+    // If it's a custom card, also remove from localStorage
+    const cardToRemove = cards.find(c => c.id === cardId)
+    if (cardToRemove && isCustomCard(cardToRemove)) {
+      removeCustomCard(cardId)
+    }
   }
+
+  // Load custom cards on app startup
+  useEffect(() => {
+    const customCards = loadCustomCards()
+    if (customCards.length > 0) {
+      setCards(prev => [...prev, ...customCards])
+      setCardOrder(prev => [...prev, ...customCards.map(card => card.id)])
+    }
+  }, [])
+
+  // Add new handler for custom card creation
+  const handleCardCreated = useCallback((newCard: Card) => {
+    // Save to localStorage
+    const saved = addCustomCard(newCard)
+    if (saved) {
+      setCards(prev => [...prev, newCard])
+      setCardOrder(prev => [...prev, newCard.id])
+    } else {
+      console.error('Failed to save custom card')
+      // Still add to state even if localStorage fails
+      setCards(prev => [...prev, newCard])
+      setCardOrder(prev => [...prev, newCard.id])
+    }
+  }, [])
 
   // Sharing handlers
   const handleShare = async () => {
@@ -356,9 +387,21 @@ function App() {
 
           {/* Top-center: Layer Cards header and workspace */}
           <section className="space-y-4 card-workspace lg:row-span-2 min-w-0">
-            <div>
-              <h2 className="text-xl font-semibold">Layers</h2>
-              <p className="text-sm text-muted-foreground">Drag cards to reorder horizontally • Cards to the right override those to the left</p>
+            <div className="flex justify-between items-center">
+              <div>
+                <h2 className="text-xl font-semibold">Layers</h2>
+                <p className="text-sm text-muted-foreground">Drag cards to reorder horizontally • Cards to the right override those to the left</p>
+              </div>
+              <div className="flex gap-2">
+                <CardBuilder
+                  selectedProfile={selectedProfile}
+                  onCardCreated={handleCardCreated}
+                />
+                <Button onClick={loadDemo} variant="outline">
+                  <Plus size={16} className="mr-1" />
+                  {showDemo ? 'Clear Demo' : 'Load Demo'}
+                </Button>
+              </div>
             </div>
 
             {cards.length === 0 ? (
@@ -366,11 +409,17 @@ function App() {
                 <FileText size={48} className="text-muted-foreground" />
                 <div>
                   <h3 className="text-lg font-semibold">No cards yet</h3>
-                  <p className="text-muted-foreground">Load the demo or create your first card to get started</p>
+                  <p className="text-muted-foreground">Load the demo or create your first custom card to get started</p>
                 </div>
-                <Button onClick={loadDemo}>
-                  Load Demo Cards
-                </Button>
+                <div className="flex gap-2">
+                  <CardBuilder
+                    selectedProfile={selectedProfile}
+                    onCardCreated={handleCardCreated}
+                  />
+                  <Button onClick={loadDemo} variant="outline">
+                    Load Demo Cards
+                  </Button>
+                </div>
               </div>
             ) : (
               <div className="bg-card rounded-xl border p-4 h-auto lg:h-[calc(100%-80px)] overflow-hidden w-full">
