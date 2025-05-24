@@ -1,5 +1,5 @@
 {
-  "name": "slicer-layered-profiles",
+  "name": "layered-profile-builder",
   "private": true,
   "version": "0.0.0",
   "type": "module",

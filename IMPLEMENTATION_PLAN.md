@@ -1,4 +1,4 @@
-# Slicer Layer Composer - Implementation Plan
+# Layered Profile Builder - Implementation Plan
 
 ## Weekend MVP Goals
 Build a browser-based tool for composing PrusaSlicer profiles from simple "layers" (cards).

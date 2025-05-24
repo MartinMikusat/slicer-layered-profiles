@@ -242,7 +242,7 @@ function App() {
       <header className="border-b bg-background p-6">
         <div className="w-full flex justify-between items-center">
           <div>
-            <h1 className="text-2xl font-bold text-foreground">Slicer Layer Composer</h1>
+            <h1 className="text-2xl font-bold text-foreground">Layered Profile Builder</h1>
             <p className="text-muted-foreground text-sm">Build PrusaSlicer profiles from simple layers</p>
           </div>
           <div className="flex items-center gap-3">
@@ -476,7 +476,7 @@ function App() {
       <footer className="border-t bg-muted/30 py-4">
         <div className="w-full px-6 flex justify-between items-center">
           <p className="text-sm text-muted-foreground">
-            Slicer Layer Composer • Weekend MVP • Built with React + TypeScript
+            Layered Profile Builder • Weekend MVP • Built with React + TypeScript
           </p>
           <Button variant="ghost" size="sm">
             <Settings size={16} />

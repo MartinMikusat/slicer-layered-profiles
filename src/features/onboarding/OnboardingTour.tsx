@@ -12,7 +12,7 @@ interface TourStep {
 const tourSteps: TourStep[] = [
     {
         id: 'welcome',
-        title: 'Welcome to Slicer Layer Composer!',
+        title: 'Welcome to Layered Profile Builder!',
         content: 'This tool helps you build custom PrusaSlicer profiles by combining a base profile with modular "cards" that modify specific settings.',
         position: 'center'
     },

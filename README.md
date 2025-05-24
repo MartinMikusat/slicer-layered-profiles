@@ -1,4 +1,4 @@
-# Slicer Layer Composer
+# Layered Profile Builder
 
 A browser-based tool for composing PrusaSlicer profiles from simple "layers" (cards). Build custom 3D printing profiles by combining and reordering setting modifications.
 

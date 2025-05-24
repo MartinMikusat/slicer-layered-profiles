@@ -104,7 +104,7 @@ export function generateChangeSummary(
         summary += `${h2}Technical Details\n\n`
         summary += `${bullet}${bold('Generation Time')}: ${new Date().toISOString()}\n`
         summary += `${bullet}${bold('Base Profile Version')}: ${baseProfile.version}\n`
-        summary += `${bullet}${bold('Tool')}: Slicer Layer Composer\n\n`
+        summary += `${bullet}${bold('Tool')}: Layered Profile Builder\n\n`
 
         if (isMarkdown) {
             summary += `${h3}Card Order (Left to Right)\n`

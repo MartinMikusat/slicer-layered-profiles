@@ -1,4 +1,4 @@
-# RFC: Slicer Layer Composer - Modular Profile System for PrusaSlicer
+# RFC: Layered Profile Builder - Modular Profile System for PrusaSlicer
 
 ## Executive Summary
 
