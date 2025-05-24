@@ -1,0 +1,89 @@
+import React from 'react'
+import {
+    DndContext,
+    closestCenter,
+    KeyboardSensor,
+    PointerSensor,
+    useSensor,
+    useSensors,
+} from '@dnd-kit/core'
+import type { DragEndEvent } from '@dnd-kit/core'
+import {
+    arrayMove,
+    SortableContext,
+    sortableKeyboardCoordinates,
+    verticalListSortingStrategy,
+} from '@dnd-kit/sortable'
+import { Card } from './Card'
+import type { Card as CardType, SettingChange } from '../types'
+
+interface SortableCardListProps {
+    cards: CardType[]
+    cardOrder: string[]
+    cardsWithPreviews: Array<CardType & { preview?: SettingChange[] }>
+    onReorder: (oldIndex: number, newIndex: number) => void
+    onToggle: (cardId: string) => void
+    onRemove: (cardId: string) => void
+    hasConflict: (path: string) => boolean
+}
+
+export const SortableCardList: React.FC<SortableCardListProps> = ({
+    cards,
+    cardOrder,
+    cardsWithPreviews,
+    onReorder,
+    onToggle,
+    onRemove,
+    hasConflict,
+}) => {
+    const sensors = useSensors(
+        useSensor(PointerSensor, {
+            activationConstraint: {
+                distance: 8,
+            },
+        }),
+        useSensor(KeyboardSensor, {
+            coordinateGetter: sortableKeyboardCoordinates,
+        })
+    )
+
+    const handleDragEnd = (event: DragEndEvent) => {
+        const { active, over } = event
+
+        if (over && active.id !== over.id) {
+            const oldIndex = cardOrder.indexOf(active.id as string)
+            const newIndex = cardOrder.indexOf(over.id as string)
+
+            onReorder(oldIndex, newIndex)
+        }
+    }
+
+    return (
+        <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragEnd={handleDragEnd}
+        >
+            <SortableContext items={cardOrder} strategy={verticalListSortingStrategy}>
+                <div className="card-list">
+                    {cardsWithPreviews.map((card, index) => {
+                        const cardHasConflicts = card.preview?.some(change => hasConflict(change.path)) || false
+
+                        return (
+                            <Card
+                                key={card.id}
+                                card={card}
+                                index={index}
+                                preview={card.preview}
+                                hasConflicts={cardHasConflicts}
+                                onToggle={onToggle}
+                                onRemove={onRemove}
+                                hasConflict={hasConflict}
+                            />
+                        )
+                    })}
+                </div>
+            </SortableContext>
+        </DndContext>
+    )
+} 

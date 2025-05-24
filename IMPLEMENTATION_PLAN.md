@@ -40,23 +40,23 @@ Build a browser-based tool for composing PrusaSlicer profiles from simple "layer
 
 ## Phase 3: User Interface (3-4 hours)
 
-### 🔲 3.1 Card Components
-- [ ] Build draggable card component
-- [ ] Add card metadata display
-- [ ] Implement enable/disable toggle
-- [ ] Show setting changes preview
+### ✅ 3.1 Card Components
+- [x] Build draggable card component
+- [x] Add card metadata display
+- [x] Implement enable/disable toggle
+- [x] Show setting changes preview
 
-### 🔲 3.2 Drag & Drop System
-- [ ] Implement card reordering with @dnd-kit
-- [ ] Add visual feedback during drag
-- [ ] Update card order state
-- [ ] Handle drop zones and validation
+### ✅ 3.2 Drag & Drop System
+- [x] Implement card reordering with @dnd-kit
+- [x] Add visual feedback during drag
+- [x] Update card order state
+- [x] Handle drop zones and validation
 
-### 🔲 3.3 Conflict Visualization
-- [ ] Detect setting conflicts between cards
-- [ ] Show conflict indicators on cards
-- [ ] Add tooltips explaining conflicts
-- [ ] Highlight overridden settings
+### ✅ 3.3 Conflict Visualization
+- [x] Detect setting conflicts between cards
+- [x] Show conflict indicators on cards
+- [x] Add tooltips explaining conflicts
+- [x] Highlight overridden settings
 
 ## Phase 4: Core Functionality (2-3 hours)
 

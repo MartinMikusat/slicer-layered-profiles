@@ -481,6 +481,114 @@ body {
   border-color: #cbd5e1;
 }
 
+/* Drag & Drop Styles */
+.card {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+}
+
+.card-drag-handle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  background: #f8fafc;
+  border-right: 1px solid #e2e8f0;
+  color: #94a3b8;
+  cursor: grab;
+  transition: all 0.2s ease;
+}
+
+.card-drag-handle:hover {
+  background: #f1f5f9;
+  color: #475569;
+}
+
+.card-drag-handle:active {
+  cursor: grabbing;
+}
+
+.card-content {
+  flex: 1;
+  padding: 1rem;
+}
+
+.card.dragging {
+  opacity: 0.5;
+  transform: rotate(5deg);
+  z-index: 1000;
+}
+
+.card.dragging .card-drag-handle {
+  cursor: grabbing;
+  background: #e2e8f0;
+}
+
+/* Enhanced preview styles */
+.preview-header {
+  margin-bottom: 0.5rem;
+}
+
+.preview-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #475569;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.setting-value .old-value {
+  color: #6b7280;
+  text-decoration: line-through;
+}
+
+.setting-value .arrow {
+  color: #10b981;
+  font-weight: bold;
+  margin: 0 0.25rem;
+}
+
+.setting-value .new-value {
+  color: #059669;
+  font-weight: bold;
+}
+
+.setting-value .unit {
+  color: #6b7280;
+  font-weight: normal;
+  margin-left: 0.125rem;
+}
+
+/* Enhanced toggle button */
+.toggle-btn.enabled {
+  background: #dcfce7;
+  color: #16a34a;
+  border-color: #bbf7d0;
+}
+
+.toggle-btn.enabled:hover {
+  background: #bbf7d0;
+  border-color: #86efac;
+}
+
+.toggle-btn.disabled {
+  background: #fef2f2;
+  color: #dc2626;
+  border-color: #fecaca;
+}
+
+.toggle-btn.disabled:hover {
+  background: #fee2e2;
+  border-color: #fca5a5;
+}
+
+.card-author {
+  font-style: italic;
+  color: #6b7280;
+}
+
 /* Responsive design */
 @media (max-width: 768px) {
   .app-main {
@@ -504,5 +612,13 @@ body {
   .demo-btn, .export-btn {
     width: 100%;
     justify-content: center;
+  }
+
+  .card-drag-handle {
+    width: 1.5rem;
+  }
+
+  .card-content {
+    padding: 0.75rem;
   }
 }

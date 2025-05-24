@@ -1,10 +1,12 @@
 import { useState } from 'react'
 import { Download, FileText, Settings, Plus, AlertTriangle } from 'lucide-react'
+import { arrayMove } from '@dnd-kit/sortable'
 import { baseProfiles } from './data/baseProfiles'
 import { demoCards } from './data/demoCards'
 import { useProfileCompiler } from './hooks/useProfileCompiler'
 import { exportProfileAsINI, downloadINIFile } from './utils/iniExporter'
 import { DEFAULT_EXPORT_SETTINGS } from './constants'
+import { SortableCardList } from './components/SortableCardList'
 import type { BaseProfile, Card } from './types'
 import './App.css'
 
@@ -48,6 +50,24 @@ function App() {
       console.error('Export failed:', error)
       alert('Failed to export profile. Please try again.')
     }
+  }
+
+  const handleCardReorder = (oldIndex: number, newIndex: number) => {
+    const newCardOrder = arrayMove(cardOrder, oldIndex, newIndex)
+    setCardOrder(newCardOrder)
+  }
+
+  const handleCardToggle = (cardId: string) => {
+    const updatedCards = cards.map(c =>
+      c.id === cardId ? { ...c, enabled: !c.enabled } : c
+    )
+    setCards(updatedCards)
+  }
+
+  const handleCardRemove = (cardId: string) => {
+    const updatedCards = cards.filter(c => c.id !== cardId)
+    setCards(updatedCards)
+    setCardOrder(cardOrder.filter(id => id !== cardId))
   }
 
   return (
@@ -175,69 +195,15 @@ function App() {
               </button>
             </div>
           ) : (
-            <div className="card-list">
-              {cardsWithPreviews.map((card, index) => {
-                const cardHasConflicts = card.preview?.some(change => hasConflict(change.path)) || false
-
-                return (
-                  <div key={card.id} className={`card ${!card.enabled ? 'disabled' : ''} ${cardHasConflicts ? 'has-conflicts' : ''}`}>
-                    <div className="card-header">
-                      <div className="card-title">
-                        <h3>{card.name}</h3>
-                        {cardHasConflicts && (
-                          <AlertTriangle size={16} className="conflict-icon" />
-                        )}
-                      </div>
-                      <div className="card-actions">
-                        <button
-                          onClick={() => {
-                            const updatedCards = cards.map(c =>
-                              c.id === card.id ? { ...c, enabled: !c.enabled } : c
-                            )
-                            setCards(updatedCards)
-                          }}
-                          className="toggle-btn"
-                        >
-                          {card.enabled ? 'Disable' : 'Enable'}
-                        </button>
-                        <button
-                          onClick={() => {
-                            const updatedCards = cards.filter(c => c.id !== card.id)
-                            setCards(updatedCards)
-                            setCardOrder(cardOrder.filter(id => id !== card.id))
-                          }}
-                          className="remove-btn"
-                        >
-                          Remove
-                        </button>
-                      </div>
-                    </div>
-                    <p className="card-description">{card.description}</p>
-                    {card.preview && (
-                      <div className="card-preview">
-                        {card.preview.map((change, i) => {
-                          const isConflicted = hasConflict(change.path)
-                          return (
-                            <div key={i} className={`setting-change ${isConflicted ? 'conflicted' : ''}`}>
-                              <span className="setting-name">{change.key}</span>
-                              <span className="setting-value">
-                                {change.oldValue !== undefined && `${change.oldValue} → `}
-                                {change.newValue}{change.unit}
-                                {isConflicted && <span className="conflict-indicator">⚠️</span>}
-                              </span>
-                            </div>
-                          )
-                        })}
-                      </div>
-                    )}
-                    <div className="card-meta">
-                      <span className="card-order">#{index + 1}</span>
-                      <span className="card-category">{card.metadata.category}</span>
-                    </div>
-                  </div>
-                )
-              })}
-            </div>
+            <SortableCardList
+              cards={cards}
+              cardOrder={cardOrder}
+              cardsWithPreviews={cardsWithPreviews}
+              onReorder={handleCardReorder}
+              onToggle={handleCardToggle}
+              onRemove={handleCardRemove}
+              hasConflict={hasConflict}
+            />
           )}
         </section>
       </main>
