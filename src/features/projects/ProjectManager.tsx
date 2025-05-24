@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { Save, FolderOpen, Download, Upload, X, AlertCircle } from 'lucide-react';
+import { Save, FolderOpen, Download, Upload, X, AlertCircle, RotateCcw } from 'lucide-react';
 import { Button } from '../ui/components/button';
 import { Input } from '../ui/components/input';
 import { Textarea } from '../ui/components/textarea';
@@ -21,6 +21,7 @@ interface ProjectManagerProps {
     onImport: (jsonString: string) => Promise<{ success: boolean; projectData?: any; error?: string }>;
     onClearError: () => void;
     onProjectLoaded?: (projectData: any) => void;
+    onResetAll?: () => void;
 }
 
 export const ProjectManager: React.FC<ProjectManagerProps> = ({
@@ -39,6 +40,7 @@ export const ProjectManager: React.FC<ProjectManagerProps> = ({
     onImport,
     onClearError,
     onProjectLoaded,
+    onResetAll,
 }) => {
     const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -176,6 +178,18 @@ export const ProjectManager: React.FC<ProjectManagerProps> = ({
                 >
                     <Upload size={16} />
                     Import
+                </Button>
+
+                <Button
+                    onClick={onResetAll}
+                    disabled={isLoading}
+                    variant="outline"
+                    size="sm"
+                    title="Reset all app state and localStorage"
+                    className="gap-2"
+                >
+                    <RotateCcw size={16} />
+                    Reset All
                 </Button>
             </div>
 

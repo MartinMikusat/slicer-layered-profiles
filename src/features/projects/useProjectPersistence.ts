@@ -75,37 +75,9 @@ export function useProjectPersistence(
         return () => clearTimeout(timeoutId);
     }, [baseProfile.id, cards, cardOrder, exportSettings, projectName, projectDescription, autoSaveEnabled, autoSaveDelay]);
 
-    // Load project on mount if available
+    // Initialize state only - no auto-loading
     useEffect(() => {
-        if (hasStoredProject()) {
-            setState(prev => ({ ...prev, isLoading: true }));
-
-            try {
-                const storedProject = loadProjectFromStorage();
-                if (storedProject) {
-                    setProjectName(storedProject.name);
-                    setProjectDescription(storedProject.metadata.description || '');
-                    setState(prev => ({
-                        ...prev,
-                        isLoading: false,
-                        lastSaved: new Date(storedProject.metadata.modified),
-                        error: null,
-                    }));
-
-                    // Note: Project loaded successfully
-                    console.log('Project loaded from storage:', storedProject.name);
-                }
-            } catch (error) {
-                setState(prev => ({
-                    ...prev,
-                    isLoading: false,
-                    error: 'Failed to load saved project',
-                }));
-                console.error('Failed to load stored project:', error);
-            }
-        } else {
-            setState(prev => ({ ...prev, isLoading: false }));
-        }
+        setState(prev => ({ ...prev, isLoading: false }));
     }, []);
 
     // Manual save

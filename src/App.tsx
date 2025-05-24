@@ -84,6 +84,7 @@ function App() {
       handleProjectLoaded(sharedProject)
       clearProjectFromURL() // Clean up URL
     } else {
+      // Always start with a clean slate unless loading a shared project
       // Check if user should see the tour
       const hasSeenTour = localStorage.getItem('hasSeenTour')
       if (!hasSeenTour) {
@@ -139,6 +140,50 @@ function App() {
     setShowDemo(false)
   }
 
+  // Clear all state and start fresh
+  const clearAllState = () => {
+    setCards([])
+    setCardOrder([])
+    setShowDemo(false)
+    setSelectedProfile(baseProfiles[0])
+    setProjectName('Untitled Project')
+    setProjectDescription('')
+
+    // Clear localStorage
+    localStorage.removeItem('layered-profile-builder-project')
+    localStorage.removeItem('layered-profile-builder-custom-cards')
+    localStorage.removeItem('hasSeenTour')
+  }
+
+  // Handle reset all with confirmation
+  const handleResetAll = () => {
+    if (confirm('Are you sure you want to reset all app state? This will clear all cards, projects, and settings. This action cannot be undone.')) {
+      clearAllState();
+      // Force a page reload to ensure clean state
+      window.location.reload();
+    }
+  }
+
+  // Debug function for development - expose to window for console access
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      (window as any).clearAllAppState = clearAllState;
+      (window as any).debugAppState = () => {
+        console.log('Current App State:', {
+          selectedProfile: selectedProfile.name,
+          cards: cards.map(c => ({ id: c.id, name: c.name, enabled: c.enabled })),
+          cardOrder,
+          showDemo,
+          localStorage: {
+            project: localStorage.getItem('layered-profile-builder-project'),
+            customCards: localStorage.getItem('layered-profile-builder-custom-cards'),
+            hasSeenTour: localStorage.getItem('hasSeenTour')
+          }
+        });
+      };
+    }
+  }, [selectedProfile, cards, cardOrder, showDemo, projectName, projectDescription]);
+
   // Push state for undo/redo when changes happen
   useEffect(() => {
     pushState({ selectedProfile, cards, cardOrder })
@@ -176,15 +221,6 @@ function App() {
       removeCustomCard(cardId)
     }
   }
-
-  // Load custom cards on app startup
-  useEffect(() => {
-    const customCards = loadCustomCards()
-    if (customCards.length > 0) {
-      setCards(prev => [...prev, ...customCards])
-      setCardOrder(prev => [...prev, ...customCards.map(card => card.id)])
-    }
-  }, [])
 
   // Add new handler for custom card creation
   const handleCardCreated = useCallback((newCard: Card) => {
@@ -415,6 +451,7 @@ function App() {
                 onImport={async (jsonString) => importProject(jsonString)}
                 onClearError={clearError}
                 onProjectLoaded={handleProjectLoaded}
+                onResetAll={handleResetAll}
               />
             </div>
           </section>
