@@ -19,6 +19,7 @@ import {
   DialogTitle,
   DialogDescription,
   DialogFooter,
+  ProfileSummary,
   useUndoRedo,
   useKeyboardShortcuts
 } from './features/ui'
@@ -503,57 +504,12 @@ function App() {
           {/* Top-right: Profile Summary */}
           <section className="bg-card rounded-xl border p-6 shadow-sm lg:row-span-2 flex flex-col">
             <h3 className="text-lg font-semibold mb-4 flex-shrink-0">Profile Summary</h3>
-            <div className="space-y-3 overflow-y-auto max-h-[calc(100vh-500px)] min-h-0 flex-1">
-              <div className="flex justify-between items-center text-sm">
-                <span className="text-muted-foreground">Layer Height:</span>
-                <span className="font-semibold">
-                  {compiledProfile ?
-                    `${compiledProfile.finalData.print_settings?.layer_height || selectedProfile.data.print_settings.layer_height}mm` :
-                    `${selectedProfile.data.print_settings.layer_height}mm`
-                  }
-                </span>
-              </div>
-              <div className="flex justify-between items-center text-sm">
-                <span className="text-muted-foreground">Temperature:</span>
-                <span className="font-semibold">
-                  {compiledProfile ?
-                    `${compiledProfile.finalData.filament_settings?.temperature || selectedProfile.data.filament_settings.temperature}°C` :
-                    `${selectedProfile.data.filament_settings.temperature}°C`
-                  }
-                </span>
-              </div>
-              <div className="flex justify-between items-center text-sm">
-                <span className="text-muted-foreground">Speed:</span>
-                <span className="font-semibold">
-                  {compiledProfile ?
-                    `${compiledProfile.finalData.print_settings?.perimeter_speed || selectedProfile.data.print_settings.perimeter_speed}mm/s` :
-                    `${selectedProfile.data.print_settings.perimeter_speed}mm/s`
-                  }
-                </span>
-              </div>
-              <div className="flex justify-between items-center text-sm">
-                <span className="text-muted-foreground">Infill:</span>
-                <span className="font-semibold">
-                  {compiledProfile ?
-                    `${compiledProfile.finalData.print_settings?.fill_density || selectedProfile.data.print_settings.fill_density}%` :
-                    `${selectedProfile.data.print_settings.fill_density}%`
-                  }
-                </span>
-              </div>
-              {compiledProfile && compiledProfile.appliedCards.length > 0 && (
-                <div className="pt-3 border-t space-y-2">
-                  <div className="flex justify-between items-center text-sm">
-                    <span className="text-muted-foreground">Applied Cards:</span>
-                    <span className="font-semibold">{compiledProfile.appliedCards.length}</span>
-                  </div>
-                  {Object.keys(compiledProfile.conflicts).length > 0 && (
-                    <div className="flex justify-between items-center text-sm">
-                      <span className="text-muted-foreground">Conflicts:</span>
-                      <span className="font-semibold text-destructive">{Object.keys(compiledProfile.conflicts).length}</span>
-                    </div>
-                  )}
-                </div>
-              )}
+            <div className="overflow-y-auto max-h-[calc(100vh-500px)] min-h-0 flex-1">
+              <ProfileSummary
+                selectedProfile={selectedProfile}
+                compiledProfile={compiledProfile}
+                isCompiling={isCompiling}
+              />
             </div>
           </section>
 

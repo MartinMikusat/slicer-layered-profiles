@@ -4,6 +4,7 @@
 export { LoadingButton, ErrorMessage } from './components/LoadingStates'
 export { Button } from './components/button'
 export { Input } from './components/input'
+export { ProfileSummary } from './components/ProfileSummary'
 export {
     Dialog,
     DialogContent,
