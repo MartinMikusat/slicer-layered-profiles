@@ -220,11 +220,14 @@
   box-shadow: 
     0 0 0 4px rgba(59, 130, 246, 0.8),
     0 0 0 9999px rgba(0, 0, 0, 0.6);
+  transition: all 0.2s ease-out;
 }
 
 .tour-tooltip {
   @apply absolute bg-white rounded-lg shadow-lg p-4 max-w-sm;
   z-index: 1002; /* Above the highlight element */
+  transition: all 0.2s ease-out;
+  opacity: 1;
 }
 
 .tour-tooltip.center {

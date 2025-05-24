@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { ChevronLeft, ChevronRight, X } from 'lucide-react'
 
 interface TourStep {
@@ -55,64 +55,16 @@ interface OnboardingTourProps {
 export function OnboardingTour({ isVisible, onComplete, onSkip }: OnboardingTourProps) {
     const [currentStep, setCurrentStep] = useState(0)
     const [highlightElement, setHighlightElement] = useState<HTMLElement | null>(null)
+    const elementRectRef = useRef<DOMRect | null>(null)
 
-    useEffect(() => {
-        if (!isVisible) return
-
-        const step = tourSteps[currentStep]
-        if (step.target) {
-            // Add a small delay to ensure DOM is ready
-            setTimeout(() => {
-                const element = document.querySelector(step.target!) as HTMLElement
-                setHighlightElement(element)
-            }, 100)
-        } else {
-            setHighlightElement(null)
-        }
-    }, [currentStep, isVisible])
-
-    useEffect(() => {
-        if (!isVisible) return
-
-        // Add tour overlay class to body
-        document.body.classList.add('tour-active')
-
-        return () => {
-            document.body.classList.remove('tour-active')
-        }
-    }, [isVisible])
-
-    if (!isVisible) return null
-
-    const currentTourStep = tourSteps[currentStep]
-    const isFirstStep = currentStep === 0
-    const isLastStep = currentStep === tourSteps.length - 1
-
-    const handleNext = () => {
-        if (isLastStep) {
-            onComplete()
-        } else {
-            setCurrentStep(prev => prev + 1)
-        }
-    }
-
-    const handlePrev = () => {
-        if (!isFirstStep) {
-            setCurrentStep(prev => prev - 1)
-        }
-    }
-
-    const handleSkip = () => {
-        onSkip()
-    }
-
-    // Helper function to calculate tooltip position
-    const getTooltipStyle = (position: string, element: HTMLElement | null) => {
+    // Helper function to calculate tooltip position - optimized version
+    const getTooltipStyle = useCallback((position: string, element: HTMLElement | null) => {
         if (!element || position === 'center') {
             return {}
         }
 
-        const rect = element.getBoundingClientRect()
+        // Use cached rect if available to avoid recalculation
+        const rect = elementRectRef.current || element.getBoundingClientRect()
         const style: React.CSSProperties = { position: 'fixed' }
 
         // Check if the element takes up a majority of the screen (>50% of either dimension)
@@ -156,21 +108,83 @@ export function OnboardingTour({ isVisible, onComplete, onSkip }: OnboardingTour
         }
 
         return style
-    }
+    }, [])
 
-    // Helper function to determine if we should use center positioning
-    const shouldUseCenterPosition = (position: string, element: HTMLElement | null) => {
+    // Helper function to determine if we should use center positioning - optimized
+    const shouldUseCenterPosition = useCallback((position: string, element: HTMLElement | null) => {
         if (!element || position === 'center') {
             return true
         }
 
-        const rect = element.getBoundingClientRect()
+        // Use cached rect if available
+        const rect = elementRectRef.current || element.getBoundingClientRect()
         const viewportWidth = window.innerWidth
         const viewportHeight = window.innerHeight
         const elementWidth = rect.width
         const elementHeight = rect.height
 
         return (elementWidth / viewportWidth > 0.5) || (elementHeight / viewportHeight > 0.5)
+    }, [])
+
+    // Memoize expensive calculations
+    const updateHighlightElement = useCallback((step: TourStep) => {
+        if (step.target) {
+            const element = document.querySelector(step.target!) as HTMLElement
+            if (element) {
+                // Cache the rect to avoid multiple getBoundingClientRect calls
+                elementRectRef.current = element.getBoundingClientRect()
+                setHighlightElement(element)
+            } else {
+                elementRectRef.current = null
+                setHighlightElement(null)
+            }
+        } else {
+            elementRectRef.current = null
+            setHighlightElement(null)
+        }
+    }, [])
+
+    useEffect(() => {
+        if (!isVisible) return
+
+        const step = tourSteps[currentStep]
+        // Update highlight element immediately for smooth transitions
+        updateHighlightElement(step)
+    }, [currentStep, isVisible, updateHighlightElement])
+
+    useEffect(() => {
+        if (!isVisible) return
+
+        // Add tour overlay class to body
+        document.body.classList.add('tour-active')
+
+        return () => {
+            document.body.classList.remove('tour-active')
+        }
+    }, [isVisible])
+
+    if (!isVisible) return null
+
+    const currentTourStep = tourSteps[currentStep]
+    const isFirstStep = currentStep === 0
+    const isLastStep = currentStep === tourSteps.length - 1
+
+    const handleNext = () => {
+        if (isLastStep) {
+            onComplete()
+        } else {
+            setCurrentStep(prev => prev + 1)
+        }
+    }
+
+    const handlePrev = () => {
+        if (!isFirstStep) {
+            setCurrentStep(prev => prev - 1)
+        }
+    }
+
+    const handleSkip = () => {
+        onSkip()
     }
 
     const effectivePosition = shouldUseCenterPosition(currentTourStep.position, highlightElement)
@@ -186,23 +200,23 @@ export function OnboardingTour({ isVisible, onComplete, onSkip }: OnboardingTour
                 style={{ pointerEvents: 'auto' }}
             />
 
-            {/* Highlight box */}
+            {/* Highlight box - always visible when element exists */}
             {highlightElement && (
                 <div
                     className="tour-highlight"
                     style={{
                         position: 'fixed',
-                        top: highlightElement.getBoundingClientRect().top - 8,
-                        left: highlightElement.getBoundingClientRect().left - 8,
-                        width: highlightElement.getBoundingClientRect().width + 16,
-                        height: highlightElement.getBoundingClientRect().height + 16,
+                        top: (elementRectRef.current?.top || highlightElement.getBoundingClientRect().top) - 8,
+                        left: (elementRectRef.current?.left || highlightElement.getBoundingClientRect().left) - 8,
+                        width: (elementRectRef.current?.width || highlightElement.getBoundingClientRect().width) + 16,
+                        height: (elementRectRef.current?.height || highlightElement.getBoundingClientRect().height) + 16,
                         zIndex: 1001,
                         pointerEvents: 'none'
                     }}
                 />
             )}
 
-            {/* Tour tooltip */}
+            {/* Tour tooltip - always visible when tour is active */}
             <div
                 className={`tour-tooltip ${effectivePosition}`}
                 data-centered={effectivePosition === 'center'}
