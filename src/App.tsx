@@ -328,28 +328,30 @@ function App() {
       </header>
 
       <main className="flex-1 w-full p-6 overflow-hidden">
-        {/* Full-width grid layout with proper constraints */}
-        <div className="grid grid-cols-1 lg:grid-cols-[300px_minmax(0,1fr)_320px] lg:grid-rows-[auto_1fr] gap-6 h-auto lg:h-[calc(100vh-200px)] w-full max-w-full">
+        {/* Full-width grid layout with proper constraints - accounting for footer */}
+        <div className="grid grid-cols-1 lg:grid-cols-[300px_minmax(0,1fr)_320px] lg:grid-rows-[auto_1fr] gap-6 h-auto lg:h-[calc(100vh-320px)] w-full max-w-full">
           {/* Top-left: Project Management */}
-          <section className="bg-card rounded-xl border p-6 shadow-sm">
-            <h2 className="text-lg font-semibold mb-4">Project Management</h2>
-            <ProjectManager
-              projectName={projectName}
-              projectDescription={projectDescription}
-              hasUnsavedChanges={hasUnsavedChanges}
-              lastSaved={lastSaved}
-              isLoading={isSaving}
-              error={error}
-              hasStoredProject={hasStoredProject}
-              onProjectNameChange={setProjectName}
-              onProjectDescriptionChange={setProjectDescription}
-              onSave={saveProject}
-              onLoad={async () => loadProject()}
-              onExport={exportProject}
-              onImport={async (jsonString) => importProject(jsonString)}
-              onClearError={clearError}
-              onProjectLoaded={handleProjectLoaded}
-            />
+          <section className="bg-card rounded-xl border p-6 shadow-sm flex flex-col">
+            <h2 className="text-lg font-semibold mb-4 flex-shrink-0">Project Management</h2>
+            <div className="overflow-y-auto max-h-[calc(100vh-500px)] min-h-0 flex-1">
+              <ProjectManager
+                projectName={projectName}
+                projectDescription={projectDescription}
+                hasUnsavedChanges={hasUnsavedChanges}
+                lastSaved={lastSaved}
+                isLoading={isSaving}
+                error={error}
+                hasStoredProject={hasStoredProject}
+                onProjectNameChange={setProjectName}
+                onProjectDescriptionChange={setProjectDescription}
+                onSave={saveProject}
+                onLoad={async () => loadProject()}
+                onExport={exportProject}
+                onImport={async (jsonString) => importProject(jsonString)}
+                onClearError={clearError}
+                onProjectLoaded={handleProjectLoaded}
+              />
+            </div>
           </section>
 
           {/* Top-center: Layer Cards header and workspace */}
@@ -386,9 +388,9 @@ function App() {
           </section>
 
           {/* Top-right: Profile Summary */}
-          <section className="bg-card rounded-xl border p-6 shadow-sm lg:row-span-2">
-            <h3 className="text-lg font-semibold mb-4">Profile Summary</h3>
-            <div className="space-y-3">
+          <section className="bg-card rounded-xl border p-6 shadow-sm lg:row-span-2 flex flex-col">
+            <h3 className="text-lg font-semibold mb-4 flex-shrink-0">Profile Summary</h3>
+            <div className="space-y-3 overflow-y-auto max-h-[calc(100vh-500px)] min-h-0 flex-1">
               <div className="flex justify-between items-center text-sm">
                 <span className="text-muted-foreground">Layer Height:</span>
                 <span className="font-semibold">
@@ -443,9 +445,9 @@ function App() {
           </section>
 
           {/* Bottom-left: Base Profile */}
-          <section className="bg-card rounded-xl border p-6 shadow-sm profile-section">
-            <h2 className="text-lg font-semibold mb-4">Base Profile</h2>
-            <div className="space-y-3">
+          <section className="bg-card rounded-xl border p-6 shadow-sm profile-section flex flex-col">
+            <h2 className="text-lg font-semibold mb-4 flex-shrink-0">Base Profile</h2>
+            <div className="space-y-3 overflow-y-auto max-h-[calc(100vh-500px)] min-h-0 flex-1">
               {baseProfiles.map((profile) => (
                 <label key={profile.id} className="cursor-pointer block">
                   <input

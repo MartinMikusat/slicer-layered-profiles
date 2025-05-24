@@ -85,6 +85,82 @@
   @apply bg-foreground;
 }
 
+/* Profile section scrolling */
+.profile-section .space-y-3 {
+  /* Vertical scrolling with nice scrollbar */
+  scrollbar-width: thin;
+  scrollbar-color: hsl(var(--muted-foreground)) hsl(var(--background));
+  /* Reserve space for scrollbar to prevent overlap */
+  scrollbar-gutter: stable;
+  /* Add padding to the right to ensure content doesn't get cut off by scrollbar */
+  padding-right: 4px;
+  /* Add bottom padding to ensure last item is fully visible */
+  padding-bottom: 8px;
+  /* Set minimum height to ensure usability on small screens */
+  min-height: 200px;
+  /* Use max-height that's more conservative */
+  max-height: min(calc(100vh - 500px), 400px);
+}
+
+.profile-section .space-y-3::-webkit-scrollbar {
+  width: 8px;
+}
+
+.profile-section .space-y-3::-webkit-scrollbar-track {
+  @apply bg-muted rounded;
+  /* Move track slightly to the right to avoid overlap */
+  margin-right: 2px;
+}
+
+.profile-section .space-y-3::-webkit-scrollbar-thumb {
+  @apply bg-muted-foreground rounded;
+  /* Make thumb slightly smaller to avoid overlap */
+  border-right: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+.profile-section .space-y-3::-webkit-scrollbar-thumb:hover {
+  @apply bg-foreground;
+}
+
+/* Sidebar section scrolling (for all sidebar scrollable areas) */
+.bg-card .overflow-y-auto {
+  /* Vertical scrolling with nice scrollbar */
+  scrollbar-width: thin;
+  scrollbar-color: hsl(var(--muted-foreground)) hsl(var(--background));
+  /* Reserve space for scrollbar to prevent overlap */
+  scrollbar-gutter: stable;
+  /* Add padding to the right to ensure content doesn't get cut off by scrollbar */
+  padding-right: 4px;
+  /* Add bottom padding to ensure last item is fully visible */
+  padding-bottom: 8px;
+  /* Set minimum height to ensure usability on small screens */
+  min-height: 200px;
+  /* Use max-height that's more conservative */
+  max-height: min(calc(100vh - 500px), 400px);
+}
+
+.bg-card .overflow-y-auto::-webkit-scrollbar {
+  width: 8px;
+}
+
+.bg-card .overflow-y-auto::-webkit-scrollbar-track {
+  @apply bg-muted rounded;
+  /* Move track slightly to the right to avoid overlap */
+  margin-right: 2px;
+}
+
+.bg-card .overflow-y-auto::-webkit-scrollbar-thumb {
+  @apply bg-muted-foreground rounded;
+  /* Make thumb slightly smaller to avoid overlap */
+  border-right: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+.bg-card .overflow-y-auto::-webkit-scrollbar-thumb:hover {
+  @apply bg-foreground;
+}
+
 .card {
   @apply bg-card border rounded-lg shadow-sm transition-all duration-200 flex items-start gap-3 p-4 min-w-72 flex-shrink-0;
 }
