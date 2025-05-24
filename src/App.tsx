@@ -3,7 +3,7 @@ import { Download, FileText, Settings, Plus, Undo, Redo, Share, BookOpen } from 
 import { arrayMove } from '@dnd-kit/sortable'
 import { baseProfiles, useProfileCompiler } from './features/profiles'
 import { demoCards, SortableCardList } from './features/layers'
-import { CardBuilder, loadCustomCards, addCustomCard, removeCustomCard, updateCustomCard, isCustomCard } from './features/cards'
+import { CardBuilder, CardLibrary, loadCustomCards, addCustomCard, removeCustomCard, updateCustomCard, isCustomCard } from './features/cards'
 import { useProjectPersistence, ProjectManager } from './features/projects'
 import { exportProfileAsINI, downloadINIFile, exportChangeSummaryAsFile } from './features/export'
 import { encodeProjectToURL, decodeProjectFromURL, clearProjectFromURL, copyToClipboard } from './features/projects'
@@ -293,6 +293,20 @@ function App() {
     setShowDemo(false)
   }
 
+  // Add handler for selecting cards from library
+  const handleCardSelected = useCallback((selectedCard: Card) => {
+    // Check if card is already in the workspace
+    const existingCard = cards.find(c => c.id === selectedCard.id)
+    if (existingCard) {
+      alert('This card is already in your workspace')
+      return
+    }
+
+    // Add the card to the workspace
+    setCards(prev => [...prev, selectedCard])
+    setCardOrder(prev => [...prev, selectedCard.id])
+  }, [cards])
+
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <header className="border-b bg-background p-6">
@@ -356,6 +370,18 @@ function App() {
               Tour
             </Button>
 
+            {/* Card Library for browsing/managing */}
+            <CardLibrary
+              mode="browse"
+              onCardEdit={handleCardEdit}
+              trigger={
+                <Button variant="outline" size="default">
+                  <BookOpen size={16} />
+                  My Cards
+                </Button>
+              }
+            />
+
             {/* Export group */}
             <div className="flex gap-2 export-actions">
               <Button
@@ -418,6 +444,12 @@ function App() {
                 <p className="text-sm text-muted-foreground">Drag cards to reorder horizontally • Cards to the right override those to the left</p>
               </div>
               <div className="flex gap-2">
+                <CardLibrary
+                  mode="select"
+                  onCardSelect={handleCardSelected}
+                  onCardEdit={handleCardEdit}
+                  selectedCardIds={cards.map(c => c.id)}
+                />
                 <CardBuilder
                   selectedProfile={selectedProfile}
                   onCardCreated={handleCardCreated}
@@ -437,6 +469,12 @@ function App() {
                   <p className="text-muted-foreground">Load the demo or create your first custom card to get started</p>
                 </div>
                 <div className="flex gap-2">
+                  <CardLibrary
+                    mode="select"
+                    onCardSelect={handleCardSelected}
+                    onCardEdit={handleCardEdit}
+                    selectedCardIds={cards.map(c => c.id)}
+                  />
                   <CardBuilder
                     selectedProfile={selectedProfile}
                     onCardCreated={handleCardCreated}
