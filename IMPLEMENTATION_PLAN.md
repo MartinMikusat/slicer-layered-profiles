@@ -20,23 +20,23 @@ Build a browser-based tool for composing PrusaSlicer profiles from simple "layer
 - [x] Create main app layout
 - [x] Set up basic component structure
 
-## Phase 2: Profile System (2-3 hours)
+## Phase 2: Profile System ✅ (2-3 hours)
 
-### 🔲 2.1 Base Profile System
-- [ ] Create sample PrusaSlicer profiles as JSON
-- [ ] Implement profile loading and parsing
-- [ ] Build profile selector component
+### ✅ 2.1 Base Profile System
+- [x] Create sample PrusaSlicer profiles as JSON
+- [x] Implement profile loading and parsing
+- [x] Build profile selector component
 
-### 🔲 2.2 Card/Patch System
-- [ ] Define card data structure
-- [ ] Implement JSON patch application logic
-- [ ] Create sample demo cards
-- [ ] Build conflict detection system
+### ✅ 2.2 Card/Patch System
+- [x] Define card data structure
+- [x] Implement JSON patch application logic
+- [x] Create sample demo cards
+- [x] Build conflict detection system
 
-### 🔲 2.3 Profile Compilation
-- [ ] Combine base profile + cards into final profile
-- [ ] Implement last-write-wins conflict resolution
-- [ ] Add real-time profile preview
+### ✅ 2.3 Profile Compilation
+- [x] Combine base profile + cards into final profile
+- [x] Implement last-write-wins conflict resolution
+- [x] Add real-time profile preview
 
 ## Phase 3: User Interface (3-4 hours)
 
@@ -60,11 +60,11 @@ Build a browser-based tool for composing PrusaSlicer profiles from simple "layer
 
 ## Phase 4: Core Functionality (2-3 hours)
 
-### 🔲 4.1 INI Export System
-- [ ] Convert final JSON profile to INI format
-- [ ] Validate INI structure
-- [ ] Implement file download
-- [ ] Add export metadata/comments
+### ✅ 4.1 INI Export System
+- [x] Convert final JSON profile to INI format
+- [x] Validate INI structure
+- [x] Implement file download
+- [x] Add export metadata/comments
 
 ### 🔲 4.2 Project Persistence
 - [ ] Save/load project state to localStorage
@@ -72,10 +72,10 @@ Build a browser-based tool for composing PrusaSlicer profiles from simple "layer
 - [ ] Import project from JSON file
 - [ ] Handle migration/versioning
 
-### 🔲 4.3 Demo & Sample Data
-- [ ] Create 3-5 demo cards (temperature, speed, quality)
-- [ ] Add "Load Demo" button
-- [ ] Pre-populate with working example
+### ✅ 4.3 Demo & Sample Data
+- [x] Create 3-5 demo cards (temperature, speed, quality)
+- [x] Add "Load Demo" button
+- [x] Pre-populate with working example
 - [ ] Add tooltips explaining each demo card
 
 ## Phase 5: Polish & Testing (2-3 hours)

@@ -194,6 +194,17 @@ body {
   color: #1e293b;
 }
 
+.compilation-status {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e2e8f0;
+}
+
+.conflict-count {
+  color: #f59e0b !important;
+  font-weight: 700 !important;
+}
+
 /* Card workspace */
 .card-workspace {
   background: white;
@@ -293,6 +304,22 @@ body {
   margin-bottom: 0.75rem;
 }
 
+.card-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.conflict-icon {
+  color: #f59e0b;
+  flex-shrink: 0;
+}
+
+.card.has-conflicts {
+  border-color: #fbbf24;
+  background: #fffbeb;
+}
+
 .card-header h3 {
   margin: 0;
   font-size: 1.125rem;
@@ -372,6 +399,20 @@ body {
   color: #1e293b;
   font-weight: 600;
   font-family: 'SF Mono', 'Monaco', monospace;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.setting-change.conflicted {
+  background: #fef3c7;
+  border-left: 3px solid #f59e0b;
+  padding-left: 0.5rem;
+  margin-left: -0.5rem;
+}
+
+.conflict-indicator {
+  font-size: 0.7rem;
 }
 
 /* Card meta */
