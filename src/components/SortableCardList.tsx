@@ -58,6 +58,14 @@ export const SortableCardList: React.FC<SortableCardListProps> = ({
         }
     }
 
+    // Create a map for quick lookup of card data
+    const cardsMap = new Map(cardsWithPreviews.map(card => [card.id, card]))
+
+    // Order cards according to cardOrder
+    const orderedCards = cardOrder
+        .map(cardId => cardsMap.get(cardId))
+        .filter((card): card is NonNullable<typeof card> => card !== undefined)
+
     return (
         <DndContext
             sensors={sensors}
@@ -66,7 +74,7 @@ export const SortableCardList: React.FC<SortableCardListProps> = ({
         >
             <SortableContext items={cardOrder} strategy={verticalListSortingStrategy}>
                 <div className="card-list">
-                    {cardsWithPreviews.map((card, index) => {
+                    {orderedCards.map((card, index) => {
                         const cardHasConflicts = card.preview?.some(change => hasConflict(change.path)) || false
 
                         return (
