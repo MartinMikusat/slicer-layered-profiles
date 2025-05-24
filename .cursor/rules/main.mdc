@@ -9,6 +9,13 @@ alwaysApply: true
 Building a browser-based tool for composing PrusaSlicer profiles from layers/cards.
 Tech stack: React + TypeScript + Vite, localStorage, fast-json-patch for applying changes.
 
+## Progress Tracking
+**IMPORTANT**: Follow the detailed `IMPLEMENTATION_PLAN.md` file for development phases.
+- Update checkboxes (🔲 → ✅) as tasks are completed
+- Mark phase sections as complete when all subtasks are done
+- Keep the plan current to track overall progress
+- Reference the plan to determine next priorities
+
 ## Development Guidelines
 
 ### Code Style & Patterns
@@ -108,4 +115,45 @@ interface AppState {
 3. Polish and user experience improvements
 4. Advanced features (sharing, tours, etc.)
 
-Remember: Keep it simple, ship fast, iterate based on feedback. 
+## Context Tracking
+**IMPORTANT**: Always check `.llm/context.md` first when starting new work to understand current progress and context.
+- Keep a single `context.md` file in the `.llm/` folder for tracking current plans and progress
+- This file should contain current status, next tasks, and any relevant context
+- Update this file after completing individual tasks or when switching focus areas
+- Include current blockers, key decisions, active files, and immediate next steps
+- **CRITICAL**: Clear/delete this file before git commits and before creating progress documentation to keep the slate clean after completing features
+
+## Development Workflow
+1. **Check `.llm/context.md`** first for current context and progress
+2. **Check IMPLEMENTATION_PLAN.md** for current phase and next tasks
+3. **Create granular task lists** for complex requests (e.g., "Align the top buttons" level of detail)
+4. **Implement features incrementally** - test each component before moving on
+5. **Update progress markers** in the plan as tasks complete
+6. **Update `.llm/context.md`** with current status and next steps
+7. **Commit working states** frequently with descriptive messages
+8. **Test core flow** after each major feature addition
+
+## Progress Documentation
+**IMPORTANT**: Before each git commit (when user asks for commit):
+1. **First clear `.llm/context.md`** to keep the slate clean
+2. Create a comprehensive progress summary and save it to the `progress/` folder so it can be included in the same commit:
+
+### Progress Summary Format
+- **Filename**: `YYYY-MM-DD-HHMMSS-brief-description.md`
+- **Content**: Include milestone achieved, commit hash, files changed, key features implemented, what users can now do, and next steps
+- **Structure**: Use markdown with sections for changes summary, new files, modified files, key features, user capabilities, and next steps
+- **Implementation plan progress**: Reference current phase completion status
+- **IMPORTANT**: Always use `date +"%Y-%m-%d %H:%M:%S"` terminal command to get accurate timestamps - do not rely on training data which may be outdated
+
+### When to Create Progress Summaries
+- Before completing git commits for major phases or milestones
+- When user requests git commit of significant work (create summary first, then commit together)
+- At natural breaking points in development
+- When major functionality becomes available to users
+
+This documentation helps track project evolution and maintain development momentum.
+
+## Important Notes
+**CRITICAL**: Always use `.cursor/rules/` folder for cursor rules, NOT `.cursorrules` file (which is deprecated). Update rules in `.cursor/rules/main.mdc`.
+
+Remember: Keep it simple, ship fast, iterate based on feedback. Follow the implementation plan to maintain steady progress toward the weekend MVP goal. 
