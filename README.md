@@ -2,6 +2,8 @@
 
 A browser-based tool for composing PrusaSlicer profiles from simple "layers". Build custom 3D printing profiles by combining and reordering setting modifications.
 
+**Desktop Application**: Designed exclusively for desktop use - optimized for efficient workflows on desktop screens.
+
 **Status**: Advanced MVP Complete ✅  
 **Ready For**: Real-world testing and PrusaSlicer profile integration
 
@@ -41,7 +43,7 @@ Instead of manually editing complex slicer profiles, this tool lets you:
 - 🎪 **Demo mode** - Try it instantly with pre-made layers
 - 🖱️ **Drag & drop** - Intuitive layer reordering
 - 👀 **Live preview** - See setting changes in real-time
-- 📱 **Mobile friendly** - Works on phones and tablets
+- 🖥️ **Desktop optimized** - Clean layouts designed for desktop workflows
 - ⚡ **Fast** - No server required, everything runs locally
 - 🎯 **Guided tours** - Interactive onboarding and help
 

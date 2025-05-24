@@ -84,7 +84,7 @@ const ProfileSummary: React.FC<ProfileSummaryProps> = ({
     const keySettings = getKeySettings();
 
     return (
-        <div className="space-y-4">
+        <div className="min-h-full flex flex-col space-y-4">
             {/* Loading state */}
             {isCompiling && (
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
@@ -147,9 +147,9 @@ const ProfileSummary: React.FC<ProfileSummaryProps> = ({
                 </div>
             )}
 
-            {/* All Changes - Simple List */}
+            {/* All Changes - Simple List - This should expand to fill available space */}
             {hasChanges && (
-                <div className="pt-3 border-t space-y-3">
+                <div className="pt-3 border-t space-y-3 flex-1">
                     <h4 className="font-medium text-sm">All Changes</h4>
                     <div className="space-y-2">
                         {allChanges.map((change, index) => {
@@ -179,9 +179,9 @@ const ProfileSummary: React.FC<ProfileSummaryProps> = ({
                 </div>
             )}
 
-            {/* Applied Layers List */}
+            {/* Applied Layers List - This should also expand if it's the main content */}
             {compiledProfile && compiledProfile.appliedLayers.length > 0 && (
-                <div className="pt-3 border-t space-y-2">
+                <div className={`pt-3 border-t space-y-2 ${!hasChanges ? 'flex-1' : ''}`}>
                     <h4 className="font-medium text-sm">Applied Layers</h4>
                     <div className="space-y-1">
                         {compiledProfile.appliedLayers.map((layer, index) => (
@@ -206,9 +206,9 @@ const ProfileSummary: React.FC<ProfileSummaryProps> = ({
                 </div>
             )}
 
-            {/* No changes state */}
+            {/* No changes state - should expand to fill available space when it's the only content */}
             {!hasChanges && !isCompiling && (
-                <div className="pt-3 border-t text-center py-4">
+                <div className="pt-3 border-t text-center py-4 flex-1 flex flex-col justify-center">
                     <CheckCircle className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
                     <p className="text-sm text-muted-foreground">
                         No modifications applied

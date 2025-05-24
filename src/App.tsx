@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { Download, FileText, Settings, Plus, Undo, Redo, Share, BookOpen } from 'lucide-react'
 import { arrayMove } from '@dnd-kit/sortable'
 import { baseProfiles, useProfileCompiler } from './features/profiles'
-import { demoLayers, SortableLayerList } from './features/layers'
+import { demoLayers, defaultLayers, SortableLayerList } from './features/layers'
 import { LayerBuilder, LayerLibrary, addCustomLayer, removeCustomLayer, updateCustomLayer, isCustomLayer } from './features/layers'
 import { useProjectPersistence, ProjectManager } from './features/projects'
 import { exportProfileAsINI, downloadINIFile } from './features/export'
@@ -153,12 +153,22 @@ function App() {
   }, [compiledProfile])
 
   const loadDemo = () => {
+    // Find the fuzzy skin layer from default layers
+    const fuzzySkinLayer = defaultLayers.find(layer => layer.id === 'default-fuzzy-skin')
+
+    // Create demo layers with IDs
     const demoLayersWithIds: Layer[] = demoLayers.map((demoLayer, index) => ({
       ...demoLayer,
       id: `demo-${index}`,
     }))
-    setLayers(demoLayersWithIds)
-    setLayerOrder(demoLayersWithIds.map(layer => layer.id))
+
+    // Combine fuzzy skin layer (at the beginning) with demo layers
+    const allDemoLayers = fuzzySkinLayer ?
+      [{ ...fuzzySkinLayer, id: 'demo-fuzzy-skin', enabled: true }, ...demoLayersWithIds] :
+      demoLayersWithIds
+
+    setLayers(allDemoLayers)
+    setLayerOrder(allDemoLayers.map(layer => layer.id))
     setShowDemo(true)
   }
 
@@ -429,35 +439,67 @@ function App() {
       </header>
 
       <main className="flex-1 w-full p-6 overflow-hidden">
-        {/* Full-width grid layout with proper constraints - accounting for footer */}
-        <div className="grid grid-cols-1 lg:grid-cols-[300px_minmax(0,1fr)_320px] lg:grid-rows-[auto_1fr] gap-6 h-auto lg:h-[calc(100vh-320px)] w-full max-w-full">
-          {/* Top-left: Project Management */}
-          <section className="bg-card rounded-xl border p-6 shadow-sm flex flex-col tour-project-management">
-            <h2 className="text-lg font-semibold mb-4 flex-shrink-0">Project Management</h2>
-            <div className="overflow-y-auto max-h-[calc(100vh-500px)] min-h-0 flex-1">
-              <ProjectManager
-                projectName={projectName}
-                projectDescription={projectDescription}
-                hasUnsavedChanges={hasUnsavedChanges}
-                lastSaved={lastSaved}
-                isLoading={isSaving}
-                error={error}
-                hasStoredProject={hasStoredProject}
-                onProjectNameChange={setProjectName}
-                onProjectDescriptionChange={setProjectDescription}
-                onSave={saveProject}
-                onLoad={async () => loadProject()}
-                onExport={exportProject}
-                onImport={async (jsonString) => importProject(jsonString)}
-                onClearError={clearError}
-                onProjectLoaded={handleProjectLoaded}
-                onResetAll={handleResetAll}
-              />
-            </div>
-          </section>
+        {/* Desktop-only flexbox layout */}
+        <div className="flex gap-6 h-full">
+          {/* Left column: Project Management + Base Profile */}
+          <div className="flex flex-col gap-6 w-[300px] flex-shrink-0">
+            {/* Project Management */}
+            <section className="bg-card rounded-xl border p-6 shadow-sm flex flex-col tour-project-management">
+              <h2 className="text-lg font-semibold mb-4 flex-shrink-0">Project Management</h2>
+              <div className="overflow-y-auto flex-1">
+                <ProjectManager
+                  projectName={projectName}
+                  projectDescription={projectDescription}
+                  hasUnsavedChanges={hasUnsavedChanges}
+                  lastSaved={lastSaved}
+                  isLoading={isSaving}
+                  error={error}
+                  hasStoredProject={hasStoredProject}
+                  onProjectNameChange={setProjectName}
+                  onProjectDescriptionChange={setProjectDescription}
+                  onSave={saveProject}
+                  onLoad={async () => loadProject()}
+                  onExport={exportProject}
+                  onImport={async (jsonString) => importProject(jsonString)}
+                  onClearError={clearError}
+                  onProjectLoaded={handleProjectLoaded}
+                  onResetAll={handleResetAll}
+                />
+              </div>
+            </section>
 
-          {/* Top-center: Layers header and workspace */}
-          <section className="space-y-4 card-workspace lg:row-span-2 min-w-0">
+            {/* Base Profile */}
+            <section className="bg-card rounded-xl border p-6 shadow-sm profile-section flex flex-col">
+              <h2 className="text-lg font-semibold mb-4 flex-shrink-0">Base Profile</h2>
+              <div className="space-y-3 overflow-y-auto flex-1">
+                {baseProfiles.map((profile) => (
+                  <label key={profile.id} className="cursor-pointer block">
+                    <input
+                      type="radio"
+                      name="baseProfile"
+                      value={profile.id}
+                      checked={selectedProfile.id === profile.id}
+                      onChange={() => setSelectedProfile(profile)}
+                      className="sr-only"
+                    />
+                    <div className={`p-4 rounded-lg border-2 transition-all ${selectedProfile.id === profile.id
+                      ? 'border-primary bg-primary/5'
+                      : 'border-border hover:border-border/80 hover:bg-accent/50'
+                      }`}>
+                      <h3 className="font-semibold text-sm">{profile.name}</h3>
+                      <p className="text-xs text-muted-foreground mt-1">{profile.description}</p>
+                      <div className="text-xs text-muted-foreground mt-2 font-medium">
+                        {profile.metadata.printer} • {profile.metadata.quality}
+                      </div>
+                    </div>
+                  </label>
+                ))}
+              </div>
+            </section>
+          </div>
+
+          {/* Center: Layers workspace */}
+          <section className="flex-1 space-y-4 card-workspace min-w-0">
             <div className="flex justify-between items-center">
               <div>
                 <h2 className="text-xl font-semibold">Layers</h2>
@@ -482,7 +524,7 @@ function App() {
             </div>
 
             {layers.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-12 text-center space-y-4 bg-card rounded-xl border border-dashed h-auto lg:h-[calc(100%-80px)]">
+              <div className="flex flex-col items-center justify-center py-12 text-center space-y-4 bg-card rounded-xl border border-dashed flex-1">
                 <FileText size={48} className="text-muted-foreground" />
                 <div>
                   <h3 className="text-lg font-semibold">No layers yet</h3>
@@ -505,7 +547,7 @@ function App() {
                 </div>
               </div>
             ) : (
-              <div className="bg-card rounded-xl border p-4 h-auto lg:h-[calc(100%-80px)] overflow-hidden w-full">
+              <div className="bg-card rounded-xl border p-4 flex-1 overflow-hidden">
                 <SortableLayerList
                   layers={layers}
                   layerOrder={layerOrder}
@@ -520,44 +562,15 @@ function App() {
             )}
           </section>
 
-          {/* Top-right: Profile Summary */}
-          <section className="bg-card rounded-xl border p-6 shadow-sm lg:row-span-2 flex flex-col tour-profile-summary">
+          {/* Right: Profile Summary */}
+          <section className="bg-card rounded-xl border p-6 shadow-sm w-[320px] flex-shrink-0 flex flex-col tour-profile-summary">
             <h3 className="text-lg font-semibold mb-4 flex-shrink-0">Profile Summary</h3>
-            <div className="overflow-y-auto max-h-[calc(100vh-500px)] min-h-0 flex-1">
+            <div className="overflow-y-auto flex-1">
               <ProfileSummary
                 selectedProfile={selectedProfile}
                 compiledProfile={compiledProfile}
                 isCompiling={isCompiling}
               />
-            </div>
-          </section>
-
-          {/* Bottom-left: Base Profile */}
-          <section className="bg-card rounded-xl border p-6 shadow-sm profile-section flex flex-col">
-            <h2 className="text-lg font-semibold mb-4 flex-shrink-0">Base Profile</h2>
-            <div className="space-y-3 overflow-y-auto max-h-[calc(100vh-500px)] min-h-0 flex-1">
-              {baseProfiles.map((profile) => (
-                <label key={profile.id} className="cursor-pointer block">
-                  <input
-                    type="radio"
-                    name="baseProfile"
-                    value={profile.id}
-                    checked={selectedProfile.id === profile.id}
-                    onChange={() => setSelectedProfile(profile)}
-                    className="sr-only"
-                  />
-                  <div className={`p-4 rounded-lg border-2 transition-all ${selectedProfile.id === profile.id
-                    ? 'border-primary bg-primary/5'
-                    : 'border-border hover:border-border/80 hover:bg-accent/50'
-                    }`}>
-                    <h3 className="font-semibold text-sm">{profile.name}</h3>
-                    <p className="text-xs text-muted-foreground mt-1">{profile.description}</p>
-                    <div className="text-xs text-muted-foreground mt-2 font-medium">
-                      {profile.metadata.printer} • {profile.metadata.quality}
-                    </div>
-                  </div>
-                </label>
-              ))}
             </div>
           </section>
         </div>

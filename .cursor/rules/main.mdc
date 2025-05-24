@@ -9,7 +9,9 @@ alwaysApply: true
 Building a browser-based tool for composing PrusaSlicer profiles from layers/cards.
 Tech stack: React + TypeScript + Vite, localStorage, fast-json-patch for applying changes.
 
-**IMPORTANT**: Check `PROJECT_STATE.md` first to understand what has been implemented and the current status of all features. This document provides a comprehensive overview of completed phases, architecture, and current capabilities.
+**DESKTOP-ONLY APPLICATION**: This application is designed exclusively for desktop use. No mobile responsiveness is required. Use simple, clean layouts optimized for desktop screens (1024px+ width).
+
+**IMPORTANT**: Check `PROJECT_COMPLETION_SUMMARY.md` first to understand what has been implemented and the current status of all features. This document provides a comprehensive overview of completed phases, architecture, and current capabilities.
 
 ## Progress Tracking
 **IMPORTANT**: Follow the detailed `IMPLEMENTATION_PLAN.md` file for development phases.
@@ -68,10 +70,12 @@ Tech stack: React + TypeScript + Vite, localStorage, fast-json-patch for applyin
 - Store cards as ordered array
 
 ### User Experience
+- **Desktop-focused design** - No mobile responsiveness needed, optimize for desktop workflows
 - Drag and drop should feel natural (react-dnd or @dnd-kit)
 - Show immediate feedback for actions
 - Display conflicts clearly but non-intrusively
 - Make sharing via URL simple (base64 encode state)
+- Use simple flexbox layouts instead of complex responsive grids
 
 ### Performance
 - Keep render cycles minimal
