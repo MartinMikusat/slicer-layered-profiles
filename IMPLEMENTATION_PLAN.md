@@ -1,181 +1,302 @@
-# Layered Profile Builder - Implementation Plan
+# Layered Profile Builder - Next Phase Implementation Plan
 
-## Weekend MVP Goals
-Build a browser-based tool for composing PrusaSlicer profiles from simple "layers" (cards).
+## Current Status Assessment
+✅ **Core MVP Features Complete** - The foundation is solid with:
+- Base profile system with compilation
+- Card/patch system with conflict detection  
+- Drag & drop reordering with visual feedback
+- INI export and project persistence
+- URL sharing and onboarding tour
+- Demo cards and comprehensive UI
 
-## Phase 1: Core Architecture Setup ✅ (1-2 hours)
+## Phase 6.5: Real PrusaSlicer Profile Integration 🎯 (2-3 hours)
+**Priority: HIGHEST - Foundation for truly functional profiles**
 
-### ✅ 1.1 Project Initialization
-- [x] Create Vite + React + TypeScript project
-- [x] Install dependencies: `fast-json-patch`, `@dnd-kit/*`, `lucide-react`
-- [x] Set up project structure and cursor rules
+### 🔲 6.5.1 Profile Data Collection
+- [ ] Download real PrusaSlicer profile bundles from official sources:
+  - [Prusa FDM profiles](https://github.com/prusa3d/PrusaSlicer-settings-prusa-fff) (MK3S+, MK4, XL, etc.)
+  - [Non-Prusa FDM profiles](https://github.com/prusa3d/PrusaSlicer-settings-non-prusa-fff) (Creality, Kingroon, etc.)
+  - Community-tested profiles from GitHub repos
+- [ ] Parse INI bundle files to extract individual printer configurations
+- [ ] Convert INI sections to JSON format for our system
+- [ ] Validate profile structure and completeness
 
-### ✅ 1.2 Type Definitions & Core Structure
-- [x] Create type definitions in `src/types/`
-- [x] Set up basic folder structure
-- [x] Create core constants and sample data
+### 🔲 6.5.2 Profile Parsing & Conversion
+- [ ] Create INI parser utility (`parseINIProfile.ts`)
+- [ ] Build profile converter (`convertPrusaProfile.ts`) 
+- [ ] Handle multi-printer bundles (extract individual printer profiles)
+- [ ] Preserve all original settings and metadata
+- [ ] Generate appropriate preview data for UI
 
-### ✅ 1.3 Basic Layout & Routing
-- [x] Clean up default Vite template
-- [x] Create main app layout
-- [x] Set up basic component structure
+### 🔲 6.5.3 Profile Integration & Organization
+- [ ] Replace demo profiles with real Prusa profiles
+- [ ] Add profile categories: Prusa (MK3S+, MK4), Community (Creality, etc.)
+- [ ] Create profile selector with printer manufacturer grouping
+- [ ] Add profile metadata display (printer model, nozzle size, material compatibility)
+- [ ] Implement profile search/filter by printer type
 
-## Phase 2: Profile System ✅ (2-3 hours)
+### 🔲 6.5.4 Validation & Testing
+- [ ] Test profile compilation with real settings
+- [ ] Validate INI export produces PrusaSlicer-compatible files
+- [ ] Test card patches work correctly with real profile structure
+- [ ] Verify exported profiles can be imported into actual PrusaSlicer
+- [ ] Test with multiple printer types (i3 MK3S+, MK4, Ender 3, etc.)
 
-### ✅ 2.1 Base Profile System
-- [x] Create sample PrusaSlicer profiles as JSON
-- [x] Implement profile loading and parsing
-- [x] Build profile selector component
+## Phase 7: Custom Card Creation 🎯 (3-4 hours) 
+**Priority: HIGH - This is the key missing MVP feature**
 
-### ✅ 2.2 Card/Patch System
-- [x] Define card data structure
-- [x] Implement JSON patch application logic
-- [x] Create sample demo cards
-- [x] Build conflict detection system
+### 🔲 7.1 Card Builder UI
+- [ ] Create `CardBuilder.tsx` component with form interface
+- [ ] Add "Create Custom Card" button to main interface
+- [ ] Implement modal/dialog for card creation
+- [ ] Add card template selection (empty, from existing card)
 
-### ✅ 2.3 Profile Compilation
-- [x] Combine base profile + cards into final profile
-- [x] Implement last-write-wins conflict resolution
-- [x] Add real-time profile preview
+### 🔲 7.2 Setting Editor
+- [ ] Build setting path browser/picker from base profile
+- [ ] Add value input with type validation (number, string, boolean)
+- [ ] Show setting current value vs. new value preview
+- [ ] Support multiple setting modifications per card
 
-## Phase 3: User Interface (3-4 hours)
+### 🔲 7.3 Card Metadata Input
+- [ ] Add name, description, and category fields
+- [ ] Include author, version, and tags input
+- [ ] Add card validation before save
+- [ ] Generate preview automatically from patches
 
-### ✅ 3.1 Card Components
-- [x] Build draggable card component
-- [x] Add card metadata display
-- [x] Implement enable/disable toggle
-- [x] Show setting changes preview
+### 🔲 7.4 Card Management
+- [ ] Save custom cards to localStorage with versioning
+- [ ] Edit existing custom cards (not demo cards)
+- [ ] Duplicate cards to create variations
+- [ ] Delete custom cards with confirmation
 
-### ✅ 3.2 Drag & Drop System
-- [x] Implement card reordering with @dnd-kit
-- [x] Add visual feedback during drag
-- [x] Update card order state
-- [x] Handle drop zones and validation
+## Phase 8: Enhanced User Experience 🔲 (2-3 hours)
+**Priority: MEDIUM - Polish for better usability**
 
-### ✅ 3.3 Conflict Visualization
-- [x] Detect setting conflicts between cards
-- [x] Show conflict indicators on cards
-- [x] Add tooltips explaining conflicts
-- [x] Highlight overridden settings
+### 🔲 8.1 Card Library
+- [ ] Separate demo cards from custom cards in UI
+- [ ] Add card library/collection view
+- [ ] Implement card search/filter for custom cards
+- [ ] Add card import from JSON/INI snippets
 
-## Phase 4: Core Functionality ✅ (2-3 hours)
+### 🔲 8.2 Profile Enhancement
+- [ ] Support multiple base profiles (different printers/materials)
+- [ ] Add base profile import from actual PrusaSlicer INI files
+- [ ] Show more detailed profile information
+- [ ] Add profile comparison feature
 
-### ✅ 4.1 INI Export System
-- [x] Convert final JSON profile to INI format
-- [x] Validate INI structure
-- [x] Implement file download
-- [x] Add export metadata/comments
+### 🔲 8.3 Better Conflict Handling
+- [ ] Visual conflict resolution interface
+- [ ] Allow manual conflict resolution (not just last-wins)
+- [ ] Show setting dependency warnings
+- [ ] Add conflict explanation tooltips
 
-### ✅ 4.2 Project Persistence
-- [x] Save/load project state to localStorage
-- [x] Export project as JSON file
-- [x] Import project from JSON file
-- [x] Handle migration/versioning
+## Phase 9: Advanced Features 🔲 (2-3 hours)
+**Priority: LOW - Nice-to-have enhancements**
 
-### ✅ 4.3 Demo & Sample Data
-- [x] Create 3-5 demo cards (temperature, speed, quality)
-- [x] Add "Load Demo" button
-- [x] Pre-populate with working example
-- [x] Add tooltips explaining each demo card
+### 🔲 9.1 Card Templates & Presets
+- [ ] Create card template system (speed boost, quality improve, etc.)
+- [ ] Add preset card collections for common use cases
+- [ ] Export/import card collections
+- [ ] Community card sharing format
 
-## Phase 5: Polish & Testing ✅ (2-3 hours)
+### 🔲 9.2 Advanced Export Options
+- [ ] Multi-profile export (different quality settings)
+- [ ] Export to PrusaSlicer bundle format
+- [ ] Add print time estimation integration
+- [ ] Export validation warnings
 
-### ✅ 5.1 User Experience Improvements
-- [x] Add undo/redo functionality
-- [x] Implement keyboard shortcuts
-- [x] Add loading states and error handling
-- [ ] Improve mobile responsiveness
+### 🔲 9.3 Mobile Optimizations
+- [ ] Improve touch-based drag and drop
+- [ ] Optimize card layout for mobile
+- [ ] Add swipe gestures for card management
+- [ ] Touch-friendly card creation interface
 
-### ✅ 5.2 Advanced Features
-- [x] URL-based project sharing (base64 encoding)
-- [x] Basic onboarding tour
-- [x] Auto-generate change summary for RFC
-- [x] Add card search/filtering
+## Phase 10: Testing & Polish 🔲 (2 hours)
+**Priority: MEDIUM - Essential for quality**
 
-### 🔲 5.3 Testing & Validation
-- [ ] Unit tests for core utilities
-- [ ] Test with real PrusaSlicer profiles
-- [ ] E2E test for main user flow
-- [ ] Performance testing with many cards
+### 🔲 10.1 Testing Suite
+- [ ] Unit tests for card creation logic
+- [ ] Integration tests for custom card workflow
+- [ ] E2E test: create card → add to profile → export
+- [ ] Regression tests for existing functionality
 
-## Phase 6: Documentation & Deployment ✅ (1 hour)
+### 🔲 10.2 Error Handling & Validation
+- [ ] Better error messages for card creation
+- [ ] Input validation with helpful feedback
+- [ ] Graceful handling of malformed custom cards
+- [ ] Recovery from localStorage corruption
 
-### ✅ 6.1 Documentation
-- [x] Update README with usage instructions
-- [x] Document card creation format
-- [x] Add FAQ and troubleshooting
-- [x] Create RFC-ready summary
+### 🔲 10.3 Performance & UX
+- [ ] Loading states for card operations
+- [ ] Optimize large card collections
+- [ ] Add keyboard shortcuts for card management
+- [ ] Improve accessibility (screen readers, keyboard nav)
 
-### ✅ 6.2 Deployment Preparation
-- [x] Build production version
-- [x] Test deployment locally
-- [x] Prepare GitHub Pages deployment
-- [x] Create release checklist
+## Implementation Priority for Next Session
 
-## Success Criteria
+### 🎯 **NEW Immediate Focus: Real PrusaSlicer Profile Integration (Phase 6.5)**
+This is now the highest priority as it makes the tool truly functional with real-world profiles:
 
-### Must Have (MVP)
-- ✅ Base profile selection
-- ✅ Card system with JSON patches
-- ✅ Drag & drop card ordering
-- ✅ Conflict detection and last-write-wins
-- ✅ INI file export
-- ✅ Local project save/load
-- ✅ 3+ working demo cards
+1. **Start with Phase 6.5.1** - Download and analyze real PrusaSlicer profiles
+2. **Phase 6.5.2** - Build INI parser and converter utilities
+3. **Phase 6.5.3** - Integrate real profiles into existing system
+4. **Phase 6.5.4** - Validate end-to-end functionality with real profiles
+
+### 📋 **Detailed Next Steps for Real Profile Integration:**
+
+#### Step 1: Profile Data Collection (45 mins)
+- Download official Prusa profile bundles (.ini files)
+- Download popular community profiles (Creality Ender 3, Kingroon KP3S)
+- Analyze INI structure and identify key sections
+- Create profile data directory structure
+
+#### Step 2: INI Parser Development (1 hour)
+- Build robust INI parser that handles PrusaSlicer format
+- Parse sections: `[printer_settings]`, `[print_settings]`, `[filament_settings]`
+- Convert to our JSON BaseProfile format
+- Preserve metadata and compatibility info
+
+#### Step 3: Profile Integration (45 mins)
+- Replace existing demo profiles with real ones
+- Update profile selector UI with categories
+- Add proper printer metadata display
+- Test profile compilation pipeline
+
+#### Step 4: Validation & Export Testing (30 mins)
+- Test card patches work with real profile structure
+- Validate exported INI files work in actual PrusaSlicer
+- Test end-to-end workflow: real profile → cards → export → import
+
+### 🔄 **Then Continue with Custom Card Creation (Phase 7)**
+After real profiles are working, proceed with custom card creation as originally planned.
+
+## Real Profile Sources & Integration Plan
+
+### **Key Profile Sources** 
+Based on web research of official PrusaSlicer repositories:
+
+**Official Prusa Profiles:**
+- **Current repo**: [PrusaSlicer-settings-prusa-fff](https://github.com/prusa3d/PrusaSlicer-settings-prusa-fff)
+- **Covers**: Original Prusa i3 MK3S+, MK4, XL, MINI+ series
+- **Format**: Bundle .ini files with complete configurations
+
+**Community Profiles:**
+- **Non-Prusa repo**: [PrusaSlicer-settings-non-prusa-fff](https://github.com/prusa3d/PrusaSlicer-settings-non-prusa-fff)  
+- **Covers**: Creality Ender 3/5, Kingroon KP3S, Artillery, etc.
+- **Community curated**: [KP3S-Prusa profiles](https://github.com/RyanT95/KP3S-Prusa) and others
+
+### **Technical Implementation Strategy**
+
+#### INI Bundle Structure (from research):
+```ini
+# Each bundle contains:
+[printer_settings]
+# Printer hardware config, bed size, nozzle, etc.
+
+[print_settings] 
+# Layer height, speeds, infill, supports, etc.
+
+[filament_settings]
+# Temperature, retraction, cooling, material properties
+```
+
+#### Our Integration Approach:
+```typescript
+// Parse real INI → convert to our BaseProfile format
+interface BaseProfile {
+  id: string; // derived from printer model
+  name: string; // "Original Prusa i3 MK3S+ 0.4mm"
+  data: {
+    printer_settings: {...},
+    print_settings: {...}, 
+    filament_settings: {...}
+  },
+  metadata: {
+    printer: "MK3S+",
+    nozzle: "0.4mm",
+    material: "PLA",
+    source: "official" | "community"
+  }
+}
+```
+
+### **File Structure for Real Profiles:**
+```
+src/features/profiles/
+├── realProfiles/           # Real PrusaSlicer profiles  
+│   ├── prusa/              # Official Prusa profiles
+│   │   ├── mk3s.json       # Converted from official INI
+│   │   ├── mk4.json
+│   │   └── xl.json
+│   ├── community/          # Community profiles
+│   │   ├── ender3.json     # Popular community printers
+│   │   ├── kingroon.json
+│   │   └── creality.json
+│   └── index.ts            # Profile registry
+├── utils/
+│   ├── iniParser.ts        # Parse PrusaSlicer INI files
+│   ├── profileConverter.ts # Convert INI → BaseProfile
+│   └── profileValidator.ts # Validate converted profiles
+└── baseProfiles.ts         # Updated to use real profiles
+```
+
+## Success Criteria for Custom Card Creation
+
+### Must Have (Core MVP)
+- [ ] Create cards with name, description, and category
+- [ ] Modify one or more profile settings per card
+- [ ] Save custom cards persistently (localStorage)
+- [ ] Use custom cards same as demo cards (drag, toggle, conflict detection)
+- [ ] Export profiles with custom cards applied
 
 ### Should Have (Polish)
-- ✅ Undo/redo functionality
-- ✅ Setting change previews
-- ✅ Basic conflict visualization
-- ✅ Mobile-friendly design
-- ✅ Error handling
+- [ ] Validate card inputs before saving
+- [ ] Edit existing custom cards
+- [ ] Visual preview of setting changes
+- [ ] Search/filter custom cards
 
 ### Could Have (Advanced)
-- ✅ URL sharing
-- ✅ Onboarding tour
-- ✅ RFC markdown export
-- ✅ Card metadata and versioning
+- [ ] Card templates for common modifications
+- [ ] Import cards from JSON/INI
+- [ ] Duplicate cards to create variations
+- [ ] Share custom cards via URL
 
-## Technical Decisions
-
-### Architecture
-- **State Management**: React hooks + localStorage (no Redux needed)
-- **Drag & Drop**: @dnd-kit (better accessibility than react-dnd)
-- **Patch System**: fast-json-patch (RFC 6901/6902 compliant)
-- **File Format**: Standard PrusaSlicer INI
+## Architecture Notes for Card Creation
 
 ### Data Flow
 ```
-Base Profile → Apply Cards (ordered) → Detect Conflicts → Export INI
-     ↓                ↓                      ↓
-   JSON             Patches               Final JSON → INI
+User Input → Validate → Generate Patches → Create Card → Save to localStorage → Add to State
 ```
 
-### Performance Considerations
-- Debounce profile compilation (500ms)
-- Memo-ize card components
-- Lazy load demo data
-- Optimize drag operations
+### File Structure
+```
+src/features/cards/
+├── CardBuilder.tsx          # Main card creation interface
+├── SettingPicker.tsx        # Browse profile settings
+├── SettingInput.tsx         # Input for individual settings
+├── CardForm.tsx             # Complete card metadata form
+├── customCardService.ts     # CRUD operations for custom cards
+└── index.ts                 # Exports
+```
+
+### Integration Points
+- **Add to layers feature**: Extend existing card management
+- **Integrate with persistence**: Use existing localStorage patterns
+- **Extend type definitions**: Add CustomCard type vs DemoCard
+- **Enhance UI components**: Reuse existing modal/form components
 
 ## Risk Mitigation
 
 ### Time Management
-- Focus on core flow first
-- Cut features aggressively if behind
-- Test early and often
-- Keep scope minimal but functional
+- Focus on core creation workflow first
+- Use existing UI components where possible
+- Defer advanced features (templates, import) if needed
+- Test incrementally - don't build everything before testing
 
 ### Technical Risks
-- INI parsing edge cases → Start with simple test cases
-- Complex nested settings → Document limitations clearly
-- Browser compatibility → Target modern browsers only
-- Performance with many cards → Test with 20+ cards
+- **Setting path complexity**: Start with simple top-level settings
+- **Input validation**: Use TypeScript for compile-time safety
+- **localStorage limits**: Implement basic storage cleanup
+- **UI complexity**: Keep card builder simple initially
 
-## Next Steps
-
-1. **Start with Phase 1.2** - Set up types and basic structure
-2. **Create sample data** - Real PrusaSlicer profile snippets
-3. **Build incrementally** - Test each phase before moving on
-4. **Document as you go** - Capture decisions and gotchas
-
-Remember: **Perfect is the enemy of good**. Ship a working MVP that demonstrates the concept clearly. 
+Remember: The goal is to complete a working custom card creation flow that integrates seamlessly with the existing MVP. Users should be able to create their own modifications and see them work exactly like the demo cards. 
