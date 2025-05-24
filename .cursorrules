@@ -1,0 +1,106 @@
+# Cursor Rules for Slicer Layer Composer
+
+## Project Context
+Building a browser-based tool for composing PrusaSlicer profiles from layers/cards.
+Tech stack: React + TypeScript + Vite, localStorage, fast-json-patch for applying changes.
+
+## Development Guidelines
+
+### Code Style & Patterns
+- Use functional components with hooks
+- Prefer TypeScript strict mode
+- Use consistent naming: camelCase for variables, PascalCase for components
+- Keep components small and focused (< 200 lines)
+- Use custom hooks for complex state logic
+- Prefer composition over inheritance
+
+### File Organization
+- Components in `src/components/` with co-located styles
+- Custom hooks in `src/hooks/`
+- Types in `src/types/` or co-located with components
+- Utils in `src/utils/`
+- Constants in `src/constants/`
+
+### State Management
+- Use React's built-in state (useState, useReducer) for local state
+- Use localStorage for persistence
+- Consider context only for truly global state
+- Implement undo/redo with a simple state stack
+
+### Profile & Card System
+- Profile = base INI data + applied patches
+- Card = JSON patch + metadata (name, description, conflicts)
+- Use fast-json-patch for applying changes
+- Implement last-write-wins conflict resolution
+- Store cards as ordered array
+
+### User Experience
+- Drag and drop should feel natural (react-dnd or @dnd-kit)
+- Show immediate feedback for actions
+- Display conflicts clearly but non-intrusively
+- Make sharing via URL simple (base64 encode state)
+
+### Performance
+- Keep render cycles minimal
+- Debounce expensive operations (profile compilation)
+- Use React.memo for pure components
+- Lazy load non-critical features
+
+### Error Handling
+- Graceful degradation when patches fail
+- Clear error messages for users
+- Validate INI export before download
+- Handle malformed imported projects
+
+### Testing Strategy
+- Unit tests for core utilities (patch application, INI export)
+- Integration tests for card ordering and conflicts
+- E2E test for full user flow (add cards → export INI)
+- Test with actual PrusaSlicer profile data
+
+## Specific Patterns
+
+### Card Component Structure
+```tsx
+interface Card {
+  id: string;
+  name: string;
+  description: string;
+  patch: Operation[]; // from fast-json-patch
+  enabled: boolean;
+  metadata?: {
+    author?: string;
+    version?: string;
+    tags?: string[];
+  };
+}
+```
+
+### Profile System
+```tsx
+interface Profile {
+  name: string;
+  baseData: Record<string, any>; // Original INI as JSON
+  appliedCards: Card[];
+  compiledData: Record<string, any>; // After applying all patches
+}
+```
+
+### State Shape
+```tsx
+interface AppState {
+  selectedBaseProfile: string;
+  cards: Card[];
+  cardOrder: string[]; // for drag/drop
+  conflicts: ConflictMap;
+  exportSettings: ExportSettings;
+}
+```
+
+## Implementation Priorities
+1. Core functionality first (base profiles, cards, export)
+2. Basic UI that works
+3. Polish and user experience improvements
+4. Advanced features (sharing, tours, etc.)
+
+Remember: Keep it simple, ship fast, iterate based on feedback. 
