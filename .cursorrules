@@ -118,7 +118,7 @@ interface AppState {
 5. **Test core flow** after each major feature addition
 
 ## Progress Documentation
-**IMPORTANT**: After each git commit (when user asks for commit), create a comprehensive progress summary and save it to the `progress/` folder:
+**IMPORTANT**: Before each git commit (when user asks for commit), create a comprehensive progress summary and save it to the `progress/` folder so it can be included in the same commit:
 
 ### Progress Summary Format
 - **Filename**: `YYYY-MM-DD-HHMMSS-brief-description.md`
@@ -128,8 +128,8 @@ interface AppState {
 - **IMPORTANT**: Always use `date +"%Y-%m-%d %H:%M:%S"` terminal command to get accurate timestamps - do not rely on training data which may be outdated
 
 ### When to Create Progress Summaries
-- After completing major phases or milestones
-- When user requests git commit of significant work
+- Before completing git commits for major phases or milestones
+- When user requests git commit of significant work (create summary first, then commit together)
 - At natural breaking points in development
 - When major functionality becomes available to users
 
