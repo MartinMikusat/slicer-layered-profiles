@@ -14,23 +14,23 @@
 
 /* Project Manager */
 .project-manager {
-  @apply bg-card rounded-xl border p-6 shadow-sm;
+  @apply space-y-4;
 }
 
 .project-info {
-  @apply flex flex-col lg:flex-row gap-6 items-start;
+  @apply flex flex-col gap-3;
 }
 
 .project-fields {
-  @apply flex-1 space-y-4;
+  @apply space-y-3;
 }
 
 .field-group {
-  @apply space-y-2;
+  @apply space-y-1;
 }
 
 .project-status {
-  @apply flex flex-col gap-2;
+  @apply flex flex-col gap-1;
 }
 
 .status-info {
@@ -38,7 +38,7 @@
 }
 
 .save-status {
-  @apply text-sm font-medium;
+  @apply text-xs font-medium;
 }
 
 .save-status.saved {
@@ -54,11 +54,11 @@
 }
 
 .project-actions {
-  @apply flex gap-2 flex-wrap;
+  @apply grid grid-cols-2 gap-2;
 }
 
 .error-message {
-  @apply flex items-center gap-2 p-3 bg-destructive/10 border border-destructive/20 rounded-md text-destructive text-sm;
+  @apply flex items-center gap-2 p-2 bg-destructive/10 border border-destructive/20 rounded-md text-destructive text-xs;
 }
 
 /* Card-specific styles */

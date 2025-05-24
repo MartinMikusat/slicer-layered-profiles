@@ -327,120 +327,40 @@ function App() {
         </div>
       </header>
 
-      <main className="flex-1 max-w-7xl mx-auto w-full p-6 space-y-6">
-        <ProjectManager
-          projectName={projectName}
-          projectDescription={projectDescription}
-          hasUnsavedChanges={hasUnsavedChanges}
-          lastSaved={lastSaved}
-          isLoading={isSaving}
-          error={error}
-          hasStoredProject={hasStoredProject}
-          onProjectNameChange={setProjectName}
-          onProjectDescriptionChange={setProjectDescription}
-          onSave={saveProject}
-          onLoad={async () => loadProject()}
-          onExport={exportProject}
-          onImport={async (jsonString) => importProject(jsonString)}
-          onClearError={clearError}
-          onProjectLoaded={handleProjectLoaded}
-        />
+      <main className="flex-1 max-w-7xl mx-auto w-full p-6">
+        {/* New grid layout matching the Excalidraw sketch */}
+        <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr_300px] lg:grid-rows-[auto_1fr] gap-6 h-auto lg:h-[calc(100vh-200px)]">
+          {/* Top-left: Project Management */}
+          <section className="bg-card rounded-xl border p-6 shadow-sm">
+            <h2 className="text-lg font-semibold mb-4">Project Management</h2>
+            <ProjectManager
+              projectName={projectName}
+              projectDescription={projectDescription}
+              hasUnsavedChanges={hasUnsavedChanges}
+              lastSaved={lastSaved}
+              isLoading={isSaving}
+              error={error}
+              hasStoredProject={hasStoredProject}
+              onProjectNameChange={setProjectName}
+              onProjectDescriptionChange={setProjectDescription}
+              onSave={saveProject}
+              onLoad={async () => loadProject()}
+              onExport={exportProject}
+              onImport={async (jsonString) => importProject(jsonString)}
+              onClearError={clearError}
+              onProjectLoaded={handleProjectLoaded}
+            />
+          </section>
 
-        <div className="grid grid-cols-1 lg:grid-cols-[320px_1fr] gap-6">
-          <aside className="space-y-6">
-            <section className="bg-card rounded-xl border p-6 shadow-sm profile-section">
-              <h2 className="text-xl font-semibold mb-4">Base Profile</h2>
-              <div className="space-y-3">
-                {baseProfiles.map((profile) => (
-                  <label key={profile.id} className="cursor-pointer block">
-                    <input
-                      type="radio"
-                      name="baseProfile"
-                      value={profile.id}
-                      checked={selectedProfile.id === profile.id}
-                      onChange={() => setSelectedProfile(profile)}
-                      className="sr-only"
-                    />
-                    <div className={`p-4 rounded-lg border-2 transition-all ${selectedProfile.id === profile.id
-                      ? 'border-primary bg-primary/5'
-                      : 'border-border hover:border-border/80 hover:bg-accent/50'
-                      }`}>
-                      <h3 className="font-semibold text-sm">{profile.name}</h3>
-                      <p className="text-xs text-muted-foreground mt-1">{profile.description}</p>
-                      <div className="text-xs text-muted-foreground mt-2 font-medium">
-                        {profile.metadata.printer} • {profile.metadata.quality}
-                      </div>
-                    </div>
-                  </label>
-                ))}
-              </div>
-            </section>
-
-            <section className="bg-card rounded-xl border p-6 shadow-sm">
-              <h3 className="text-lg font-semibold mb-4">Profile Summary</h3>
-              <div className="space-y-3">
-                <div className="flex justify-between items-center text-sm">
-                  <span className="text-muted-foreground">Layer Height:</span>
-                  <span className="font-semibold">
-                    {compiledProfile ?
-                      `${compiledProfile.finalData.print_settings?.layer_height || selectedProfile.data.print_settings.layer_height}mm` :
-                      `${selectedProfile.data.print_settings.layer_height}mm`
-                    }
-                  </span>
-                </div>
-                <div className="flex justify-between items-center text-sm">
-                  <span className="text-muted-foreground">Temperature:</span>
-                  <span className="font-semibold">
-                    {compiledProfile ?
-                      `${compiledProfile.finalData.filament_settings?.temperature || selectedProfile.data.filament_settings.temperature}°C` :
-                      `${selectedProfile.data.filament_settings.temperature}°C`
-                    }
-                  </span>
-                </div>
-                <div className="flex justify-between items-center text-sm">
-                  <span className="text-muted-foreground">Speed:</span>
-                  <span className="font-semibold">
-                    {compiledProfile ?
-                      `${compiledProfile.finalData.print_settings?.perimeter_speed || selectedProfile.data.print_settings.perimeter_speed}mm/s` :
-                      `${selectedProfile.data.print_settings.perimeter_speed}mm/s`
-                    }
-                  </span>
-                </div>
-                <div className="flex justify-between items-center text-sm">
-                  <span className="text-muted-foreground">Infill:</span>
-                  <span className="font-semibold">
-                    {compiledProfile ?
-                      `${compiledProfile.finalData.print_settings?.fill_density || selectedProfile.data.print_settings.fill_density}%` :
-                      `${selectedProfile.data.print_settings.fill_density}%`
-                    }
-                  </span>
-                </div>
-                {compiledProfile && compiledProfile.appliedCards.length > 0 && (
-                  <div className="pt-3 border-t space-y-2">
-                    <div className="flex justify-between items-center text-sm">
-                      <span className="text-muted-foreground">Applied Cards:</span>
-                      <span className="font-semibold">{compiledProfile.appliedCards.length}</span>
-                    </div>
-                    {Object.keys(compiledProfile.conflicts).length > 0 && (
-                      <div className="flex justify-between items-center text-sm">
-                        <span className="text-muted-foreground">Conflicts:</span>
-                        <span className="font-semibold text-destructive">{Object.keys(compiledProfile.conflicts).length}</span>
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-            </section>
-          </aside>
-
-          <section className="space-y-4 card-workspace">
+          {/* Top-center: Layer Cards header and workspace */}
+          <section className="space-y-4 card-workspace lg:row-span-2">
             <div>
-              <h2 className="text-xl font-semibold">Layer Cards</h2>
+              <h2 className="text-xl font-semibold">Layers</h2>
               <p className="text-sm text-muted-foreground">Drag cards to reorder horizontally • Cards to the right override those to the left</p>
             </div>
 
             {cards.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-12 text-center space-y-4 bg-card rounded-xl border border-dashed">
+              <div className="flex flex-col items-center justify-center py-12 text-center space-y-4 bg-card rounded-xl border border-dashed h-auto lg:h-[calc(100%-80px)]">
                 <FileText size={48} className="text-muted-foreground" />
                 <div>
                   <h3 className="text-lg font-semibold">No cards yet</h3>
@@ -451,16 +371,104 @@ function App() {
                 </Button>
               </div>
             ) : (
-              <SortableCardList
-                cards={cards}
-                cardOrder={cardOrder}
-                cardsWithPreviews={cardsWithPreviews}
-                onReorder={handleCardReorder}
-                onToggle={handleCardToggle}
-                onRemove={handleCardRemove}
-                hasConflict={hasConflict}
-              />
+              <div className="bg-card rounded-xl border p-4 h-auto lg:h-[calc(100%-80px)] overflow-auto">
+                <SortableCardList
+                  cards={cards}
+                  cardOrder={cardOrder}
+                  cardsWithPreviews={cardsWithPreviews}
+                  onReorder={handleCardReorder}
+                  onToggle={handleCardToggle}
+                  onRemove={handleCardRemove}
+                  hasConflict={hasConflict}
+                />
+              </div>
             )}
+          </section>
+
+          {/* Top-right: Profile Summary */}
+          <section className="bg-card rounded-xl border p-6 shadow-sm lg:row-span-2">
+            <h3 className="text-lg font-semibold mb-4">Profile Summary</h3>
+            <div className="space-y-3">
+              <div className="flex justify-between items-center text-sm">
+                <span className="text-muted-foreground">Layer Height:</span>
+                <span className="font-semibold">
+                  {compiledProfile ?
+                    `${compiledProfile.finalData.print_settings?.layer_height || selectedProfile.data.print_settings.layer_height}mm` :
+                    `${selectedProfile.data.print_settings.layer_height}mm`
+                  }
+                </span>
+              </div>
+              <div className="flex justify-between items-center text-sm">
+                <span className="text-muted-foreground">Temperature:</span>
+                <span className="font-semibold">
+                  {compiledProfile ?
+                    `${compiledProfile.finalData.filament_settings?.temperature || selectedProfile.data.filament_settings.temperature}°C` :
+                    `${selectedProfile.data.filament_settings.temperature}°C`
+                  }
+                </span>
+              </div>
+              <div className="flex justify-between items-center text-sm">
+                <span className="text-muted-foreground">Speed:</span>
+                <span className="font-semibold">
+                  {compiledProfile ?
+                    `${compiledProfile.finalData.print_settings?.perimeter_speed || selectedProfile.data.print_settings.perimeter_speed}mm/s` :
+                    `${selectedProfile.data.print_settings.perimeter_speed}mm/s`
+                  }
+                </span>
+              </div>
+              <div className="flex justify-between items-center text-sm">
+                <span className="text-muted-foreground">Infill:</span>
+                <span className="font-semibold">
+                  {compiledProfile ?
+                    `${compiledProfile.finalData.print_settings?.fill_density || selectedProfile.data.print_settings.fill_density}%` :
+                    `${selectedProfile.data.print_settings.fill_density}%`
+                  }
+                </span>
+              </div>
+              {compiledProfile && compiledProfile.appliedCards.length > 0 && (
+                <div className="pt-3 border-t space-y-2">
+                  <div className="flex justify-between items-center text-sm">
+                    <span className="text-muted-foreground">Applied Cards:</span>
+                    <span className="font-semibold">{compiledProfile.appliedCards.length}</span>
+                  </div>
+                  {Object.keys(compiledProfile.conflicts).length > 0 && (
+                    <div className="flex justify-between items-center text-sm">
+                      <span className="text-muted-foreground">Conflicts:</span>
+                      <span className="font-semibold text-destructive">{Object.keys(compiledProfile.conflicts).length}</span>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          </section>
+
+          {/* Bottom-left: Base Profile */}
+          <section className="bg-card rounded-xl border p-6 shadow-sm profile-section">
+            <h2 className="text-lg font-semibold mb-4">Base Profile</h2>
+            <div className="space-y-3">
+              {baseProfiles.map((profile) => (
+                <label key={profile.id} className="cursor-pointer block">
+                  <input
+                    type="radio"
+                    name="baseProfile"
+                    value={profile.id}
+                    checked={selectedProfile.id === profile.id}
+                    onChange={() => setSelectedProfile(profile)}
+                    className="sr-only"
+                  />
+                  <div className={`p-4 rounded-lg border-2 transition-all ${selectedProfile.id === profile.id
+                    ? 'border-primary bg-primary/5'
+                    : 'border-border hover:border-border/80 hover:bg-accent/50'
+                    }`}>
+                    <h3 className="font-semibold text-sm">{profile.name}</h3>
+                    <p className="text-xs text-muted-foreground mt-1">{profile.description}</p>
+                    <div className="text-xs text-muted-foreground mt-2 font-medium">
+                      {profile.metadata.printer} • {profile.metadata.quality}
+                    </div>
+                  </div>
+                </label>
+              ))}
+            </div>
           </section>
         </div>
       </main>
