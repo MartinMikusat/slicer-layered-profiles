@@ -284,11 +284,11 @@
 }
 
 .tour-actions {
-  @apply flex gap-2;
+  @apply flex items-center gap-3;
 }
 
 .tour-skip {
-  @apply text-sm text-muted-foreground hover:text-foreground cursor-pointer;
+  @apply text-sm text-muted-foreground hover:text-foreground cursor-pointer whitespace-nowrap;
 }
 
 .tour-nav {
@@ -309,6 +309,40 @@
 
 .tour-prev:not(:disabled):hover {
   @apply bg-muted border-muted-foreground/50;
+}
+
+/* Inverted colors for centered tour tooltips */
+.tour-tooltip[data-centered="true"] {
+  @apply bg-black text-white;
+}
+
+.tour-tooltip[data-centered="true"] .tour-header h3 {
+  @apply text-white;
+}
+
+.tour-tooltip[data-centered="true"] .tour-close {
+  @apply text-gray-300 hover:text-white;
+}
+
+.tour-tooltip[data-centered="true"] .tour-content p {
+  @apply text-gray-200;
+}
+
+.tour-tooltip[data-centered="true"] .tour-skip {
+  @apply text-gray-300 hover:text-white whitespace-nowrap;
+}
+
+.tour-tooltip[data-centered="true"] .tour-prev,
+.tour-tooltip[data-centered="true"] .tour-next {
+  @apply border-gray-600 text-gray-200;
+}
+
+.tour-tooltip[data-centered="true"] .tour-prev:not(:disabled):hover {
+  @apply bg-gray-800 border-gray-500 text-white;
+}
+
+.tour-tooltip[data-centered="true"] .tour-next.primary {
+  @apply bg-white text-black border-white hover:bg-gray-200;
 }
 
 /* Responsive adjustments */

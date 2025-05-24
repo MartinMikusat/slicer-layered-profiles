@@ -115,6 +115,23 @@ export function OnboardingTour({ isVisible, onComplete, onSkip }: OnboardingTour
         const rect = element.getBoundingClientRect()
         const style: React.CSSProperties = { position: 'fixed' }
 
+        // Check if the element takes up a majority of the screen (>50% of either dimension)
+        const viewportWidth = window.innerWidth
+        const viewportHeight = window.innerHeight
+        const elementWidth = rect.width
+        const elementHeight = rect.height
+
+        const isLargeElement = (elementWidth / viewportWidth > 0.5) || (elementHeight / viewportHeight > 0.5)
+
+        // If it's a large element, center the dialog within the highlighted area
+        if (isLargeElement) {
+            style.left = rect.left + rect.width / 2
+            style.top = rect.top + rect.height / 2
+            style.transform = 'translate(-50%, -50%)'
+            return style
+        }
+
+        // Otherwise, use the original positioning logic
         switch (position) {
             case 'top':
                 style.bottom = window.innerHeight - rect.top + 16
@@ -140,6 +157,25 @@ export function OnboardingTour({ isVisible, onComplete, onSkip }: OnboardingTour
 
         return style
     }
+
+    // Helper function to determine if we should use center positioning
+    const shouldUseCenterPosition = (position: string, element: HTMLElement | null) => {
+        if (!element || position === 'center') {
+            return true
+        }
+
+        const rect = element.getBoundingClientRect()
+        const viewportWidth = window.innerWidth
+        const viewportHeight = window.innerHeight
+        const elementWidth = rect.width
+        const elementHeight = rect.height
+
+        return (elementWidth / viewportWidth > 0.5) || (elementHeight / viewportHeight > 0.5)
+    }
+
+    const effectivePosition = shouldUseCenterPosition(currentTourStep.position, highlightElement)
+        ? 'center'
+        : currentTourStep.position
 
     return (
         <>
@@ -168,9 +204,10 @@ export function OnboardingTour({ isVisible, onComplete, onSkip }: OnboardingTour
 
             {/* Tour tooltip */}
             <div
-                className={`tour-tooltip ${currentTourStep.position}`}
+                className={`tour-tooltip ${effectivePosition}`}
+                data-centered={effectivePosition === 'center'}
                 style={{
-                    ...getTooltipStyle(currentTourStep.position, highlightElement),
+                    ...getTooltipStyle(effectivePosition, highlightElement),
                     pointerEvents: 'auto'
                 }}
             >
@@ -200,7 +237,7 @@ export function OnboardingTour({ isVisible, onComplete, onSkip }: OnboardingTour
                             className="tour-skip"
                             onClick={handleSkip}
                         >
-                            Skip Tour
+                            Skip
                         </button>
 
                         <div className="tour-nav">
