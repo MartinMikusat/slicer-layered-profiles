@@ -343,7 +343,7 @@ function App() {
   }, [layers])
 
   return (
-    <div className="min-h-screen flex flex-col bg-background">
+    <div className="min-h-screen flex flex-col bg-background" data-testid="app-container">
       <header className="border-b bg-background p-6">
         <div className="w-full flex justify-between items-center">
           <div>
@@ -381,6 +381,7 @@ function App() {
               onClick={showDemo ? clearLayers : loadDemo}
               title={`Load Demo (${getShortcutText().demo})`}
               className="demo-btn gap-2"
+              data-testid="load-demo-cards"
             >
               <Plus size={16} />
               {showDemo ? 'Clear Demo' : 'Load Demo'}
@@ -471,7 +472,7 @@ function App() {
             {/* Base Profile */}
             <section className="bg-card rounded-xl border p-6 shadow-sm profile-section flex flex-col">
               <h2 className="text-lg font-semibold mb-4 flex-shrink-0">Base Profile</h2>
-              <div className="space-y-3 overflow-y-auto flex-1">
+              <div className="space-y-3 overflow-y-auto flex-1" data-testid="base-profile-selector">
                 {baseProfiles.map((profile) => (
                   <label key={profile.id} className="cursor-pointer block">
                     <input
@@ -485,7 +486,7 @@ function App() {
                     <div className={`p-4 rounded-lg border-2 transition-all ${selectedProfile.id === profile.id
                       ? 'border-primary bg-primary/5'
                       : 'border-border hover:border-border/80 hover:bg-accent/50'
-                      }`}>
+                      }`} data-testid="profile-option">
                       <h3 className="font-semibold text-sm">{profile.name}</h3>
                       <p className="text-xs text-muted-foreground mt-1">{profile.description}</p>
                       <div className="text-xs text-muted-foreground mt-2 font-medium">
@@ -516,7 +517,7 @@ function App() {
                   selectedProfile={selectedProfile}
                   onLayerCreated={handleLayerCreated}
                 />
-                <Button onClick={loadDemo} variant="outline" className="gap-2">
+                <Button onClick={loadDemo} variant="outline" className="gap-2" data-testid="load-demo-cards-workspace">
                   <Plus size={16} />
                   {showDemo ? 'Clear Demo' : 'Load Demo'}
                 </Button>
@@ -541,7 +542,7 @@ function App() {
                     selectedProfile={selectedProfile}
                     onLayerCreated={handleLayerCreated}
                   />
-                  <Button onClick={loadDemo} variant="outline" className="gap-2">
+                  <Button onClick={loadDemo} variant="outline" className="gap-2" data-testid="load-demo-cards-empty">
                     Load Demo Layers
                   </Button>
                 </div>

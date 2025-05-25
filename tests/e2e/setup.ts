@@ -1,4 +1,4 @@
-import { test as base, expect, Browser, Page } from '@playwright/test';
+import { expect, Browser, Page, chromium } from '@playwright/test';
 
 export interface TestContext {
     browser: Browser;
@@ -6,8 +6,6 @@ export interface TestContext {
 }
 
 export async function setupBrowser(): Promise<TestContext> {
-    const { chromium } = await import('@playwright/test');
-
     const browser = await chromium.launch({
         headless: process.env.CI ? true : false, // Show browser in development
         args: [
