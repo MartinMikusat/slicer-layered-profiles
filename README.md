@@ -55,6 +55,18 @@ Instead of manually editing complex slicer profiles, this tool lets you:
 
 ## 🚀 Quick Start
 
+### Try the Live Demo
+
+**🌐 [Live Demo Available Here](https://martinmikusat.github.io/slicer-layered-profiles/)**
+
+> ⚠️ **MVP Notice**: This is a proof-of-concept demonstration. While functional, it uses demo profiles and layers for testing purposes. The exported profiles should not be used for actual 3D printing without thorough validation.
+
+1. Click "Load Demo" in the header
+2. See 5 example layers with different modifications
+3. Drag layers to reorder them
+4. Toggle layers on/off to see conflicts
+5. Export the final profile as `.ini`
+
 ### Run Locally
 
 ```bash
@@ -70,14 +82,6 @@ npm run dev
 
 # Open in browser (usually http://localhost:5173)
 ```
-
-### Try the Demo
-
-1. Click "Load Demo" in the header
-2. See 5 example layers with different modifications
-3. Drag layers to reorder them
-4. Toggle layers on/off to see conflicts
-5. Export the final profile as `.ini`
 
 ## 🎮 How to Use
 

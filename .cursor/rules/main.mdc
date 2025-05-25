@@ -22,6 +22,18 @@ Tech stack: React + TypeScript + Vite, localStorage, fast-json-patch for applyin
 
 ## Development Guidelines
 
+### Request Clarification Protocol
+**CRITICAL**: Before implementing any user request, analyze it for ambiguity or unclear requirements.
+- If any aspect of the request is unclear, ambiguous, or could be interpreted multiple ways, **ALWAYS ask clarifying questions FIRST**
+- Do not make assumptions or start implementing based on incomplete understanding
+- Ask specific questions about:
+  - Exact requirements and expected behavior
+  - Which files or components should be affected
+  - Design preferences or constraints
+  - Priority if multiple interpretations exist
+- Only proceed with implementation after receiving clear direction
+- Better to over-clarify than to implement the wrong solution
+
 ### Code Style & Patterns
 - Use functional components with hooks
 - Prefer TypeScript strict mode
