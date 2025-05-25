@@ -1,4 +1,4 @@
-import { expect, Browser, Page, chromium } from '@playwright/test';
+import { Browser, Page, chromium } from '@playwright/test';
 
 export interface TestContext {
     browser: Browser;
