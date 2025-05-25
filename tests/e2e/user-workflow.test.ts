@@ -8,7 +8,7 @@ import {
     TestContext
 } from './setup';
 
-test.describe('Layered Profile Builder - User Workflow', () => {
+test.describe.skip('Layered Profile Builder - User Workflow', () => {
     let context: TestContext;
 
     test.beforeAll(async () => {

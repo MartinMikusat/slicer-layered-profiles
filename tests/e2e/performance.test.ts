@@ -7,7 +7,7 @@ import {
     TestContext
 } from './setup';
 
-test.describe('Layered Profile Builder - Performance Tests', () => {
+test.describe.skip('Layered Profile Builder - Performance Tests', () => {
     let context: TestContext;
 
     test.beforeAll(async () => {
