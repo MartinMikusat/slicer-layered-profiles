@@ -1,8 +1,13 @@
-name: E2E Tests (Manual)
+name: E2E Tests (DISABLED)
 
 on:
-  # Only run manually for now - uncomment push/pull_request when tests are ready
+  # E2E tests disabled - uncomment workflow_dispatch when ready to re-enable
   workflow_dispatch:
+    inputs:
+      disabled:
+        description: 'This workflow is disabled'
+        required: false
+        default: 'true'
   # push:
   #   branches: [ main, develop ]
   # pull_request:
@@ -11,6 +16,7 @@ on:
 jobs:
   e2e-tests:
     runs-on: ubuntu-latest
+    if: false  # DISABLED - set to true to re-enable
     
     strategy:
       matrix:
